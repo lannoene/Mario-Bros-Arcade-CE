@@ -1,0 +1,37 @@
+palettes:
+  - name: global_palette
+    fixed-entries:
+      - color: {index: 0, r: 255, g: 0, b: 128}
+      - color: {index: 1, r: 255, g: 255, b: 255}
+      - color: {index: 2, r: 0, g: 0, b: 0}
+      - color: {index: 3, r: 81.0, g: 43, b: 186}
+    images: automatic
+
+converts:
+  - name: sprites
+    palette: global_palette
+    transparent-color-index: 0
+    images:
+      - title/mario_title_card.png
+      - mario/stand_right.png
+      - mario/walk1_right.png
+      - mario/walk2_right.png
+      - mario/walk3_right.png
+      - mario/jump_right.png
+      - mario/stand_left.png
+      - mario/walk1_left.png
+      - mario/walk2_left.png
+      - mario/walk3_left.png
+      - mario/jump_left.png
+      - level/level1_block.png
+      - level/level1_ground.png
+
+
+outputs:
+  - type: c
+    include-file: gfx.h
+    palettes:
+      - global_palette
+    converts:
+      - sprites
+
