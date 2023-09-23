@@ -7,9 +7,14 @@
 
 bool LoadTitle(void) {
 	gfx_FillScreen(2);
-	// draw title card
-	gfx_Sprite_NoClip(mario_title_card, 10, 80);
+	
+	gfx_sprite_t* tmp_title_card = gfx_MallocSprite(mario_title_card_width, mario_title_card_height);
+	zx7_Decompress(tmp_title_card->data, mario_title_card_compressed);
+	
+	gfx_Sprite_NoClip(tmp_title_card, 10, 80);
+	free(tmp_title_card);
 	gfx_SwapDraw();
+	gfx_BlitScreen();
 	ChangeScreen(SCR_TITLE);
 	return true;
 }
@@ -17,17 +22,13 @@ bool LoadTitle(void) {
 bool RunTitle(void) {
 	// title should be simple, so no need to split into seperate functions
 	// draw
-
-	kb_Scan();
+	
 	if (kb_Data[6] & kb_Enter) {
-		ChangeScreen(SCR_GAME_LOAD);
-		gfx_FillScreen(0);
+		ChangeScreen(SCR_LEVEL_LOAD);
 	}
 	if (kb_Data[6] & kb_Clear) {
 		return false;
 	}
-	// copy over last screen
-	gfx_BlitScreen();
 	
 	gfx_SwapDraw();
 	

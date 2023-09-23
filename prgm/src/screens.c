@@ -2,8 +2,8 @@
 #include "title.h"
 #include "level.h"
 
-int currentScreen = SCR_TITLE_LOAD;
-bool (*cur_scr_r[])(void) = {RunTitle, LoadTitle, GameLoop, LoadGame};
+static int currentScreen = SCR_TITLE_LOAD;
+static bool (*cur_scr_r[])(void) = {RunTitle, LoadTitle, LevelLoop, LoadLevel};
 
 bool RunScreen(void) {
 	return (cur_scr_r[currentScreen]());

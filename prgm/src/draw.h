@@ -2,6 +2,8 @@
 #include "player.h"
 #include <graphx.h>
 
+#define BLOCK_SIZE 8
+
 extern gfx_sprite_t* mario_sprites[2][5];
 extern uint8_t mario_walking_sprite_table[4];
 

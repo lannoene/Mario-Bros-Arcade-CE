@@ -4,14 +4,14 @@
 #include <keypadc.h>
 
 int main(void) {
-	/* Initialize graphics drawing */
+	// Initialize graphics drawing
 	gfx_Begin();
 	gfx_SetDrawBuffer();
 
-	/* Set the palette for sprites */
+	// Set the palette for sprites
 	gfx_SetPalette(global_palette, sizeof_global_palette, 0);
 
-	/* These were set in the image conversion file */
+	// These were set in the image conversion file
 	gfx_SetTransparentColor(3);
 	gfx_FillScreen(2);
 	do {
@@ -19,7 +19,7 @@ int main(void) {
 		kb_Scan();
 	} while (RunScreen());
 
-	/* End graphics drawing */
+	// End graphics drawing
 	gfx_End();
 
 	return 0;

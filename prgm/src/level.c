@@ -9,15 +9,15 @@
 #include "player.h"
 #include "platforms.h"
 
-int gameFrame = 0;
+unsigned int gameFrame = 0;
 player_t mario1;
 gameData_t game_data = {};
 
-bool GameLoop(void) {
-	
+bool LevelLoop(void) {
 	mario1.moving = false;
 	// check for button presses
 	if (kb_Data[6] & kb_Clear) {
+		UnloadLevel();
 		return false;
 	}
 	if (kb_Data[7] & kb_Right) {
@@ -40,18 +40,34 @@ bool GameLoop(void) {
 	return true;
 }
 
-bool LoadGame(void) {
+bool LoadLevel(void) {
 	// we only need to draw the background once because we perform non-destructive sprite placement during the game loop in order to save on resources
 	DrawBackground();
 	
-	// change windows
-	ChangeScreen(SCR_GAME);
+	// init level platform struct
+	InitPlatformData();
+	
+	// spawn in platforms. width must be a multiple of 8 (the tile size)
+	// bottom platforms
+	CreatePlatform(0, 176, 112);
+	CreatePlatform(208, 176, 112);
+	// small side platforms
+	CreatePlatform(0, 128, 48);
+	CreatePlatform(272, 128, 48);
+	// middle sized middle platform
+	//CreatePlatform(272, 128, 48);
 	
 	// init player
 	PlayerInit(&mario1);
 	
-	numPlatforms = 1;
+	// change windows
+	ChangeScreen(SCR_LEVEL);
 	
 	// return
 	return true;
+}
+
+void UnloadLevel(void) {
+	// deinit platform data
+	FreePlatforms();
 }

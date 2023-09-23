@@ -6,5 +6,6 @@ typedef struct {
 	uint8_t numPlatforms;
 } gameData_t;
 
-bool GameLoop(void);
-bool LoadGame(void);
+bool LevelLoop(void);
+bool LoadLevel(void);
+void UnloadLevel(void);

@@ -1,7 +1,5 @@
 global_palette.h
 global_palette.c
-mario_title_card.h
-mario_title_card.c
 stand_right.h
 stand_right.c
 walk1_right.h
@@ -26,4 +24,12 @@ level1_block.h
 level1_block.c
 level1_ground.h
 level1_ground.c
+level1_block_bump1.h
+level1_block_bump1.c
+level1_block_bump2.h
+level1_block_bump2.c
+level1_block_bump3.h
+level1_block_bump3.c
+mario_title_card.h
+mario_title_card.c
 gfx.h

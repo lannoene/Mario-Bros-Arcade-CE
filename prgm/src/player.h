@@ -14,9 +14,9 @@ typedef struct {
 	int16_t x, x_old;
 	uint8_t y, y_old;
 	float verAccel, horAccel;
-	bool grounded, moving; // moving: whether or not the player has pressed any directional keys this frame
 	uint8_t sprite;
-	bool dir;
+	bool grounded, moving : 1; // moving: whether or not the player has pressed any directional keys this frame
+	bool dir : 1;
 	uint8_t backgroundData[PLAYER_HEIGHT*PLAYER_WIDTH + 2];
 } player_t;
 

@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "platforms.h"
@@ -32,7 +34,7 @@ void PlayerMove(player_t* player, uint8_t direction) {
 			break;
 		case UP:
 			if (player->grounded) {
-				player->verAccel = 4;
+				player->verAccel = 4.5;
 				player->grounded = false;
 				player->sprite = 4;
 			}
@@ -45,14 +47,15 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 	if (player->horAccel != 0 && !player->moving && player->grounded)
 		player->horAccel = 0;
 	
-	int16_t platformY_coord = CheckColision(&player->x, &player->y, PLAYER_WIDTH, PLAYER_HEIGHT, &player->verAccel, &player->horAccel);
-	if (platformY_coord != -1 && player->verAccel <= 0) {
-		player->y = platformY_coord - PLAYER_HEIGHT;
+	colision_t colidedPlatform = CheckColision(&player->x, &player->y, PLAYER_WIDTH, PLAYER_HEIGHT, &player->verAccel, &player->horAccel);
+	if (colidedPlatform.hasColided && colidedPlatform.colidedSide == UP) {
+		player->y = colidedPlatform.y - PLAYER_HEIGHT;
 		player->verAccel = 0;
 		player->grounded = true;
-	} else if (platformY_coord != -1 && player->verAccel > 0) {
-		player->y = platformY_coord + PLATFORM_HEIGHT;
+	} else if (colidedPlatform.hasColided && colidedPlatform.colidedSide == DOWN) {
+		player->y = colidedPlatform.y + PLATFORM_HEIGHT;
 		player->verAccel = -1;
+		BumpPlatform(player->x, colidedPlatform.colidedIndex, gameFrame);
 	} else {
 		player->grounded = false;
 	}

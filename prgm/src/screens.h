@@ -8,6 +8,6 @@ bool RunScreen(void);
 enum SCREEN_IDS {
 	SCR_TITLE = 0,
 	SCR_TITLE_LOAD,
-	SCR_GAME,
-	SCR_GAME_LOAD,
+	SCR_LEVEL,
+	SCR_LEVEL_LOAD,
 };

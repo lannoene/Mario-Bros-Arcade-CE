@@ -12,7 +12,6 @@ converts:
     palette: global_palette
     transparent-color-index: 0
     images:
-      - title/mario_title_card.png
       - mario/stand_right.png
       - mario/walk1_right.png
       - mario/walk2_right.png
@@ -25,8 +24,16 @@ converts:
       - mario/jump_left.png
       - level/level1_block.png
       - level/level1_ground.png
+      - level/level1_block_bump1.png
+      - level/level1_block_bump2.png
+      - level/level1_block_bump3.png
 
-
+  - name: compressed
+    palette: global_palette
+    compress: zx7
+    width-and-height: false
+    images:
+      - title/mario_title_card.png
 outputs:
   - type: c
     include-file: gfx.h
@@ -34,4 +41,5 @@ outputs:
       - global_palette
     converts:
       - sprites
+      - compressed
 
