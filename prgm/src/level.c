@@ -8,6 +8,7 @@
 #include "draw.h"
 #include "player.h"
 #include "platforms.h"
+#include "enemies.h"
 
 unsigned int gameFrame = 0;
 player_t mario1;
@@ -17,6 +18,8 @@ bool LevelLoop(void) {
 	mario1.moving = false;
 	// check for button presses
 	if (kb_Data[6] & kb_Clear) {
+		// make sure everything is freed before we exit
+		FreeEnimies();
 		UnloadLevel();
 		return false;
 	}
@@ -30,8 +33,12 @@ bool LevelLoop(void) {
 		PlayerMove(&mario1, UP); // jump
 	}
 	
-	// update player
+	if (gameFrame % 10000 == 0)
+		SpawnEnemy(ENEMY_SPIKE, (rand() % 2), gameFrame);
+	
+	// update movables
 	UpdatePlayer(&mario1, gameFrame);
+	UpdateEnemies(&mario1, gameFrame);
 	
 	// draw updated player
 	DrawScene(&mario1, gameFrame);
@@ -55,7 +62,13 @@ bool LoadLevel(void) {
 	CreatePlatform(0, 128, 48);
 	CreatePlatform(272, 128, 48);
 	// middle sized middle platform
-	//CreatePlatform(272, 128, 48);
+	CreatePlatform(88, 120, BLOCK_SIZE*18);
+	// top platforms
+	CreatePlatform(0, 72, BLOCK_SIZE*18);
+	CreatePlatform(176, 72, BLOCK_SIZE*18);
+	
+	// init enemies
+	InitEnemies();
 	
 	// init player
 	PlayerInit(&mario1);

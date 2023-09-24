@@ -6,16 +6,14 @@
 
 #include "platforms.h"
 
-#define FRAME_DELAY 2
+#define FRAME_DELAY 5
 
 void PlayerInit(player_t* player) {
 	memset(player, 0, sizeof(*player));
 	player->backgroundData[0] = PLAYER_WIDTH;
 	player->backgroundData[1] = PLAYER_HEIGHT;
-}
-
-void DrawPlayer(player_t* player, int* gameFrame) {
-
+	player->y = 224 - PLAYER_HEIGHT;
+	player->x = 16;
 }
 
 void PlayerMove(player_t* player, uint8_t direction) {
@@ -43,7 +41,7 @@ void PlayerMove(player_t* player, uint8_t direction) {
 }
 
 void UpdatePlayer(player_t* player, int gameFrame) {
-	player->verAccel -= 0.2;
+	player->verAccel -= GRAVITY;
 	if (player->horAccel != 0 && !player->moving && player->grounded)
 		player->horAccel = 0;
 	
@@ -54,7 +52,7 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 		player->grounded = true;
 	} else if (colidedPlatform.hasColided && colidedPlatform.colidedSide == DOWN) {
 		player->y = colidedPlatform.y + PLATFORM_HEIGHT;
-		player->verAccel = -1;
+		player->verAccel = 0;
 		BumpPlatform(player->x, colidedPlatform.colidedIndex, gameFrame);
 	} else {
 		player->grounded = false;
@@ -62,18 +60,15 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 	
 	if (player->horAccel != 0 && player->grounded) {
 		if (gameFrame % FRAME_DELAY == 0) {
-			switch (gameFrame/FRAME_DELAY % 4) {
+			switch (gameFrame/FRAME_DELAY % 3) {
 				case 0:
-					player->sprite = 1;
+					player->sprite = 2;
 					break;
 				case 1:
-					player->sprite = 2;
+					player->sprite = 1;
 					break;
 				case 2:
-					player->sprite = 3;
-					break;
-				case 3:
-					player->sprite = 2;
+					player->sprite = 0;
 					break;
 			}
 		}

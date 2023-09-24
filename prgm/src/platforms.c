@@ -4,10 +4,13 @@
 #include <graphx.h>
 
 #include "player.h"
+#include "enemies.h"
+
+#include "gfx/gfx.h"
 
 levelPlatformData_t levelPlatforms = {};
 
-colision_t CheckColision(int16_t* x, uint8_t* y, uint8_t width, uint8_t height, float* verAccel, float* horAccel) {
+colision_t CheckColision(int16_t* x, int16_t* y, uint8_t width, uint8_t height, float* verAccel, float* horAccel) {
 	colision_t retStruct = {false, 0, 0, 0, 0};
 	// checking x for offscreen transition to other side
 	if (*x + width < 0)
@@ -64,18 +67,47 @@ void CreatePlatform(int16_t x, uint8_t y, uint8_t width) {
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData[0] = width;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData[1] = PLATFORM_HEIGHT*2; // this is to prevent the bumps from staying on the screen, so i'm getting the area above the block in order to restore it. this is super bad, because the bump is only 3x2, but i'm getting the WidthxHeightx2, when i only am using a small fraction of that. TODO: FIX THIS!!!!!
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].beingBumped = false;
+	// preprocess tile image
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage = malloc(width*(PLATFORM_HEIGHT*2) + 2);
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[0] = width;
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[1] = PLATFORM_HEIGHT*2;
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // get bg
+	for (uint8_t i = 0; i < width/BLOCK_SIZE; i++)
+		gfx_Sprite((gfx_sprite_t*)level1_block, x + i*BLOCK_SIZE, y); // process image
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage, x, y);
+	gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // return bg to original place
 }
 
 void FreePlatforms(void) {
 	for (uint8_t i = 0; i < levelPlatforms.numPlatforms; i++) {
 		free(levelPlatforms.platformArray[i].backgroundData);
+		free(levelPlatforms.platformArray[i].processedTileImage);
 	}
 	free(levelPlatforms.platformArray);
 }
 
-void BumpPlatform(int16_t playerX, uint8_t platformIndex, int gameFrame) {
-	gfx_SetTextXY(0, 0);
+void BumpPlatform(int16_t playerX, uint8_t platformIndex, unsigned int gameFrame) {
 	levelPlatforms.platformArray[platformIndex].beingBumped = true;
 	levelPlatforms.platformArray[platformIndex].timeOfLastBump = gameFrame;
-	levelPlatforms.platformArray[platformIndex].bumpedTileXpos = playerX;
+	if (levelPlatforms.platformArray[platformIndex].x + levelPlatforms.platformArray[platformIndex].width - playerX < BLOCK_SIZE)
+		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = levelPlatforms.platformArray[platformIndex].x + levelPlatforms.platformArray[platformIndex].width - BLOCK_SIZE;
+	else
+		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = playerX;
+	
+	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
+		if (levelEnemies.enemyArray[i].x + ENEMY_SPIKE_SIZE > playerX - BLOCK_SIZE && levelEnemies.enemyArray[i].x < playerX + 2*BLOCK_SIZE && levelEnemies.enemyArray[i].y + ENEMY_SPIKE_SIZE > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelEnemies.enemyArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
+			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING) {
+				levelEnemies.enemyArray[i].state = ENEMY_LAYING;
+				levelEnemies.enemyArray[i].verAccel = 2;
+				levelEnemies.enemyArray[i].layStartTime = gameFrame;
+				levelEnemies.enemyArray[i].grounded = false;
+				levelEnemies.enemyArray[i].sprite = 3;
+				levelEnemies.enemyArray[i].horSpriteOffset = 0;
+			} else {
+				levelEnemies.enemyArray[i].state = ENEMY_WALKING;
+				levelEnemies.enemyArray[i].verAccel = 2;
+				levelEnemies.enemyArray[i].horSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
+			}
+		}
+	}
 }

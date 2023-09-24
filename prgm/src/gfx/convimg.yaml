@@ -27,6 +27,16 @@ converts:
       - level/level1_block_bump1.png
       - level/level1_block_bump2.png
       - level/level1_block_bump3.png
+      - level/pipe_stationary_right.png
+      - level/pipe_stationary_left.png
+      - enemy/spike_walk1_right.png
+      - enemy/spike_walk2_right.png
+      - enemy/spike_walk3_right.png
+      - enemy/spike_upsidedown1_right.png
+      - enemy/spike_walk1_left.png
+      - enemy/spike_walk2_left.png
+      - enemy/spike_walk3_left.png
+      - enemy/spike_upsidedown1_left.png
 
   - name: compressed
     palette: global_palette
@@ -34,6 +44,10 @@ converts:
     width-and-height: false
     images:
       - title/mario_title_card.png
+      - background/bg_pipes_top_right.png
+      - background/bg_pipes_top_left.png
+      - background/bg_pipes_bottom_right.png
+      - background/bg_pipes_bottom_left.png
 outputs:
   - type: c
     include-file: gfx.h
