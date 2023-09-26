@@ -12,31 +12,11 @@ converts:
     palette: global_palette
     transparent-color-index: 0
     images:
-      - mario/stand_right.png
-      - mario/walk1_right.png
-      - mario/walk2_right.png
-      - mario/walk3_right.png
-      - mario/jump_right.png
-      - mario/stand_left.png
-      - mario/walk1_left.png
-      - mario/walk2_left.png
-      - mario/walk3_left.png
-      - mario/jump_left.png
       - level/level1_block.png
       - level/level1_ground.png
       - level/level1_block_bump1.png
       - level/level1_block_bump2.png
       - level/level1_block_bump3.png
-      - level/pipe_stationary_right.png
-      - level/pipe_stationary_left.png
-      - enemy/spike_walk1_right.png
-      - enemy/spike_walk2_right.png
-      - enemy/spike_walk3_right.png
-      - enemy/spike_upsidedown1_right.png
-      - enemy/spike_walk1_left.png
-      - enemy/spike_walk2_left.png
-      - enemy/spike_walk3_left.png
-      - enemy/spike_upsidedown1_left.png
 
   - name: compressed
     palette: global_palette
@@ -48,6 +28,32 @@ converts:
       - background/bg_pipes_top_left.png
       - background/bg_pipes_bottom_right.png
       - background/bg_pipes_bottom_left.png
+  - name: rlet_sprites
+    palette: global_palette
+    style: rlet
+    transparent-color-index: 3
+    images:
+      - mario/stand_right.png
+      - mario/walk1_right.png
+      - mario/walk2_right.png
+      - mario/walk3_right.png
+      - mario/jump_right.png
+      - mario/stand_left.png
+      - mario/walk1_left.png
+      - mario/walk2_left.png
+      - mario/walk3_left.png
+      - mario/jump_left.png
+      - mario/dead.png
+      - level/pipe_stationary_right.png
+      - level/pipe_stationary_left.png
+      - enemy/spike_walk1_right.png
+      - enemy/spike_walk2_right.png
+      - enemy/spike_walk3_right.png
+      - enemy/spike_upsidedown1_right.png
+      - enemy/spike_walk1_left.png
+      - enemy/spike_walk2_left.png
+      - enemy/spike_walk3_left.png
+      - enemy/spike_upsidedown1_left.png
 outputs:
   - type: c
     include-file: gfx.h
@@ -56,4 +62,5 @@ outputs:
     converts:
       - sprites
       - compressed
+      - rlet_sprites
 

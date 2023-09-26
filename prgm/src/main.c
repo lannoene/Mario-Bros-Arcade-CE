@@ -7,6 +7,14 @@
 
 #include "gfx/gfx.h"
 
+/* Lag producers top 5:
+1	Pipes
+2.	Enemies
+3.	Ground
+4.	Player
+5.	Colision in general
+That's literally everything i've added to the game lol */
+
 int main(void) {
 	srand(rtc_Time());
 	

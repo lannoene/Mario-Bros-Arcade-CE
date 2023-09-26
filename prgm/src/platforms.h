@@ -27,7 +27,7 @@ typedef struct {
 	platform_t* platformArray;
 } levelPlatformData_t;
 
-colision_t CheckColision(int16_t* x, int16_t* y, uint8_t width, uint8_t height, float* verAccel, float* horAccel);
+colision_t CheckColision(int16_t* x, int16_t* y, uint8_t width, uint8_t height, float* verAccel, float* horAccel, bool requireBottomColision);
 void InitPlatformData(void);
 void CreatePlatform(int16_t x, uint8_t y, uint8_t width);
 void FreePlatforms(void);
