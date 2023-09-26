@@ -32,7 +32,6 @@ bool LevelLoop(void) {
 	// check for button presses
 	if (kb_Data[6] & kb_Clear) {
 		// make sure everything is freed before we exit
-		FreeEnemies();
 		UnloadLevel();
 		return false;
 	}
