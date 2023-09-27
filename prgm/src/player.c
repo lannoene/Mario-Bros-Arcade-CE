@@ -21,8 +21,6 @@ void PlayerInit(player_t* player) {
 }
 
 void PlayerMove(player_t* player, uint8_t direction) {
-	if (!player->grounded)
-		return;
 	switch (direction) {
 		case LEFT:
 			player->horAccel = -2;
@@ -35,6 +33,8 @@ void PlayerMove(player_t* player, uint8_t direction) {
 			player->moving = true;
 			break;
 		case UP:
+			if (!player->grounded)
+				return;
 			if (player->grounded) {
 				player->verAccel = 4.5;
 				player->grounded = false;
@@ -73,19 +73,6 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 		if (player->horAccel != 0 && !player->moving && player->grounded)
 			player->horAccel = 0;
 		
-		/*colision_t colidedPlatform = CheckColision(&player->x, &player->y, PLAYER_WIDTH, PLAYER_HEIGHT, &player->verAccel, &player->horAccel, true);
-		if (colidedPlatform.hasColided && colidedPlatform.colidedSide == UP) {
-			player->y = colidedPlatform.y - PLAYER_HEIGHT;
-			player->verAccel = 0;
-			player->grounded = true;
-		} else if (colidedPlatform.hasColided && colidedPlatform.colidedSide == DOWN) {
-			player->y = colidedPlatform.y + PLATFORM_HEIGHT;
-			player->verAccel = 0;
-			BumpPlatform(player->x, colidedPlatform.colidedIndex, gameFrame);
-		} else {
-			player->grounded = false;
-		}*/
-			
 		// checking x for offscreen transition to other side
 		if (player->x < -PLAYER_WIDTH)
 			player->x = 320; // if they go offscreen to the left, teleport them to the right side
@@ -117,8 +104,10 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 					}
 				}
 			}
-			if (i == levelPlatforms.numPlatforms)
+			if (player->grounded && i == levelPlatforms.numPlatforms) {
 				player->grounded = false;
+				player->sprite = 4;
+			}
 		}
 		
 		if (player->horAccel != 0 && player->grounded) {

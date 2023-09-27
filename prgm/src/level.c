@@ -9,6 +9,7 @@
 #include "platforms.h"
 #include "enemies.h"
 #include "hud.h"
+#include "pipes.h"
 
 #define MAX_ENEMIES 10
 
@@ -19,7 +20,7 @@ gameData_t game_data = {0, 1};
 int16_t enemyLog[2][2][MAX_ENEMIES] = {
 	{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{100, 250, 400, 550, -1, -1, -1, -1, -1, -1}
+		{100, 250, 400, 550, 601, 602, 603, 604, 605, 606}
 	},
 	{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -69,6 +70,8 @@ bool LevelLoop(void) {
 bool LoadLevel(void) {
 	// we only need to draw the background once because we perform non-destructive sprite placement during the game loop in order to save on resources
 	DrawBackground();
+	// init the bg for pipes. they're stationary, so we don't need to refresh the bg slice in order to save resources
+	InitPipeBackgroundData();
 	
 	// init level platform struct
 	InitPlatformData();

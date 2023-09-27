@@ -16,12 +16,16 @@
 
 gfx_rletsprite_t* mario_sprites[2][6] = {{stand_right, walk1_right, walk2_right, walk3_right, jump_right, dead}, {stand_left, walk1_left, walk2_left, walk3_left, jump_left, dead}};
 gfx_sprite_t* platform_bump_sprites[3] = {level1_block_bump1, level1_block_bump2, level1_block_bump3};
-gfx_rletsprite_t* spike_sprites[2][4] = {{spike_walk1_right, spike_walk2_right, spike_walk3_right, spike_upsidedown1_right}, {spike_walk1_left, spike_walk2_left, spike_walk3_left, spike_upsidedown1_left}};
+gfx_rletsprite_t* enemy_sprites[2][2][4] = {
+{
+	{spike_walk1_right, spike_walk2_right, spike_walk3_right, spike_upsidedown1_right}, {spike_walk1_left, spike_walk2_left, spike_walk3_left, spike_upsidedown1_left}},
+	{}
+};
 gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationary_left}};
 
 uint8_t platform_bump_sprite_sheet[4] = {0, 1, 2, 1};
 
-void DrawScene(player_t* player, int gameFrame) {
+void DrawScene(player_t* player, unsigned int gameFrame) {
 	uint8_t i;
 	// get bgs under sprites before 
 	// player
@@ -30,17 +34,12 @@ void DrawScene(player_t* player, int gameFrame) {
 	// platforms
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
 		// get bg as big as the width * height of the platform (set compile time)
-		gfx_GetSprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - BLOCK_SIZE);
+		//gfx_GetSprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - BLOCK_SIZE);
 	}
 	
 	// enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
 		gfx_GetSprite((gfx_sprite_t*)levelEnemies.enemyArray[i].backgroundData, levelEnemies.enemyArray[i].x_old, levelEnemies.enemyArray[i].y_old + levelEnemies.enemyArray[i].verSpriteOffset_old);
-	}
-	
-	// pipes
-	for (i = 0; i < NUM_OF_PIPES; i++) {
-		//gfx_GetSprite_NoClip((gfx_sprite_t*)pipes[i].backgroundData, pipes[i].x, pipes[i].y);
 	}
 	
 	// hud
@@ -87,12 +86,16 @@ void DrawScene(player_t* player, int gameFrame) {
 	
 	// draw enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
-		gfx_RLETSprite(spike_sprites[levelEnemies.enemyArray[i].dir][levelEnemies.enemyArray[i].sprite], levelEnemies.enemyArray[i].x, levelEnemies.enemyArray[i].y + levelEnemies.enemyArray[i].verSpriteOffset);
+		gfx_RLETSprite(enemy_sprites[levelEnemies.enemyArray[i].type][levelEnemies.enemyArray[i].dir][levelEnemies.enemyArray[i].sprite], levelEnemies.enemyArray[i].x, levelEnemies.enemyArray[i].y + levelEnemies.enemyArray[i].verSpriteOffset);
 	}
 	
 	// make sure pipes draw over enemies
 	for (i = 0; i < NUM_OF_PIPES; i++) {
-		gfx_RLETSprite((gfx_rletsprite_t*)pipe_sprites[pipes[i].dir][pipes[i].sprite], pipes[i].x, pipes[i].y);
+		if (pipes[i].redraw) {
+			gfx_RLETSprite((gfx_rletsprite_t*)pipe_sprites[pipes[i].dir][pipes[i].sprite], pipes[i].x, pipes[i].y);
+			if (gameFrame - pipes[i].redrawTime == 2) // only redraw twice to fill both buffers
+				pipes[i].redraw = false;
+		}
 	}
 	
 	// draw player over pipes
@@ -114,7 +117,7 @@ void DrawScene(player_t* player, int gameFrame) {
 	// platforms
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
 		// replace entire platform with bg. this wont work correctly if PLATFORM_WIDTH isn't a multiple of 8. so REMEMBER THAT!!!!
-		gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - BLOCK_SIZE);
+		//gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - BLOCK_SIZE);
 		SET_OLD_TO_NEW_COORDS(&levelPlatforms.platformArray[i]);
 	}
 	
@@ -127,8 +130,12 @@ void DrawScene(player_t* player, int gameFrame) {
 	
 	// pipes
 	for (i = 0; i < NUM_OF_PIPES; i++) {
-		//gfx_Sprite_NoClip((gfx_sprite_t*)pipes[i].backgroundData, pipes[i].x, pipes[i].y);
+		if (pipes[i].redraw) {
+			gfx_Sprite_NoClip((gfx_sprite_t*)pipes[i].backgroundData, pipes[i].x, pipes[i].y);
+		}
 	}
+	
+	// hud
 	HudRefresh();
 	
 }
