@@ -7,13 +7,7 @@
 
 #include "gfx/gfx.h"
 
-/* Lag producers top 5:
-1	Pipes
-2.	Enemies
-3.	Ground
-4.	Player
-5.	Colision in general
-That's literally everything i've added to the game lol */
+// OBJECTIVE: render platforms before hand and paste them to the screen. never refresh them. put a mask over the platform for the bumps like before, but only replace the small part of the platform once it is done.
 
 int main(void) {
 	srand(rtc_Time());
