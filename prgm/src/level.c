@@ -19,11 +19,11 @@ gameData_t game_data = {0, 1};
 // arr part 1 is level index, pt 2 is switch between enemy id/enemy spawn time, pt 3 is spawn track
 int16_t enemyLog[2][2][MAX_ENEMIES] = {
 	{
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{100, 250, 400, 550, 601, 602, 603, 604, 605, 606}
+		{0, 0, 0, 0, 1, 0, 1, 1, 1, 1},
+		{100, 250, 400, 550, 600, 750, 800, 850, 980, 1200}
 	},
 	{
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
 		{200, 350, 500, 590, 610, 800, 900, -1, -1}
 	}
 };
@@ -38,9 +38,10 @@ bool LevelLoop(void) {
 	}
 	if (kb_Data[7] & kb_Right) {
 		PlayerMove(&mario1, RIGHT);
-	}
-	if (kb_Data[7] & kb_Left) {
+	} else if (kb_Data[7] & kb_Left) {
 		PlayerMove(&mario1, LEFT);
+	} else {
+		PlayerMove(&mario1, 5);
 	}
 	if (kb_Data[1] & kb_2nd) {
 		PlayerMove(&mario1, UP); // jump
@@ -48,7 +49,7 @@ bool LevelLoop(void) {
 	uint8_t i;
 	for (i = 0; i < MAX_ENEMIES; i++) {
 		if (enemyLog[game_data.level - 1][1][i] == (int)gameFrame) {
-			SpawnEnemy(enemyLog[game_data.level][0][i], (rand() % 2), gameFrame);
+			SpawnEnemy(enemyLog[game_data.level - 1][0][i], (rand() % 2), gameFrame);
 			break;
 		}
 	}

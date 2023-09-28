@@ -8,6 +8,9 @@
 #include "platforms.h"
 
 #define FRAME_DELAY 5
+#define PLAYER_ACCELERATION	0.5
+#define PLAYER_MAX_SPEED	2
+#define PLAYER_DECELERATION	0.2
 
 void PlayerInit(player_t* player) {
 	memset(player, 0, sizeof(*player));
@@ -23,12 +26,18 @@ void PlayerInit(player_t* player) {
 void PlayerMove(player_t* player, uint8_t direction) {
 	switch (direction) {
 		case LEFT:
-			player->horAccel = -2;
+			if (player->horAccel > -PLAYER_MAX_SPEED)
+				player->horAccel -= PLAYER_ACCELERATION;
+			else
+				player->horAccel = -PLAYER_MAX_SPEED;
 			player->dir = LEFT;
 			player->moving = true;
 			break;
 		case RIGHT:
-			player->horAccel = 2;
+			if (player->horAccel < PLAYER_MAX_SPEED)
+				player->horAccel += PLAYER_ACCELERATION;
+			else
+				player->horAccel = PLAYER_MAX_SPEED;
 			player->dir = RIGHT;
 			player->moving = true;
 			break;
@@ -40,6 +49,15 @@ void PlayerMove(player_t* player, uint8_t direction) {
 				player->grounded = false;
 				player->sprite = 4;
 			}
+			break;
+		default:
+			if (player->horAccel < PLAYER_DECELERATION && player->horAccel > -PLAYER_DECELERATION)
+				player->horAccel = 0;
+			
+			if (player->horAccel > 0 && player->grounded)
+				player->horAccel -= PLAYER_DECELERATION;
+			else if (player->horAccel < 0 && player->grounded)
+				player->horAccel += PLAYER_DECELERATION;
 			break;
 	}
 }
@@ -70,8 +88,6 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 	}
 	
 	if (player->state == PLAYER_NORMAL) {
-		if (player->horAccel != 0 && !player->moving && player->grounded)
-			player->horAccel = 0;
 		
 		// checking x for offscreen transition to other side
 		if (player->x < -PLAYER_WIDTH)

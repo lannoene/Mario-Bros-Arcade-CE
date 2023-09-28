@@ -61,23 +61,24 @@ void CreatePlatform(int16_t x, uint8_t y, uint8_t width) {
 	++levelPlatforms.numPlatforms;
 	levelPlatforms.platformArray = realloc(levelPlatforms.platformArray, levelPlatforms.numPlatforms*sizeof(platform_t));
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].x = x;
-	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].x_old = 0;
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].x_old = x;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].y = y;
-	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].y_old = 0;
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].y_old = y;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].width = width;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData = malloc(width*(PLATFORM_HEIGHT*2) + 2);
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData[0] = width;
-	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData[1] = PLATFORM_HEIGHT*2; // this is to prevent the bumps from staying on the screen, so i'm getting the area above the block in order to restore it. this is super bad, because the bump is only 3x2, but i'm getting the WidthxHeightx2, when i only am using a small fraction of that. TODO: FIX THIS!!!!!
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData[1] = PLATFORM_HEIGHT*2;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].beingBumped = false;
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].needsRefresh = false;
 	// preprocess tile image
-	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage = malloc(width*(PLATFORM_HEIGHT*2) + 2);
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage = malloc(width*PLATFORM_HEIGHT*2 + 2);
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[0] = width;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[1] = PLATFORM_HEIGHT*2;
 	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // get bg
 	for (uint8_t i = 0; i < width/BLOCK_SIZE; i++)
 		gfx_Sprite((gfx_sprite_t*)level1_block, x + i*BLOCK_SIZE, y); // process image
-	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage, x, y);
-	gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // return bg to original place
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage, x, y - PLATFORM_HEIGHT);
+	//gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // return bg to original place
 }
 
 void FreePlatforms(void) {
@@ -100,13 +101,19 @@ void BumpPlatform(int16_t playerX, uint8_t platformIndex, unsigned int gameFrame
 	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
 		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].x + ENEMY_SPIKE_SIZE > playerX - BLOCK_SIZE && levelEnemies.enemyArray[i].x < playerX + 2*BLOCK_SIZE && levelEnemies.enemyArray[i].y + ENEMY_SPIKE_SIZE > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelEnemies.enemyArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
 			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING) {
-				levelEnemies.enemyArray[i].state = ENEMY_LAYING;
+				if (levelEnemies.enemyArray[i].type == ENEMY_CRAB && !levelEnemies.enemyArray[i].crabIsMad)
+					levelEnemies.enemyArray[i].crabIsMad = true;
+				else {
+					levelEnemies.enemyArray[i].state = ENEMY_LAYING;
+					levelEnemies.enemyArray[i].verSpriteOffset = 0;
+				}
 				levelEnemies.enemyArray[i].verAccel = 2;
 				levelEnemies.enemyArray[i].layStartTime = gameFrame;
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].sprite = 3;
-				levelEnemies.enemyArray[i].verSpriteOffset = 0;
 			} else {
+				if (levelEnemies.enemyArray[i].type == ENEMY_CRAB && levelEnemies.enemyArray[i].crabIsMad)
+					levelEnemies.enemyArray[i].crabIsMad = false;
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].state = ENEMY_WALKING;
 				levelEnemies.enemyArray[i].verAccel = 2;

@@ -54,6 +54,20 @@ converts:
       - enemy/spike_walk2_left.png
       - enemy/spike_walk3_left.png
       - enemy/spike_upsidedown1_left.png
+      - enemy/crab_walk1_right.png
+      - enemy/crab_walk2_right.png
+      - enemy/crab_walk3_right.png
+      - enemy/crab_upsidedown1_right.png
+      - enemy/crab_walk1_left.png
+      - enemy/crab_walk2_left.png
+      - enemy/crab_walk3_left.png
+      - enemy/crab_upsidedown1_left.png
+      - enemy/crab_walk1_mad_right.png
+      - enemy/crab_walk2_mad_right.png
+      - enemy/crab_walk3_mad_right.png
+      - enemy/crab_walk1_mad_left.png
+      - enemy/crab_walk2_mad_left.png
+      - enemy/crab_walk3_mad_left.png
 outputs:
   - type: c
     include-file: gfx.h

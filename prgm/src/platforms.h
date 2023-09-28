@@ -11,7 +11,7 @@ typedef struct {
 	uint16_t width;
 	uint8_t* backgroundData;
 	uint8_t* processedTileImage;
-	bool beingBumped;
+	bool beingBumped, needsRefresh : 1;
 	int16_t bumpedTileXpos;
 	unsigned int timeOfLastBump;
 } platform_t;

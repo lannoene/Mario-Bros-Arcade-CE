@@ -16,10 +16,10 @@
 
 gfx_rletsprite_t* mario_sprites[2][6] = {{stand_right, walk1_right, walk2_right, walk3_right, jump_right, dead}, {stand_left, walk1_left, walk2_left, walk3_left, jump_left, dead}};
 gfx_sprite_t* platform_bump_sprites[3] = {level1_block_bump1, level1_block_bump2, level1_block_bump3};
-gfx_rletsprite_t* enemy_sprites[2][2][4] = {
+gfx_rletsprite_t* enemy_sprites[2][2][7] = 
 {
-	{spike_walk1_right, spike_walk2_right, spike_walk3_right, spike_upsidedown1_right}, {spike_walk1_left, spike_walk2_left, spike_walk3_left, spike_upsidedown1_left}},
-	{}
+	{{spike_walk1_right, spike_walk2_right, spike_walk3_right, spike_upsidedown1_right}, {spike_walk1_left, spike_walk2_left, spike_walk3_left, spike_upsidedown1_left}},
+	{{crab_walk1_right, crab_walk2_right, crab_walk3_right, crab_upsidedown1_right, crab_walk1_mad_right, crab_walk2_mad_right, crab_walk3_mad_right}, {crab_walk1_left, crab_walk2_left, crab_walk3_left, crab_upsidedown1_left, crab_walk1_mad_left, crab_walk2_mad_left, crab_walk3_mad_left}}
 };
 gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationary_left}};
 
@@ -30,12 +30,6 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 	// get bgs under sprites before 
 	// player
 	gfx_GetSprite((gfx_sprite_t*)player->backgroundData, player->x_old, player->y_old + player->verSpriteOffset_old);
-	
-	// platforms
-	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
-		// get bg as big as the width * height of the platform (set compile time)
-		//gfx_GetSprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - BLOCK_SIZE);
-	}
 	
 	// enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
@@ -49,9 +43,12 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 	// draw platforms
 	// platforms are pre rendered, and a mask is put under the bump when it is needed
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
-		if (!levelPlatforms.platformArray[i].beingBumped) // if the platform isn't being bumped, show every tile
-			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
-		else if (levelPlatforms.platformArray[i].beingBumped) {
+		if (levelPlatforms.platformArray[i].needsRefresh || gameFrame == 1) { // if gameFrame is 1 because we draw the platform once on frame 0, but we need to draw it on the other buffer on frame 1
+			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
+		}
+		if (!levelPlatforms.platformArray[i].beingBumped) {// if the platform isn't being bumped, show every tile
+			continue;
+		} else if (levelPlatforms.platformArray[i].beingBumped) {
 			
 			int16_t flooredXpos = (levelPlatforms.platformArray[i].bumpedTileXpos/BLOCK_SIZE)*BLOCK_SIZE; // integers get floored automatically
 			// get bg around bump
@@ -59,7 +56,7 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 			bgFill[0] = BLOCK_SIZE*3;
 			bgFill[1] = BLOCK_SIZE;
 			gfx_GetSprite((gfx_sprite_t*)bgFill, flooredXpos, levelPlatforms.platformArray[i].y);
-			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
+			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
 			gfx_Sprite((gfx_sprite_t*)bgFill, flooredXpos, levelPlatforms.platformArray[i].y);
 			
 			if (levelPlatforms.platformArray[i].bumpedTileXpos - levelPlatforms.platformArray[i].x >= levelPlatforms.platformArray[i].width - 2*BLOCK_SIZE) { // if we are near the edge, floor the block's x pos to two blocks behind the edge, then cutoff animation at the edge
@@ -78,8 +75,6 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 				gfx_TransparentSprite(platform_bump_sprites[platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], flooredXpos, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 			}
 			
-			if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 > 3)
-				levelPlatforms.platformArray[i].beingBumped = false;
 		}
 	}
 	
@@ -116,9 +111,18 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 	
 	// platforms
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
-		// replace entire platform with bg. this wont work correctly if PLATFORM_WIDTH isn't a multiple of 8. so REMEMBER THAT!!!!
-		//gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - BLOCK_SIZE);
-		SET_OLD_TO_NEW_COORDS(&levelPlatforms.platformArray[i]);
+		if (levelPlatforms.platformArray[i].beingBumped) {
+			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - PLATFORM_HEIGHT);
+			SET_OLD_TO_NEW_COORDS(&levelPlatforms.platformArray[i]);
+			if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 > 3) { // it needs to be greater 3 but it also needs 1 more frame for the other buffer
+				levelPlatforms.platformArray[i].beingBumped = false;
+				levelPlatforms.platformArray[i].needsRefresh = true;
+			}
+		} else if (levelPlatforms.platformArray[i].needsRefresh) {
+			if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 > 4) {
+				levelPlatforms.platformArray[i].needsRefresh = false;
+			}
+		}
 	}
 	
 	// enemies
@@ -159,8 +163,6 @@ void DrawBackground(void) {
 	
 	for (uint8_t i = 0; i < 20; i++)
 		gfx_TransparentSprite(level1_ground, i*level1_ground_width, 224);
-	
-	/* ---- there's a weird bug where part of the buffer on the bottom gets copied to the screen on the top. i have no idea what's causing that :( ---- */
 	
 	// copy it to the screen
 	gfx_SetDrawScreen();
