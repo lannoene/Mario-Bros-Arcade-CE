@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "player.h"
+
 #define PLATFORM_HEIGHT	8
 #define BLOCK_SIZE 8
 
@@ -31,6 +33,6 @@ colision_t CheckColision(int16_t* x, int16_t* y, uint8_t width, uint8_t height, 
 void InitPlatformData(void);
 void CreatePlatform(int16_t x, uint8_t y, uint8_t width);
 void FreePlatforms(void);
-void BumpPlatform(int16_t playerX, uint8_t platformIndex, unsigned int gameFrame);
+void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFrame);
 
 extern levelPlatformData_t levelPlatforms;

@@ -9,10 +9,10 @@
 #include "enemies.h"
 #include "pipes.h"
 #include "hud.h"
+#include "pow.h"
 
 #define SET_OLD_TO_NEW_COORDS(varName) \
 (varName)->x_old = (varName)->x; (varName)->y_old = (varName)->y;
-
 
 gfx_rletsprite_t* mario_sprites[2][6] = {{stand_right, walk1_right, walk2_right, walk3_right, jump_right, dead}, {stand_left, walk1_left, walk2_left, walk3_left, jump_left, dead}};
 gfx_sprite_t* platform_bump_sprites[3] = {level1_block_bump1, level1_block_bump2, level1_block_bump3};
@@ -21,6 +21,7 @@ gfx_rletsprite_t* enemy_sprites[2][2][7] =
 	{{spike_walk1_right, spike_walk2_right, spike_walk3_right, spike_upsidedown1_right}, {spike_walk1_left, spike_walk2_left, spike_walk3_left, spike_upsidedown1_left}},
 	{{crab_walk1_right, crab_walk2_right, crab_walk3_right, crab_upsidedown1_right, crab_walk1_mad_right, crab_walk2_mad_right, crab_walk3_mad_right}, {crab_walk1_left, crab_walk2_left, crab_walk3_left, crab_upsidedown1_left, crab_walk1_mad_left, crab_walk2_mad_left, crab_walk3_mad_left}}
 };
+gfx_rletsprite_t* pow_sprites[3] = {pow_full, pow_medium, pow_low};
 gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationary_left}};
 
 uint8_t platform_bump_sprite_sheet[4] = {0, 1, 2, 1};
@@ -38,6 +39,11 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 	
 	// hud
 	HudGetBackground();
+	
+	// pows
+	for (i = 0; i < levelPows.numPows; i++) {
+		gfx_GetSprite((gfx_sprite_t*)levelPows.powArray[i].backgroundData, levelPows.powArray[i].x, levelPows.powArray[i].y);
+	}
 	
 	// draw sprites over bgs
 	// draw platforms
@@ -93,11 +99,20 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 		}
 	}
 	
-	// draw player over pipes
+	// pows
+	for (i = 0; i < levelPows.numPows; i++) {
+		if (levelPows.powArray[i].state != POW_EMPTY)
+			gfx_RLETSprite(pow_sprites[levelPows.powArray[i].state], levelPows.powArray[i].x, levelPows.powArray[i].y);
+	}
+	
+	// draw player over everything physical
 	gfx_RLETSprite(mario_sprites[player->dir][player->sprite], player->x, player->y + player->verSpriteOffset);
 	
 	// draw hud over everything
-	HudDraw(player);
+	HudDraw(player, gameFrame);
+	
+	// in the beginning of the level, draw phase card
+	
 	
 	// finish drawing
 	gfx_SwapDraw();
@@ -142,6 +157,11 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 	// hud
 	HudRefresh();
 	
+	// pows
+	for (i = 0; i < levelPows.numPows; i++) {
+		gfx_Sprite_NoClip((gfx_sprite_t*)levelPows.powArray[i].backgroundData, levelPows.powArray[i].x, levelPows.powArray[i].y);
+	}
+	
 }
 
 void DrawBackground(void) {
@@ -169,6 +189,14 @@ void DrawBackground(void) {
 	gfx_BlitBuffer();
 	// go back to offscreen buffer
 	gfx_SetDrawBuffer();
+}
+
+void DrawPhaseCard(int16_t x, uint8_t y) {
+	gfx_RLETSprite_NoClip(phase_card, x, y);
+}
+
+void GetPhaseCardBackground(int16_t x, uint8_t y) {
+	
 }
 
 void DecompressSprites(void) {

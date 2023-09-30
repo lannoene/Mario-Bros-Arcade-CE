@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 #include <graphx.h>
+#include <math.h>
 
-#include "player.h"
 #include "enemies.h"
 
 #include "gfx/gfx.h"
@@ -89,25 +89,35 @@ void FreePlatforms(void) {
 	free(levelPlatforms.platformArray);
 }
 
-void BumpPlatform(int16_t playerX, uint8_t platformIndex, unsigned int gameFrame) {
-	//playerX += PLAYER_WIDTH/2; // player x is the player's left x. so to make it the middle, we add half the player's width
+void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFrame) {
+	//player->x += PLAYER_WIDTH/2; // player x is the player's left x. so to make it the middle, we add half the player's width
 	levelPlatforms.platformArray[platformIndex].beingBumped = true;
 	levelPlatforms.platformArray[platformIndex].timeOfLastBump = gameFrame;
-	if (levelPlatforms.platformArray[platformIndex].x + levelPlatforms.platformArray[platformIndex].width - playerX < BLOCK_SIZE)
+	if (levelPlatforms.platformArray[platformIndex].x + levelPlatforms.platformArray[platformIndex].width - player->x < BLOCK_SIZE)
 		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = levelPlatforms.platformArray[platformIndex].x + levelPlatforms.platformArray[platformIndex].width - BLOCK_SIZE;
 	else
-		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = playerX;
+		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = player->x;
 	
 	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
-		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].x + ENEMY_SPIKE_SIZE > playerX - BLOCK_SIZE && levelEnemies.enemyArray[i].x < playerX + 2*BLOCK_SIZE && levelEnemies.enemyArray[i].y + ENEMY_SPIKE_SIZE > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelEnemies.enemyArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
+		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].x + ENEMY_SPIKE_SIZE > player->x - BLOCK_SIZE && levelEnemies.enemyArray[i].x < player->x + 2*BLOCK_SIZE && levelEnemies.enemyArray[i].y + ENEMY_SPIKE_SIZE > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelEnemies.enemyArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
+			float playerVsEnemySlope = 57.2958*atan((levelEnemies.enemyArray[i].y - player->y)/(levelEnemies.enemyArray[i].x - player->x));
+			
 			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING) {
 				if (levelEnemies.enemyArray[i].type == ENEMY_CRAB && !levelEnemies.enemyArray[i].crabIsMad)
 					levelEnemies.enemyArray[i].crabIsMad = true;
 				else {
 					levelEnemies.enemyArray[i].state = ENEMY_LAYING;
 					levelEnemies.enemyArray[i].verSpriteOffset = 0;
+					PlayerAddScore(player, 10);
 				}
-				levelEnemies.enemyArray[i].verAccel = 2;
+				if (playerVsEnemySlope < -70 || playerVsEnemySlope > 70)
+					levelEnemies.enemyArray[i].horAccel = 0;
+				else if (playerVsEnemySlope > 0) {
+					levelEnemies.enemyArray[i].horAccel = -fabsf(levelEnemies.enemyArray[i].horAccel);
+				} else {
+					levelEnemies.enemyArray[i].horAccel = fabsf(levelEnemies.enemyArray[i].horAccel);
+				}
+				levelEnemies.enemyArray[i].verAccel = 2.5;
 				levelEnemies.enemyArray[i].layStartTime = gameFrame;
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].sprite = 3;
@@ -116,8 +126,18 @@ void BumpPlatform(int16_t playerX, uint8_t platformIndex, unsigned int gameFrame
 					levelEnemies.enemyArray[i].crabIsMad = false;
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].state = ENEMY_WALKING;
-				levelEnemies.enemyArray[i].verAccel = 2;
+				levelEnemies.enemyArray[i].verAccel = 2.5;
 				levelEnemies.enemyArray[i].verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
+				if (playerVsEnemySlope < -75 || playerVsEnemySlope > 75)
+					levelEnemies.enemyArray[i].horAccel = 0;
+				else if (playerVsEnemySlope > 0) {
+					levelEnemies.enemyArray[i].horAccel = -levelEnemies.enemyArray[i].maxSpeed;
+					levelEnemies.enemyArray[i].dir = LEFT;
+				} else {
+					levelEnemies.enemyArray[i].horAccel = levelEnemies.enemyArray[i].maxSpeed;
+					levelEnemies.enemyArray[i].dir = RIGHT;
+				}
+				
 			}
 		}
 	}

@@ -46,6 +46,9 @@ converts:
       - mario/dead.png
       - level/pipe_stationary_right.png
       - level/pipe_stationary_left.png
+      - level/pow_full.png
+      - level/pow_medium.png
+      - level/pow_low.png
       - enemy/spike_walk1_right.png
       - enemy/spike_walk2_right.png
       - enemy/spike_walk3_right.png
@@ -68,6 +71,18 @@ converts:
       - enemy/crab_walk1_mad_left.png
       - enemy/crab_walk2_mad_left.png
       - enemy/crab_walk3_mad_left.png
+      - font/phase/phase_card.png
+      - font/phase/phase_number0.png
+      - font/phase/phase_number1.png
+      - font/phase/phase_number2.png
+      - font/phase/phase_number3.png
+      - font/phase/phase_number4.png
+      - font/phase/phase_number5.png
+      - font/phase/phase_number6.png
+      - font/phase/phase_number7.png
+      - font/phase/phase_number8.png
+      - font/phase/phase_number9.png
+      - font/phase/phase_clear.png
 outputs:
   - type: c
     include-file: gfx.h
