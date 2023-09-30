@@ -1,0 +1,7062 @@
+	section	.text,"ax",@progbits
+	assume	adl = 1
+	section	.text,"ax",@progbits
+	public	_DrawScene
+_DrawScene:
+	ld	hl, -236
+	call	__frameset
+	ld	bc, -200
+	lea	iy, ix
+	add	iy, bc
+	ld	de, (ix + 6)
+	ld	hl, 14
+	push	ix
+	ld	bc, -206
+	add	ix, bc
+	ld	(ix), hl
+	pop	ix
+	ld	hl, 39
+	push	ix
+	ld	bc, -209
+	add	ix, bc
+	ld	(ix), hl
+	pop	ix
+	ld	bc, -215
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	lea	hl, iy
+	ld	bc, -218
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), hl
+	push	de
+	pop	iy
+	lea	hl, iy + 42
+	push	ix
+	ld	de, -212
+	add	ix, de
+	ld	(ix), hl
+	pop	ix
+	ld	bc, (iy + 4)
+	ld	a, (iy + 7)
+	call	__ftol
+	ld	iy, (iy + 10)
+	ld	a, iyh
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, iyl
+	ld	iy, (ix + 6)
+	ld	a, (iy + 35)
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	l, a
+	add	hl, de
+	push	hl
+	push	bc
+	ld	bc, -212
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_GetSprite
+	ld	de, 0
+	pop	hl
+	pop	hl
+	pop	hl
+	push	de
+	pop	bc
+	push	de
+	pop	iy
+BB0_1:
+	ld	a, (_levelEnemies)
+	ld	e, a
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jp	nc, BB0_3
+	ld	de, -203
+	lea	hl, ix
+	add	hl, de
+	ld	(hl), iy
+	ld	iy, (_levelEnemies+2)
+	push	bc
+	pop	de
+	push	ix
+	ld	bc, -221
+	add	ix, bc
+	ld	(ix), de
+	pop	ix
+	add	iy, de
+	ld	bc, (iy + 11)
+	ld	a, (iy + 14)
+	call	__ftol
+	push	ix
+	ld	de, -224
+	add	ix, de
+	ld	(ix), bc
+	pop	ix
+	ld	bc, (iy + 17)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	ld	a, (iy + 34)
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	l, a
+	add	hl, de
+	push	hl
+	ld	bc, -224
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	pea	iy + 39
+	call	_gfx_GetSprite
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	iy, (hl)
+	ld	de, 0
+	pop	hl
+	pop	hl
+	pop	hl
+	inc	iy
+	ld	bc, 297
+	ld	(ix - 3), de
+	ld	de, -221
+	lea	hl, ix
+	add	hl, de
+	ld	hl, (hl)
+	add	hl, bc
+	push	hl
+	pop	bc
+	ld	de, (ix - 3)
+	jp	BB0_1
+BB0_3:
+	call	_HudGetBackground
+	ld	bc, 0
+	ld	de, -203
+	lea	hl, ix
+	add	hl, de
+	ld	(hl), bc
+	push	bc
+	pop	iy
+BB0_4:
+	ld	a, (_levelPows+3)
+	push	bc
+	pop	de
+	ld	e, a
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jr	nc, BB0_6
+	ld	bc, -221
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	ld	iy, (_levelPows)
+	push	ix
+	ld	bc, -203
+	add	ix, bc
+	ld	de, (ix)
+	pop	ix
+	add	iy, de
+	ld	de, (iy)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, e
+	ld	de, 0
+	ld	e, (iy + 2)
+	push	de
+	push	hl
+	pea	iy + 4
+	call	_gfx_GetSprite
+	ld	de, -221
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	ld	bc, 0
+	pop	hl
+	pop	hl
+	pop	hl
+	inc	iy
+	ld	de, 262
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	add	hl, de
+	push	ix
+	ld	de, -203
+	add	ix, de
+	ld	(ix), hl
+	pop	ix
+	ld	bc, (ix - 3)
+	jr	BB0_4
+BB0_6:
+	ld	de, -203
+	lea	hl, ix
+	add	hl, de
+	ld	(hl), bc
+	push	bc
+	pop	iy
+BB0_7:
+	ld	a, (_levelPlatforms)
+	push	bc
+	pop	de
+	ld	e, a
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jp	nc, BB0_21
+	ld	bc, -221
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	ld	iy, (_levelPlatforms+1)
+	push	ix
+	ld	bc, -203
+	add	ix, bc
+	ld	de, (ix)
+	pop	ix
+	lea	bc, iy
+	add	iy, de
+	ld	a, (iy + 15)
+	and	a, 1
+	ld	hl, (ix + 9)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jr	z, BB0_10
+	bit	0, a
+	jr	z, BB0_11
+BB0_10:
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	ld	bc, (ix - 3)
+	push	bc
+	pop	iy
+	add	iy, de
+	ld	de, (iy + 11)
+	ld	bc, (iy)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	a, (iy + 4)
+	add	a, -8
+	ld	c, a
+	push	bc
+	push	hl
+	push	de
+	call	_gfx_Sprite_NoClip
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	bc, (_levelPlatforms+1)
+	ld	(ix - 3), bc
+	ld	bc, -221
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	jr	BB0_12
+BB0_11:
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	ld	bc, -221
+	lea	iy, ix
+	add	iy, bc
+	ld	hl, (iy)
+BB0_12:
+	ld	bc, (ix - 3)
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), de
+	ld	bc, (ix - 3)
+	push	bc
+	pop	iy
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	(ix), iy
+	pop	ix
+	add	iy, de
+	bit	0, (iy + 14)
+	ld	de, -215
+	lea	iy, ix
+	push	af
+	add	iy, de
+	pop	af
+	ld	bc, (iy)
+	push	hl
+	pop	iy
+	jp	z, BB0_20
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	ld	bc, -227
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), de
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	iy, (ix)
+	pop	ix
+	add	iy, de
+	push	ix
+	ld	de, -224
+	add	ix, de
+	ld	(ix), iy
+	pop	ix
+	ld	hl, (iy + 16)
+	ld.sis	bc, 8
+	call	__sdivs
+	ld	c, 3
+	call	__sshl
+	ld	e, l
+	ld	d, h
+	ld	(ix - 3), bc
+	ld	bc, -215
+	lea	iy, ix
+	add	iy, bc
+	ld	iy, (iy)
+	ld	(iy), 24
+	ld	(iy + 1), 8
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	bc, -233
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), de
+	ld	l, e
+	push	ix
+	ld	bc, -230
+	add	ix, bc
+	ld	(ix), hl
+	pop	ix
+	ld	de, 0
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	iy, (ix)
+	pop	ix
+	ld	e, (iy + 4)
+	push	de
+	push	hl
+	ld	de, -218
+	lea	hl, ix
+	add	hl, de
+	ld	hl, (hl)
+	push	hl
+	ld	bc, (ix - 3)
+	call	_gfx_GetSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	ld	bc, -227
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	ld	de, (iy + 11)
+	ld	bc, (iy)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	a, (iy + 4)
+	add	a, -8
+	ld	c, a
+	push	bc
+	push	hl
+	push	de
+	call	_gfx_Sprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	ld	bc, -227
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy + 4)
+	push	hl
+	ld	bc, -230
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	ld	bc, -218
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_levelPlatforms+1)
+	ld	bc, -224
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), hl
+	push	hl
+	pop	iy
+	ld	bc, -227
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	push	ix
+	ld	de, -227
+	add	ix, de
+	ld	(ix), iy
+	pop	ix
+	ld	bc, (iy + 16)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	ld	bc, -227
+	lea	iy, ix
+	add	iy, bc
+	ld	hl, (iy)
+	ld	iy, (hl)
+	ld	a, iyh
+	rlc	a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, iyh
+	ld	(ix - 3), de
+	push	ix
+	ld	de, -236
+	add	ix, de
+	ld	(ix), iy
+	pop	ix
+	ld	c, iyl
+	ld	de, (ix - 3)
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	ld	bc, -227
+	lea	iy, ix
+	add	iy, bc
+	ld	iy, (iy)
+	ld	de, (iy + 6)
+	ld	iy, 0
+	ld	iyl, e
+	ld	iyh, d
+	ld	bc, -16
+	push	bc
+	pop	de
+	add	iy, de
+	lea	de, iy
+	or	a, a
+	sbc	hl, de
+	call	pe, __setflag
+	jp	p, BB0_16
+	ld	de, -224
+	lea	hl, ix
+	add	hl, de
+	ld	bc, (hl)
+	ld	de, -233
+	lea	iy, ix
+	add	iy, de
+	ld	hl, (iy)
+	ld	(ix - 3), bc
+	push	ix
+	ld	bc, -236
+	add	ix, bc
+	ld	de, (ix)
+	pop	ix
+	or	a, a
+	sbc.sis	hl, de
+	call	pe, __setflag
+	ld	bc, (ix - 3)
+	jp	p, BB0_18
+	ld	de, -215
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	ld	(iy), 8
+	ld	(iy + 1), 24
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	iy, ix
+	add	iy, bc
+	ld	de, (iy)
+	push	ix
+	ld	bc, -227
+	add	ix, bc
+	ld	(ix), de
+	pop	ix
+	ld	bc, (ix - 3)
+	push	bc
+	pop	hl
+	add	hl, de
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	(ix), hl
+	pop	ix
+	ld	de, (hl)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, e
+	ld	de, -8
+	push	de
+	pop	bc
+	add	hl, bc
+	ld	de, 0
+	ld	(ix - 3), bc
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	iy, (ix)
+	pop	ix
+	ld	e, (iy + 4)
+	push	de
+	pop	iy
+	ld	bc, (ix - 3)
+	add	iy, bc
+	push	iy
+	push	hl
+	ld	bc, -218
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_GetSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	ld	bc, -227
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	(ix), iy
+	pop	ix
+	ld	de, (iy + 18)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	ld	c, 2
+	call	__ishru
+	ld	bc, 3
+	call	__iand
+	push	hl
+	pop	de
+	ld	iy, _platform_bump_sprite_sheet
+	add	iy, de
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy)
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _platform_bump_sprites
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, -230
+	lea	iy, ix
+	add	iy, de
+	ld	(iy), hl
+	ld	de, -224
+	lea	hl, ix
+	add	hl, de
+	ld	hl, (hl)
+	ld	bc, (hl)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	bc, -8
+	add	hl, bc
+	ld	de, 0
+	ld	(ix - 3), bc
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	iy, (ix)
+	pop	ix
+	ld	e, (iy + 4)
+	push	de
+	pop	iy
+	ld	bc, (ix - 3)
+	add	iy, bc
+	push	iy
+	push	hl
+	ld	bc, -230
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	ld	bc, -227
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	ld	de, (iy)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, e
+	ld	bc, -8
+	add	hl, bc
+	ld	de, 0
+	ld	e, (iy + 4)
+	push	de
+	pop	iy
+	add	iy, bc
+	jp	BB0_17
+BB0_16:
+	ld	bc, -215
+	lea	hl, ix
+	add	hl, bc
+	ld	iy, (hl)
+	ld	(iy), 8
+	ld	(iy + 1), 24
+	ld	bc, -203
+	lea	iy, ix
+	add	iy, bc
+	ld	de, (iy)
+	push	ix
+	ld	bc, -230
+	add	ix, bc
+	ld	(ix), de
+	pop	ix
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	hl, (ix)
+	pop	ix
+	add	hl, de
+	push	ix
+	ld	de, -224
+	add	ix, de
+	ld	(ix), hl
+	pop	ix
+	ld	bc, (hl)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	push	ix
+	ld	bc, -227
+	add	ix, bc
+	ld	iy, (ix)
+	pop	ix
+	ld	bc, (iy + 6)
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	iy
+	ld	l, c
+	ld	h, b
+	add	hl, de
+	push	hl
+	pop	bc
+	lea	hl, iy
+	ld	de, -224
+	lea	iy, ix
+	add	iy, de
+	ld	iy, (iy)
+	ld	l, (iy + 4)
+	ld	de, -8
+	add	hl, de
+	push	hl
+	push	bc
+	ld	bc, -218
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_GetSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	ld	bc, -230
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	(ix), iy
+	pop	ix
+	ld	de, (iy + 18)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	ld	c, 2
+	call	__ishru
+	ld	bc, 3
+	call	__iand
+	push	hl
+	pop	de
+	ld	iy, _platform_bump_sprite_sheet
+	add	iy, de
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy)
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _platform_bump_sprites
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, -227
+	lea	iy, ix
+	add	iy, de
+	ld	(iy), hl
+	ld	de, -224
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	ld	bc, (iy)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	de, (iy + 6)
+	ld	bc, 0
+	push	bc
+	pop	iy
+	ld	c, e
+	ld	b, d
+	ld	de, -16
+	add	hl, de
+	add	hl, bc
+	lea	bc, iy
+	ld	de, -224
+	lea	iy, ix
+	add	iy, de
+	ld	iy, (iy)
+	ld	c, (iy + 4)
+	ld	de, -8
+	push	bc
+	pop	iy
+	add	iy, de
+	push	iy
+	push	hl
+	ld	bc, -227
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	ld	bc, -230
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	ld	bc, (iy)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	ld	bc, (iy + 6)
+	or	a, a
+	sbc	hl, hl
+	ld	l, c
+	ld	h, b
+	add	hl, de
+	ld	de, 0
+	ld	e, (iy + 4)
+	push	de
+	pop	iy
+	ld	de, -8
+	add	iy, de
+BB0_17:
+	push	iy
+	push	hl
+	ld	bc, -218
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_Sprite
+	jp	BB0_19
+BB0_18:
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	ld	bc, (ix - 3)
+	push	bc
+	pop	iy
+	add	iy, de
+	push	ix
+	ld	bc, -224
+	add	ix, bc
+	ld	(ix), iy
+	pop	ix
+	ld	de, (iy + 18)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	ld	c, 2
+	call	__ishru
+	ld	bc, 3
+	call	__iand
+	push	hl
+	pop	de
+	ld	hl, _platform_bump_sprite_sheet
+	add	hl, de
+	ld	iy, 0
+	push	af
+	ld	a, (hl)
+	ld	iyl, a
+	pop	af
+	ld	de, -227
+	lea	hl, ix
+	add	hl, de
+	ld	(hl), iy
+	lea	hl, iy
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _platform_bump_sprites
+	add	hl, de
+	ld	bc, (hl)
+	ld	de, -224
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	push	ix
+	ld	de, -227
+	add	ix, de
+	ld	hl, (ix)
+	pop	ix
+	ld	l, (iy + 4)
+	ld	de, -8
+	add	hl, de
+	push	hl
+	ld	(ix - 3), bc
+	ld	bc, -230
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	push	de
+	ld	bc, (ix - 3)
+	push	bc
+	call	_gfx_TransparentSprite
+BB0_19:
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	bc, -221
+	lea	hl, ix
+	add	hl, bc
+	ld	iy, (hl)
+BB0_20:
+	inc	iy
+	ld	de, 21
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	add	hl, de
+	push	ix
+	ld	de, -203
+	add	ix, de
+	ld	(ix), hl
+	pop	ix
+	ld	bc, 0
+	jp	BB0_7
+BB0_21:
+	push	bc
+	pop	iy
+	push	bc
+	pop	hl
+BB0_22:
+	ld	a, (_levelEnemies)
+	push	bc
+	pop	de
+	ld	e, a
+	ld	(ix - 3), bc
+	push	ix
+	ld	bc, -203
+	add	ix, bc
+	ld	(ix), hl
+	pop	ix
+	or	a, a
+	sbc	hl, de
+	ld	bc, (ix - 3)
+	jp	nc, BB0_24
+	ld	hl, (_levelEnemies+2)
+	lea	de, iy
+	ld	bc, -215
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), de
+	push	hl
+	pop	iy
+	add	iy, de
+	ld	bc, -221
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	ld	de, 0
+	push	de
+	pop	hl
+	ld	l, (iy + 3)
+	push	de
+	pop	bc
+	ld	c, (iy)
+	ld	(ix - 3), de
+	push	ix
+	ld	de, -218
+	add	ix, de
+	ld	(ix), bc
+	pop	ix
+	ld	de, (ix - 3)
+	ld	e, (iy + 5)
+	ld	bc, 42
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemy_sprites
+	add	iy, bc
+	push	ix
+	ld	bc, -218
+	add	ix, bc
+	ld	hl, (ix)
+	pop	ix
+	ld	bc, 21
+	call	__imulu
+	push	hl
+	pop	bc
+	add	iy, bc
+	ex	de, hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	hl, (iy)
+	ld	de, -218
+	lea	iy, ix
+	add	iy, de
+	ld	(iy), hl
+	ld	de, -221
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	ld	bc, (iy + 7)
+	ld	a, (iy + 10)
+	call	__ftol
+	push	ix
+	ld	de, -224
+	add	ix, de
+	ld	(ix), bc
+	pop	ix
+	ld	bc, (iy + 15)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	ld	a, (iy + 33)
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	l, a
+	add	hl, de
+	push	hl
+	ld	bc, -224
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	ld	bc, -218
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_RLETSprite
+	ld	de, -215
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	ld	bc, 0
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, -203
+	lea	hl, ix
+	add	hl, de
+	ld	hl, (hl)
+	inc	hl
+	ld	de, 297
+	add	iy, de
+	jp	BB0_22
+BB0_24:
+	ld	de, 4888
+	push	bc
+	pop	hl
+BB0_25:
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), hl
+	or	a, a
+	sbc	hl, de
+	ld	bc, (ix - 3)
+	jp	z, BB0_30
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	ld	iy, _pipes
+	add	iy, de
+	push	ix
+	ld	de, -218
+	add	ix, de
+	ld	(ix), iy
+	pop	ix
+	ld	a, (iy + 1)
+	and	a, 1
+	bit	0, a
+	ld	bc, (ix - 3)
+	jp	z, BB0_29
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	ld	hl, _pipes
+	push	hl
+	pop	iy
+	add	iy, de
+	ld	bc, -215
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	ld	de, 0
+	push	de
+	pop	hl
+	ld	l, (iy)
+	ld	e, (iy + 5)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _pipe_sprites
+	add	iy, bc
+	ex	de, hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	de, (iy)
+	ld	(ix - 3), de
+	ld	de, -215
+	lea	iy, ix
+	add	iy, de
+	ld	iy, (iy)
+	ld	bc, (iy + 2)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	bc, 0
+	ld	c, (iy + 4)
+	push	bc
+	push	hl
+	ld	de, (ix - 3)
+	push	de
+	call	_gfx_RLETSprite
+	ld	bc, 0
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, -215
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	ld	de, (iy + 7)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jr	nz, BB0_29
+	ld	de, -218
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	res	0, (iy + 1)
+BB0_29:
+	ld	de, 2444
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	add	hl, de
+	ld	de, 4888
+	ld	bc, (ix - 3)
+	jp	BB0_25
+BB0_30:
+	ld	a, (_levelPows+3)
+	push	bc
+	pop	iy
+	push	bc
+	pop	de
+BB0_31:
+	ld	c, a
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jp	nc, BB0_35
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), a
+	push	ix
+	ld	bc, -215
+	add	ix, bc
+	ld	(ix), de
+	pop	ix
+	ld	de, (_levelPows)
+	lea	bc, iy
+	lea	hl, iy
+	ld	(ix - 3), bc
+	ld	bc, -218
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), de
+	push	de
+	pop	iy
+	ld	bc, (ix - 3)
+	add	iy, bc
+	ld	a, (iy + 3)
+	cp	a, 3
+	jr	z, BB0_34
+	ld	bc, -221
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), hl
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	push	ix
+	add	ix, bc
+	ld	de, (ix)
+	pop	ix
+	push	ix
+	ld	bc, -218
+	add	ix, bc
+	ld	iy, (ix)
+	pop	ix
+	add	iy, de
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _pow_sprites
+	add	hl, de
+	ld	de, (hl)
+	ld	bc, (iy)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	bc, 0
+	ld	c, (iy + 2)
+	push	bc
+	push	hl
+	push	de
+	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	bc, -221
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	ld	a, (_levelPows+3)
+	ld	bc, -203
+	lea	iy, ix
+	add	iy, bc
+	ld	(iy), a
+BB0_34:
+	ld	bc, -215
+	lea	iy, ix
+	add	iy, bc
+	ld	de, (iy)
+	inc	de
+	ld	bc, 262
+	add	hl, bc
+	ld	bc, 0
+	push	hl
+	pop	iy
+	ld	(ix - 3), bc
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	a, (hl)
+	ld	bc, (ix - 3)
+	jp	BB0_31
+BB0_35:
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	a, (iy + 33)
+	srl	a
+	and	a, 1
+	ld	de, 0
+	push	de
+	pop	hl
+	ld	l, a
+	ld	e, (iy + 28)
+	ld	bc, 18
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _mario_sprites
+	add	iy, bc
+	ld	bc, 3
+	ex	de, hl
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	hl, (iy)
+	ld	de, -203
+	lea	iy, ix
+	add	iy, de
+	ld	(iy), hl
+	ld	iy, (ix + 6)
+	ld	bc, (iy)
+	lea	hl, iy + 3
+	ld	a, (hl)
+	call	__ftol
+	ld	de, -215
+	lea	hl, ix
+	add	hl, de
+	ld	(hl), bc
+	ld	bc, (iy + 8)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	ld	a, (iy + 34)
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	l, a
+	add	hl, de
+	push	hl
+	ld	bc, -215
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix + 9)
+	push	hl
+	ld	hl, (ix + 6)
+	push	hl
+	call	_HudDraw
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	iy, (ix + 6)
+	lea	hl, iy + 4
+	ld	bc, (iy + 4)
+	lea	de, iy
+	push	hl
+	pop	iy
+	lea	hl, iy + 3
+	ld	a, (hl)
+	call	__ftol
+	push	de
+	pop	iy
+	ld	iy, (iy + 10)
+	ld	a, iyh
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, iyl
+	ld	iy, (ix + 6)
+	ld	a, (iy + 35)
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	l, a
+	add	hl, de
+	push	hl
+	push	bc
+	ld	bc, -212
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_Sprite
+	ld	de, 0
+	ld	bc, 0
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (ix + 6)
+	ld	hl, (iy)
+	ld	a, (iy + 3)
+	ld	(iy + 4), hl
+	ld	(iy + 7), a
+	ld	hl, (iy + 8)
+	ld	(iy + 10), l
+	ld	(iy + 11), h
+	ld	a, (iy + 34)
+	ld	(iy + 35), a
+	push	bc
+	pop	iy
+BB0_36:
+	ld	a, (_levelPlatforms)
+	ld	e, a
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jp	nc, BB0_44
+	ld	de, -203
+	lea	hl, ix
+	add	hl, de
+	ld	(hl), iy
+	ld	iy, (_levelPlatforms+1)
+	push	ix
+	ld	de, -206
+	add	ix, de
+	ld	bc, (ix)
+	pop	ix
+	push	bc
+	pop	de
+	lea	hl, iy
+	add	hl, de
+	bit	0, (hl)
+	jr	nz, BB0_41
+	push	bc
+	pop	de
+	ld	(ix - 3), bc
+	ld	bc, -212
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	add	iy, de
+	push	ix
+	ld	bc, -215
+	add	ix, bc
+	ld	(ix), iy
+	pop	ix
+	ld	e, (iy + 1)
+	ld	a, e
+	and	a, 1
+	bit	0, a
+	ld	bc, (ix - 3)
+	push	bc
+	pop	hl
+	jp	z, BB0_43
+	push	hl
+	pop	bc
+	ld	(ix - 3), de
+	ld	de, -212
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	add	iy, bc
+	ld	bc, (iy + 4)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, bc
+	ld	bc, 20
+	or	a, a
+	sbc	hl, bc
+	ld	bc, -206
+	lea	hl, ix
+	push	af
+	add	hl, bc
+	pop	af
+	ld	hl, (hl)
+	ld	de, (ix - 3)
+	jp	c, BB0_43
+	ld	a, e
+	and	a, -2
+	ld	bc, -215
+	lea	iy, ix
+	add	iy, bc
+	ld	iy, (iy)
+	ld	(iy + 1), a
+	jp	BB0_43
+BB0_41:
+	push	bc
+	pop	de
+	ld	(ix - 3), bc
+	ld	bc, -212
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), de
+	add	iy, de
+	ld	de, (iy - 6)
+	ld	bc, (ix - 3)
+	ld	(ix - 3), de
+	push	ix
+	ld	de, -206
+	add	ix, de
+	ld	(ix), bc
+	pop	ix
+	ld	bc, (iy - 12)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	a, (iy - 9)
+	add	a, -8
+	ld	c, a
+	push	bc
+	push	hl
+	ld	de, (ix - 3)
+	push	de
+	call	_gfx_Sprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	lea	bc, iy
+	ld	(ix - 3), bc
+	ld	bc, -212
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	ld	hl, (iy - 14)
+	ld	(iy - 12), l
+	ld	(iy - 11), h
+	ld	a, (iy - 10)
+	ld	(iy - 9), a
+	ld	de, (iy + 4)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	ld	de, 16
+	or	a, a
+	sbc	hl, de
+	ld	de, -206
+	lea	hl, ix
+	push	af
+	add	hl, de
+	pop	af
+	ld	hl, (hl)
+	ld	bc, (ix - 3)
+	jr	c, BB0_43
+	push	hl
+	pop	de
+	push	bc
+	pop	iy
+	add	iy, de
+	ld	(iy), 0
+	set	0, (iy + 1)
+BB0_43:
+	ld	bc, -203
+	lea	iy, ix
+	add	iy, bc
+	ld	iy, (iy)
+	inc	iy
+	ld	de, 21
+	add	hl, de
+	push	ix
+	ld	de, -206
+	add	ix, de
+	ld	(ix), hl
+	pop	ix
+	ld	bc, 0
+	or	a, a
+	sbc	hl, hl
+	ex	de, hl
+	jp	BB0_36
+BB0_44:
+	push	bc
+	pop	iy
+BB0_45:
+	ld	a, (_levelEnemies)
+	ld	de, 0
+	ld	e, a
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jp	nc, BB0_47
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	ld	iy, (_levelEnemies+2)
+	push	ix
+	ld	bc, -209
+	add	ix, bc
+	ld	de, (ix)
+	pop	ix
+	push	ix
+	ld	bc, -206
+	add	ix, bc
+	ld	(ix), de
+	pop	ix
+	add	iy, de
+	ld	bc, (iy - 28)
+	ld	a, (iy - 25)
+	call	__ftol
+	push	ix
+	ld	de, -212
+	add	ix, de
+	ld	(ix), bc
+	pop	ix
+	ld	bc, (iy - 22)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	ld	a, (iy - 5)
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	l, a
+	add	hl, de
+	push	hl
+	ld	bc, -212
+	lea	hl, ix
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	push	iy
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelEnemies+2)
+	ld	bc, -206
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	add	iy, de
+	ld	hl, (iy - 32)
+	ld	a, (iy - 29)
+	ld	(iy - 28), hl
+	ld	(iy - 25), a
+	ld	hl, (iy - 24)
+	ld	(iy - 22), l
+	ld	(iy - 21), h
+	ld	a, (iy - 6)
+	ld	(iy - 5), a
+	ld	de, -203
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	ld	bc, 0
+	inc	iy
+	ld	de, 297
+	ld	(ix - 3), bc
+	push	ix
+	ld	bc, -209
+	add	ix, bc
+	ld	hl, (ix)
+	pop	ix
+	add	hl, de
+	push	ix
+	ld	de, -209
+	add	ix, de
+	ld	(ix), hl
+	pop	ix
+	ld	bc, (ix - 3)
+	jp	BB0_45
+BB0_47:
+	push	bc
+	pop	iy
+BB0_48:
+	ld	de, 4888
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jr	z, BB0_52
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	lea	de, iy
+	ld	iy, _pipes
+	add	iy, de
+	ld	a, (iy + 1)
+	and	a, 1
+	bit	0, a
+	jr	z, BB0_51
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
+	ld	iy, _pipes
+	add	iy, de
+	ld	de, (iy + 2)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, e
+	ld	e, (iy + 4)
+	push	de
+	push	hl
+	pea	iy + 10
+	call	_gfx_Sprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+BB0_51:
+	ld	de, 2444
+	ld	bc, -203
+	lea	hl, ix
+	add	hl, bc
+	ld	iy, (hl)
+	add	iy, de
+	jr	BB0_48
+BB0_52:
+	call	_HudRefresh
+	ld	iy, 0
+	lea	hl, iy
+	ld	bc, 0
+BB0_53:
+	ld	a, (_levelPows+3)
+	push	bc
+	pop	de
+	ld	e, a
+	push	ix
+	ld	bc, -203
+	add	ix, bc
+	ld	(ix), hl
+	pop	ix
+	or	a, a
+	sbc	hl, de
+	jr	nc, BB0_55
+	ld	bc, -206
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), iy
+	ld	iy, (_levelPows)
+	push	ix
+	add	ix, bc
+	ld	de, (ix)
+	pop	ix
+	add	iy, de
+	ld	de, (iy)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, e
+	ld	e, (iy + 2)
+	push	de
+	push	hl
+	pea	iy + 4
+	call	_gfx_Sprite_NoClip
+	ld	bc, 0
+	ld	de, -206
+	lea	hl, ix
+	add	hl, de
+	ld	iy, (hl)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, -203
+	lea	hl, ix
+	add	hl, de
+	ld	hl, (hl)
+	inc	hl
+	ld	de, 262
+	add	iy, de
+	jr	BB0_53
+BB0_55:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_DrawBackground
+_DrawBackground:
+	ld	hl, -6
+	call	__frameset
+	ld	bc, _malloc
+	ld	hl, 120
+	ld	de, 127
+	push	bc
+	push	hl
+	push	de
+	call	_gfx_AllocSprite
+	push	hl
+	pop	iy
+	ld	(ix - 3), iy
+	pop	hl
+	pop	hl
+	pop	hl
+	lea	de, iy + 2
+	ld	(ix - 6), de
+	ld	hl, _bg_pipes_top_left_compressed
+	push	hl
+	push	de
+	call	_zx7_Decompress
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 255
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, _bg_pipes_bottom_left_compressed
+	push	hl
+	ld	hl, (ix - 6)
+	push	hl
+	call	_zx7_Decompress
+	pop	hl
+	pop	hl
+	ld	hl, 120
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 120
+	push	hl
+	ld	hl, 255
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_free
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 120
+	push	hl
+	ld	hl, -128
+	push	hl
+	call	_gfx_AllocSprite
+	push	hl
+	pop	iy
+	ld	(ix - 3), iy
+	pop	hl
+	pop	hl
+	pop	hl
+	lea	de, iy + 2
+	ld	(ix - 6), de
+	ld	hl, _bg_pipes_top_right_compressed
+	push	hl
+	push	de
+	call	_zx7_Decompress
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 127
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, _bg_pipes_bottom_right_compressed
+	push	hl
+	ld	hl, (ix - 6)
+	push	hl
+	call	_zx7_Decompress
+	pop	hl
+	pop	hl
+	ld	hl, 120
+	push	hl
+	ld	hl, 127
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_free
+	ld	iy, 0
+	pop	hl
+BB1_1:
+	ld	de, 320
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jr	z, BB1_3
+	ld	hl, 224
+	push	hl
+	push	iy
+	ld	hl, _level1_ground_data
+	push	hl
+	ld	(ix - 3), iy
+	call	_gfx_TransparentSprite
+	ld	iy, (ix - 3)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, 16
+	add	iy, de
+	jr	BB1_1
+BB1_3:
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_SetDraw
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_Blit
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetDraw
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_DrawPhaseCard
+_DrawPhaseCard:
+	call	__frameset0
+	ld	bc, (ix + 6)
+	ld	de, _phase_card_data
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	c, (ix + 9)
+	push	bc
+	push	hl
+	push	de
+	call	_gfx_RLETSprite_NoClip
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_GetPhaseCardBackground
+_GetPhaseCardBackground:
+	call	__frameset0
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_DecompressSprites
+_DecompressSprites:
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_InitEnemies
+_InitEnemies:
+	ld.sis	de, 0
+	ld	hl, _levelEnemies
+	ld	bc, 0
+	ld	(hl), e
+	inc	hl
+	ld	(hl), d
+	push	bc
+	call	_malloc
+	pop	de
+	ld	(_levelEnemies+2), hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_SpawnEnemy
+_SpawnEnemy:
+	ld	hl, -13
+	call	__frameset
+	or	a, a
+	sbc	hl, hl
+	ld	de, 4
+	ld	(ix - 6), de
+	ld	a, (_levelEnemies)
+	ld	iy, (_levelEnemies+2)
+	ld	de, 0
+	ld	e, a
+	ld	(ix - 10), a
+	ld	(ix - 9), a
+	ld	(ix - 3), hl
+BB6_1:
+	push	de
+	pop	hl
+	ld	bc, (ix - 3)
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB6_4
+	ld	(ix - 13), de
+	ld	hl, (ix - 6)
+	push	hl
+	pop	de
+	push	hl
+	pop	bc
+	lea	hl, iy
+	add	hl, bc
+	ld	a, (hl)
+	cp	a, 4
+	jr	z, BB6_5
+	ld	hl, (ix - 3)
+	inc	hl
+	ld	(ix - 3), hl
+	ld	a, (ix - 9)
+	dec	a
+	ld	(ix - 9), a
+	ld	bc, 297
+	ex	de, hl
+	add	hl, bc
+	ld	(ix - 6), hl
+	ld	de, (ix - 13)
+	jr	BB6_1
+BB6_4:
+	ld	(ix - 3), de
+	jr	BB6_6
+BB6_5:
+	ld	a, (ix - 9)
+	or	a, a
+	jr	nz, BB6_7
+BB6_6:
+	ld	a, (ix - 10)
+	inc	a
+	ld	(_levelEnemies), a
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	push	iy
+	call	_realloc
+	push	hl
+	pop	iy
+	pop	hl
+	pop	hl
+	ld	(_levelEnemies+2), iy
+BB6_7:
+	ld	bc, 297
+	ld	hl, (ix - 3)
+	call	__imulu
+	push	hl
+	pop	de
+	ld	(ix - 9), de
+	add	iy, de
+	ld	(ix - 3), iy
+	ld	hl, (ix - 3)
+	inc	hl
+	ld	(ix - 3), hl
+	ld	(iy + 1), 0
+	ld	hl, (ix - 3)
+	ld	(ix - 6), hl
+	ld	hl, (ix - 6)
+	inc	hl
+	ld	(ix - 6), hl
+	ld	bc, 295
+	ld	de, (ix - 6)
+	ld	hl, (ix - 3)
+	ldir
+	ld	a, (ix + 6)
+	ld	(iy + 3), a
+	ld	hl, (ix + 12)
+	ld	(iy + 19), hl
+	ld	(iy + 4), 5
+	ld	a, (ix + 9)
+	bit	0, a
+	ld	hl, -7798784
+	jr	nz, BB6_9
+	ld	hl, -1048576
+BB6_9:
+	bit	0, a
+	ld	e, 67
+	jr	nz, BB6_11
+	ld	e, 65
+BB6_11:
+	ld	(iy + 7), hl
+	ld	(iy + 10), e
+	ld	(iy + 11), hl
+	ld	(iy + 14), e
+	and	a, 1
+	ld.sis	hl, 35
+	ld	(iy + 15), l
+	ld	(iy + 16), h
+	ld	(iy + 17), l
+	ld	(iy + 18), h
+	ld	(iy), a
+	ld	(iy + 39), 16
+	ld	iy, (_levelEnemies+2)
+	ld	de, (ix - 9)
+	add	iy, de
+	ld	(iy + 40), 16
+	ld	iy, (_levelEnemies+2)
+	add	iy, de
+	ld	(iy + 33), -4
+	ld	(iy + 34), -4
+	res	0, (iy + 2)
+	ld	iy, (_levelEnemies+2)
+	add	iy, de
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 35), hl
+	ld	(iy + 38), 63
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_FreeEnemies
+_FreeEnemies:
+	ld	hl, (_levelEnemies+2)
+	push	hl
+	call	_free
+	pop	hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_UpdateEnemies
+_UpdateEnemies:
+	ld	hl, -58
+	call	__frameset
+	ld	de, 0
+	push	de
+	pop	bc
+BB8_1:
+	ld	a, (_levelEnemies)
+	ld	e, a
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jp	nc, BB8_79
+	ld	iy, (_levelEnemies+2)
+	push	bc
+	pop	hl
+	ld	(ix - 3), bc
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	(ix - 6), iy
+	add	iy, de
+	ld	(ix - 12), iy
+	ld	a, (iy + 4)
+	cp	a, 4
+	jp	z, BB8_74
+	ld	(ix - 15), a
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	(ix - 9), iy
+	lea	hl, iy + 29
+	ld	bc, (iy + 29)
+	push	hl
+	pop	iy
+	lea	hl, iy + 3
+	ld	a, (hl)
+	ld	hl, 5033165
+	ld	e, -66
+	call	__fadd
+	ld	l, (ix - 15)
+	ld	e, a
+	ld	iy, (ix - 9)
+	ld	(iy + 29), bc
+	ld	(iy + 32), e
+	ld	a, l
+	or	a, a
+	jr	nz, BB8_9
+	ld	hl, (ix - 9)
+	ld	a, (hl)
+	ld	(ix - 9), a
+	ld	hl, (ix - 3)
+	ld	(ix - 12), bc
+	ld	bc, 297
+	call	__imulu
+	ld	(ix - 15), e
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	a, (iy + 1)
+	xor	a, b
+	ld	d, a
+	or	a, a
+	sbc	hl, hl
+	ld	e, h
+	ld	bc, (ix - 12)
+	ld	a, (ix - 15)
+	call	__fcmp
+	ld	l, -1
+	jp	m, BB8_6
+	ld	l, 0
+BB8_6:
+	ld	a, d
+	or	a, l
+	bit	0, (ix - 9)
+	jp	nz, BB8_12
+	bit	0, a
+	ld	bc, 297
+	ld	iy, (ix - 6)
+	jp	nz, BB8_15
+	ld	hl, (ix - 3)
+	call	__imulu
+	push	hl
+	pop	bc
+	lea	de, iy
+	add	iy, bc
+	ld	hl, (iy + 35)
+	ld	(ix - 9), hl
+	ld	a, (iy + 38)
+	jp	BB8_14
+BB8_9:
+	ld	a, l
+	cp	a, 2
+	jp	nz, BB8_20
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	de, (iy + 22)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	ld	de, 401
+	or	a, a
+	sbc	hl, de
+	jp	c, BB8_25
+	ld	iy, (ix - 12)
+	ld	(iy + 4), 0
+	ld	hl, (ix - 3)
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	(iy + 33), -4
+	res	0, (iy + 2)
+	ld	iy, (_levelEnemies+2)
+	lea	hl, iy
+	add	hl, de
+	ld	a, (hl)
+	xor	a, 1
+	ld	(hl), a
+	jp	BB8_26
+BB8_12:
+	bit	0, a
+	ld	bc, 297
+	ld	iy, (ix - 6)
+	jr	nz, BB8_15
+	ld	hl, (ix - 3)
+	call	__imulu
+	push	hl
+	pop	bc
+	lea	de, iy
+	add	iy, bc
+	ld	bc, (iy + 35)
+	ld	a, (iy + 38)
+	call	__fneg
+	ld	(ix - 9), bc
+BB8_14:
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	de
+	pop	iy
+	ex	de, hl
+	add	iy, de
+	ld	hl, (ix - 9)
+	ld	(iy + 25), hl
+	ld	(iy + 28), a
+	ld	iy, (ix - 6)
+BB8_15:
+	ld	hl, (ix - 3)
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	de, (iy + 19)
+	ld	(ix - 15), iy
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	ld	c, 3
+	call	__ishru
+	ld	bc, 3
+	call	__iremu
+	ld	a, (iy + 2)
+	ld	b, 2
+	call	__bshl
+	and	a, 4
+	or	a, l
+	ld	(iy + 5), a
+	ld	iy, (ix + 6)
+	lea	hl, iy
+	ld	bc, (hl)
+	ld	a, (iy + 3)
+	ld	(ix - 18), bc
+	ld	(ix - 19), a
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 9), bc
+	ld	(ix - 12), a
+	ld	iy, (ix - 15)
+	ld	bc, (iy + 7)
+	ld	d, (iy + 10)
+	push	bc
+	pop	iy
+	ld	a, d
+	call	__fadd
+	ld	(ix - 22), bc
+	ld	(ix - 15), a
+	lea	hl, iy
+	ld	e, d
+	ld	bc, (ix - 9)
+	ld	a, (ix - 12)
+	call	__fcmp
+	jp	p, BB8_39
+	ld	hl, (ix - 18)
+	ld	e, (ix - 19)
+	ld	bc, (ix - 22)
+	ld	a, (ix - 15)
+	call	__fcmp
+	jp	p, BB8_39
+	ld	iy, (ix + 6)
+	ld	bc, (iy + 8)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	push	de
+	pop	hl
+	ld	bc, 19
+	add	hl, bc
+	ld	(ix - 9), hl
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	bc, (iy + 15)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	push	hl
+	pop	iy
+	ld	bc, 12
+	add	iy, bc
+	ld	bc, (ix - 9)
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB8_39
+	lea	bc, iy
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB8_39
+	ld	iy, (ix + 6)
+	ld	a, (iy + 29)
+	cp	a, 2
+	ld	hl, (ix + 9)
+	push	hl
+	push	iy
+	call	z, _KillPlayer
+	pop	hl
+	pop	hl
+	jp	BB8_39
+BB8_20:
+	ld	a, l
+	cp	a, 5
+	jp	nz, BB8_39
+	ld	iy, (ix - 9)
+	ld	a, (iy)
+	xor	a, 1
+	ld	de, 0
+	ex	de, hl
+	ld	l, a
+	ld	bc, 2444
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _pipes
+	add	hl, de
+	ex	de, hl
+	lea	bc, iy
+	push	de
+	pop	iy
+	set	0, (iy + 1)
+	ld	hl, (ix + 9)
+	ld	(iy + 7), hl
+	ld	(iy + 5), 0
+	push	bc
+	pop	iy
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 29), hl
+	ld	(iy + 32), h
+	ld	a, (iy)
+	xor	a, 1
+	bit	0, a
+	bit	0, a
+	ld	a, 63
+	ld	bc, 297
+	ld	iy, (ix - 6)
+	jr	nz, BB8_23
+	ld	a, -65
+BB8_23:
+	ld	hl, (ix - 3)
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 25), hl
+	ld	(iy + 28), a
+	ld	de, (iy + 19)
+	ld	hl, (ix + 9)
+	sbc	hl, de
+	ld	de, 66
+	or	a, a
+	sbc	hl, de
+	jp	c, BB8_39
+	ld	iy, (ix - 12)
+	ld	(iy + 4), 0
+	jp	BB8_39
+BB8_25:
+	ld	iy, (ix - 6)
+BB8_26:
+	ld	hl, (ix - 3)
+	call	__imulu
+	push	hl
+	pop	de
+	ld	(ix - 6), iy
+	add	iy, de
+	bit	0, (iy + 1)
+	jr	z, BB8_29
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	hl, (iy + 25)
+	ld	e, (iy + 28)
+	ld	bc, 0
+	xor	a, a
+	call	__fcmp
+	jr	z, BB8_29
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 25), hl
+	ld	(iy + 28), h
+BB8_29:
+	ld	iy, (ix + 6)
+	ld	a, (iy + 29)
+	cp	a, 2
+	jp	nz, BB8_39
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	bc, (iy)
+	ld	a, (iy + 3)
+	ld	(ix - 15), bc
+	ld	(ix - 18), a
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 9), bc
+	ld	(ix - 12), a
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	bc, (iy + 7)
+	ld	d, (iy + 10)
+	push	bc
+	pop	iy
+	ld	a, d
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 22), bc
+	ld	(ix - 19), a
+	lea	hl, iy
+	ld	e, d
+	ld	bc, (ix - 9)
+	ld	a, (ix - 12)
+	call	__fcmp
+	jp	p, BB8_39
+	ld	hl, (ix - 15)
+	ld	e, (ix - 18)
+	ld	bc, (ix - 22)
+	ld	a, (ix - 19)
+	call	__fcmp
+	jp	p, BB8_39
+	ld	iy, (ix + 6)
+	ld	bc, (iy + 8)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	push	de
+	pop	hl
+	ld	bc, 19
+	add	hl, bc
+	ld	(ix - 9), hl
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	bc, (iy + 15)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	push	hl
+	pop	iy
+	ld	bc, 12
+	add	iy, bc
+	ld	bc, (ix - 9)
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB8_39
+	lea	bc, iy
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB8_39
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	hl, 4194304
+	ld	(iy + 29), hl
+	ld	(iy + 32), 64
+	lea	de, iy
+	ld	(iy + 4), 3
+	ld	iy, (ix + 6)
+	lea	bc, iy
+	bit	1, (iy + 33)
+	ld	a, -1
+	jr	z, BB8_36
+	ld	a, 0
+BB8_36:
+	bit	0, a
+	bit	0, a
+	ld	a, 63
+	jr	nz, BB8_38
+	ld	a, -65
+BB8_38:
+	ld	hl, -4194304
+	push	de
+	pop	iy
+	ld	(iy + 25), hl
+	ld	(iy + 28), a
+	push	bc
+	pop	iy
+	ld	hl, (iy + 39)
+	ld	de, 800
+	add	hl, de
+	ld	(iy + 39), hl
+	ld	hl, _levelEnemies+1
+	dec	(hl)
+BB8_39:
+	ld	de, (_levelEnemies+2)
+	ld	hl, (ix - 3)
+	ld	iy, 297
+	lea	bc, iy
+	call	__imulu
+	push	hl
+	pop	bc
+	push	de
+	pop	iy
+	add	iy, bc
+	ld	a, (iy + 4)
+	cp	a, 3
+	ld	(ix - 6), de
+	ld	(ix - 15), iy
+	jp	nz, BB8_44
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	bc
+	push	de
+	pop	iy
+	add	iy, bc
+	ld	hl, (iy + 15)
+	ld.sis	de, 241
+	or	a, a
+	sbc.sis	hl, de
+	call	pe, __setflag
+	jp	m, BB8_42
+	ld	iy, (ix - 15)
+	ld	(iy + 4), 4
+BB8_42:
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	hl, (iy + 29)
+	ld	e, (iy + 32)
+	ld	(ix - 9), hl
+	ld	bc, -8388608
+	ld	a, -64
+	call	__fcmp
+	jp	p, BB8_56
+	ld	(iy + 29), bc
+	ld	(iy + 32), -64
+	ld	(ix - 9), bc
+	jp	BB8_70
+BB8_44:
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	bc
+	push	de
+	pop	iy
+	add	iy, bc
+	ld	hl, (iy + 7)
+	ld	(ix - 18), iy
+	ld	d, (iy + 10)
+	push	hl
+	pop	iy
+	ld	e, d
+	ld	bc, -8388608
+	ld	a, -63
+	call	__fcmp
+	ld	hl, -6291456
+	ld	e, 67
+	ld	a, e
+	jp	m, BB8_46
+	ld	hl, -6291456
+	lea	bc, iy
+	ld	a, d
+	call	__fcmp
+	ld	hl, -8388608
+	ld	a, -63
+	jp	p, BB8_47
+BB8_46:
+	ld	iy, (ix - 18)
+	ld	(iy + 7), hl
+	ld	(iy + 10), a
+	push	hl
+	pop	iy
+	ld	d, a
+BB8_47:
+	ld	(ix - 19), d
+	ld	(ix - 25), iy
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	a, (iy + 1)
+	ld	hl, (iy + 29)
+	ld	(ix - 9), hl
+	ld	(ix - 28), iy
+	ld	d, (iy + 32)
+	push	bc
+	pop	iy
+	ld	(ix - 29), a
+	bit	0, a
+	ld	(ix - 12), d
+	jp	z, BB8_52
+	or	a, a
+	sbc	hl, hl
+	ld	e, h
+	ld	bc, (ix - 9)
+	ld	a, d
+	call	__fcmp
+	jp	m, BB8_52
+	ld	hl, (ix - 3)
+	lea	bc, iy
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	hl, (iy + 25)
+	ld	bc, (ix - 25)
+	ld	a, (ix - 19)
+	ld	e, (iy + 28)
+	call	__fadd
+	ld	(ix - 33), bc
+	ld	(ix - 34), a
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 22), bc
+	ld	(ix - 30), a
+	ld	de, (_levelPlatforms+1)
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy + 6)
+	ld	(ix - 40), hl
+	ld	bc, 21
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	(ix - 37), de
+	ex	de, hl
+	add	hl, bc
+	ld	de, (hl)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	(ix - 43), de
+	ld	c, e
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, 297
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, (ix - 22)
+	ld	a, (ix - 30)
+	call	__fcmp
+	jp	p, BB8_52
+	ld	bc, (ix - 43)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	(ix - 22), hl
+	ld	hl, (ix - 40)
+	ld	bc, 21
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, (ix - 37)
+	add	iy, bc
+	ld	de, (iy + 6)
+	ld	bc, 0
+	push	bc
+	pop	hl
+	ld	l, e
+	ld	h, d
+	ld	de, (ix - 22)
+	add	hl, de
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, 297
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 33)
+	ld	e, (ix - 34)
+	call	__fcmp
+	jp	p, BB8_52
+	or	a, a
+	sbc	hl, hl
+	lea	bc, iy
+	ld	iy, (ix - 28)
+	ld	(iy + 29), hl
+	ld	(iy + 32), h
+	ld	(ix - 9), hl
+	xor	a, a
+	ld	(ix - 12), a
+	jp	BB8_72
+BB8_52:
+	ld	hl, (ix - 3)
+	lea	bc, iy
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	(ix - 22), iy
+	ld	de, (iy + 15)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	c, e
+	ld	d, (ix - 12)
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	iy, (ix - 9)
+	lea	hl, iy
+	ld	e, d
+	call	__fsub
+	ld	hl, 5505024
+	ld	e, 67
+	call	__fcmp
+	lea	hl, iy
+	jp	p, BB8_57
+	ld.sis	hl, 212
+	ld	iy, (ix - 22)
+	ld	(iy + 15), l
+	ld	(iy + 16), h
+	or	a, a
+	sbc	hl, hl
+	ld	iy, (ix - 28)
+	ld	(iy + 29), hl
+	ld	(iy + 32), h
+	ld	(iy + 1), 1
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	hl, (iy + 25)
+	ld	bc, (ix - 25)
+	ld	a, (ix - 19)
+	ld	e, (iy + 28)
+	call	__fadd
+	ld	d, a
+	push	bc
+	pop	iy
+	push	bc
+	pop	hl
+	ld	e, d
+	ld	bc, -6291456
+	ld	a, 67
+	call	__fcmp
+	jp	p, BB8_65
+	ld	hl, -8388608
+	ld	e, -63
+	lea	bc, iy
+	ld	a, d
+	call	__fcmp
+	jp	p, BB8_65
+	or	a, a
+	sbc	hl, hl
+	ld	(ix - 9), hl
+	xor	a, a
+	jp	BB8_70
+BB8_56:
+	ld	iy, 297
+	lea	bc, iy
+	ld	hl, (ix - 3)
+	ld	(ix - 12), e
+	jp	BB8_73
+BB8_57:
+	push	bc
+	pop	iy
+	ld	(ix - 15), a
+	ld	e, d
+	ld	bc, 0
+	xor	a, a
+	call	__fcmp
+	jp	p, BB8_71
+	ld	a, (_levelPlatforms)
+	ld	(ix - 30), a
+	lea	bc, iy
+	ld	(ix - 43), bc
+	ld	a, (ix - 15)
+	ld	hl, 4194304
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 33), bc
+	ld	(ix - 34), a
+	ld	iy, (_levelPlatforms+1)
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, (ix - 6)
+	add	hl, de
+	ld	(ix - 49), hl
+	ld	de, 0
+	push	de
+	pop	hl
+	ld	l, (ix - 30)
+	lea	iy, iy + 6
+	xor	a, a
+BB8_59:
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jp	z, BB8_75
+	ld	(ix - 40), hl
+	ld	(ix - 37), a
+	ld	a, (iy - 2)
+	push	de
+	pop	bc
+	ld	(ix - 50), a
+	ld	c, a
+	ld	h, 0
+	ld	(ix - 46), bc
+	ld	a, h
+	call	__ultof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, (ix - 33)
+	ld	a, (ix - 34)
+	call	__fcmp
+	ld	(ix - 18), iy
+	jp	p, BB8_64
+	ld	de, 8
+	ld	hl, (ix - 46)
+	add	hl, de
+	ld	d, (ix - 19)
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 43)
+	ld	e, (ix - 15)
+	call	__fcmp
+	jp	p, BB8_64
+	ld	iy, (ix - 49)
+	ld	hl, (iy + 25)
+	ld	bc, (ix - 25)
+	ld	a, d
+	ld	e, (iy + 28)
+	call	__fadd
+	ld	(ix - 54), bc
+	ld	(ix - 55), a
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 46), bc
+	ld	(ix - 51), a
+	ld	iy, (ix - 18)
+	ld	de, (iy - 6)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	(ix - 58), de
+	ld	c, e
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, (ix - 46)
+	ld	a, (ix - 51)
+	call	__fcmp
+	jp	p, BB8_64
+	ld	bc, (ix - 58)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	ld	hl, (ix - 18)
+	ld	iy, (hl)
+	ld	bc, 0
+	push	bc
+	pop	hl
+	ex	de, hl
+	ld	e, iyl
+	ld	d, iyh
+	ex	de, hl
+	add	hl, de
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix - 22)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 54)
+	ld	e, (ix - 55)
+	call	__fcmp
+	jp	m, BB8_77
+BB8_64:
+	ld	a, (ix - 37)
+	inc	a
+	ld	iy, (ix - 18)
+	lea	iy, iy + 21
+	ld	hl, (ix - 40)
+	dec	hl
+	ld	de, 0
+	jp	BB8_59
+BB8_65:
+	ld.sis	hl, 35
+	ld	iy, (ix - 22)
+	ld	(iy + 15), l
+	ld	(iy + 16), h
+	ld	iy, (ix - 15)
+	ld	(iy + 4), 5
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	hl, (ix + 9)
+	ld	(iy + 19), hl
+	ld	(ix - 6), iy
+	ld	l, (iy)
+	ld	a, l
+	xor	a, b
+	bit	0, a
+	ld	bc, -7798784
+	jr	nz, BB8_67
+	ld	bc, -1048576
+BB8_67:
+	bit	0, a
+	ld	h, 67
+	jr	nz, BB8_69
+	ld	h, 65
+BB8_69:
+	ld	a, l
+	xor	a, 1
+	ld	iy, (ix - 18)
+	ld	(iy + 7), bc
+	ld	(iy + 10), h
+	ld	hl, (ix - 6)
+	ld	(hl), a
+	ld	iy, (_levelEnemies+2)
+	ld	(ix - 6), iy
+	add	iy, de
+	ld	hl, (iy + 29)
+	ld	(ix - 9), hl
+	ld	a, (iy + 32)
+BB8_70:
+	ld	(ix - 12), a
+BB8_71:
+	ld	iy, 297
+	lea	bc, iy
+BB8_72:
+	ld	hl, (ix - 3)
+BB8_73:
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	(ix - 6), iy
+	ld	de, (iy + 15)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	c, e
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 9)
+	ld	e, (ix - 12)
+	call	__fsub
+	call	__ftol
+	ld	iy, (ix - 6)
+	ld	(iy + 15), c
+	ld	(iy + 16), b
+	ld	bc, (iy + 25)
+	lea	de, iy + 7
+	ld	hl, (iy + 7)
+	ld	(ix - 9), hl
+	lea	hl, iy
+	push	de
+	pop	iy
+	lea	de, iy + 3
+	push	hl
+	pop	iy
+	ld	a, (iy + 28)
+	ld	hl, (ix - 9)
+	push	de
+	pop	iy
+	ld	e, (iy)
+	call	__fadd
+	ld	iy, (ix - 6)
+	ld	(iy + 7), bc
+	ld	(iy + 10), a
+BB8_74:
+	ld	bc, (ix - 3)
+	inc	bc
+	ld	de, 0
+	jp	BB8_1
+BB8_75:
+	bit	0, (ix - 29)
+	jp	z, BB8_71
+BB8_76:
+	ld	iy, (ix - 28)
+	ld	(iy + 1), 0
+	jp	BB8_71
+BB8_77:
+	ld	h, 0
+	ld	l, (ix - 50)
+	ld.sis	de, -12
+	add.sis	hl, de
+	ld	(iy + 15), l
+	ld	(iy + 16), h
+	ld	de, 0
+	ld	iy, (ix - 28)
+	ld	(iy + 29), de
+	ld	(iy + 32), d
+	ld	(iy + 1), 1
+	ld	hl, (ix - 3)
+	ld	bc, 297
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	l, d
+	ld	c, (ix - 37)
+	ld	(iy + 6), c
+	ld	a, (ix - 30)
+	cp	a, c
+	ld	(ix - 9), de
+	ld	(ix - 12), l
+	jr	z, BB8_76
+	ld	de, 0
+	ld	(ix - 9), de
+	ld	(ix - 12), l
+	jp	BB8_71
+BB8_79:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_InitHud
+_InitHud:
+	call	__frameset0
+	ld	a, 72
+	ld	l, 8
+	ld	e, 56
+	ld	c, 80
+	ld	h, 15
+	ld	(_hudData), a
+	ld	a, l
+	ld	(_hudData+1), a
+	ld	a, e
+	ld	(_hudData+578), a
+	ld	a, l
+	ld	(_hudData+579), a
+	ld	a, c
+	ld	(_hudData+1028), a
+	ld	a, h
+	ld	(_hudData+1029), a
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_HudGetBackground
+_HudGetBackground:
+	ld	hl, _hudData
+	ld	de, 0
+	push	de
+	push	de
+	push	hl
+	call	_gfx_GetSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 272
+	push	hl
+	ld	hl, _hudData+578
+	push	hl
+	call	_gfx_GetSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 100
+	push	hl
+	push	hl
+	ld	hl, _hudData+1028
+	push	hl
+	call	_gfx_GetSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_HudDraw
+_HudDraw:
+	call	__frameset0
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	push	hl
+	call	_gfx_SetTextXY
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, _.str
+	push	hl
+	call	_gfx_PrintString
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 48
+	push	hl
+	call	_gfx_SetTextXY
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	ld	iy, (ix + 6)
+	ld	l, (iy + 30)
+	ld	de, 2
+	push	de
+	push	hl
+	call	_gfx_PrintUInt
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 272
+	push	hl
+	call	_gfx_SetTextXY
+	pop	hl
+	pop	hl
+	ld	iy, (ix + 6)
+	ld	hl, (iy + 39)
+	ld	de, 6
+	push	de
+	push	hl
+	call	_gfx_PrintUInt
+	pop	hl
+	pop	hl
+	ld	de, (_game_data+2)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	ld	bc, 150
+	or	a, a
+	sbc	hl, bc
+	jr	nc, BB11_2
+	ld	hl, _phase_card_data
+	ld	de, 100
+	push	de
+	push	de
+	push	hl
+	call	_gfx_RLETSprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_DrawPhaseText
+	ld	bc, 150
+BB11_2:
+	ld	de, (_game_data+5)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, de
+	or	a, a
+	sbc	hl, bc
+	jr	nc, BB11_4
+	ld	hl, _phase_clear_data
+	ld	de, 100
+	push	de
+	push	de
+	push	hl
+	call	_gfx_RLETSprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+BB11_4:
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_DrawPhaseText
+_DrawPhaseText:
+	ld	hl, -11
+	call	__frameset
+	ld	l, 0
+	ld	a, (_game_data+1)
+	ld	bc, 0
+	ld	c, a
+	ld	a, l
+	call	__ultof
+	ld	l, a
+	push	hl
+	push	bc
+	call	_log10
+	push	hl
+	pop	bc
+	ld	a, e
+	pop	hl
+	pop	hl
+	ld	hl, -2703467
+	ld	e, 51
+	call	__fadd
+	ld	l, a
+	push	hl
+	push	bc
+	call	_floorf
+	push	hl
+	pop	bc
+	ld	a, e
+	pop	hl
+	pop	hl
+	ld	l, 0
+	call	__ftoul
+BB12_1:
+	ld	a, c
+	cp	a, l
+	jp	c, BB12_3
+	ld	de, 0
+	push	de
+	pop	iy
+	ld	e, l
+	ld	(ix - 3), de
+	ld	a, (_game_data+1)
+	ld	(ix - 7), bc
+	lea	bc, iy
+	ld	c, a
+	ld	(ix - 4), l
+	ld	l, d
+	ld	a, l
+	call	__ultof
+	ld	(ix - 10), bc
+	ld	(ix - 11), a
+	ld	bc, (ix - 3)
+	ld	a, l
+	call	__ultof
+	ld	l, a
+	push	hl
+	push	bc
+	ld	hl, 65
+	push	hl
+	ld	hl, 2097152
+	push	hl
+	call	_pow
+	pop	bc
+	pop	bc
+	pop	bc
+	pop	bc
+	ld	bc, (ix - 10)
+	ld	a, (ix - 11)
+	call	__fdiv
+	call	__ftoul
+	ld	a, c
+	ld	c, 10
+	call	__bremu
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _phase_numbers
+	add	hl, de
+	ld	de, (hl)
+	ld	hl, (ix - 3)
+	ld	bc, -8
+	call	__imulu
+	ld	bc, 160
+	add	hl, bc
+	ld	bc, 100
+	push	bc
+	push	hl
+	push	de
+	call	_gfx_RLETSprite_NoClip
+	ld	bc, (ix - 7)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	l, (ix - 4)
+	inc	l
+	jp	BB12_1
+BB12_3:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_HudRefresh
+_HudRefresh:
+	ld	hl, _hudData
+	ld	de, 0
+	push	de
+	push	de
+	push	hl
+	call	_gfx_Sprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 272
+	push	hl
+	ld	hl, _hudData+578
+	push	hl
+	call	_gfx_Sprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 100
+	push	hl
+	push	hl
+	ld	hl, _hudData+1028
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_LevelLoop
+_LevelLoop:
+	ld	hl, -12
+	call	__frameset
+	ld	hl, _mario1+33
+	ld	bc, 0
+	res	0, (hl)
+	ld	hl, (_gameFrame)
+	ld	de, (_game_data+2)
+	or	a, a
+	sbc	hl, de
+	ld	de, 151
+	ld	(ix - 3), hl
+	or	a, a
+	sbc	hl, de
+	jr	c, BB14_5
+	ld	hl, -720868
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	bit	6, a
+	jp	nz, BB14_18
+	ld	iy, -720866
+	ld	l, (iy)
+	ld	h, (iy + 1)
+	ld	a, l
+	bit	2, a
+	push	bc
+	pop	hl
+	jp	nz, BB14_21
+	ld	l, (iy)
+	ld	h, (iy + 1)
+	ld	a, l
+	bit	1, a
+	jp	z, BB14_20
+	ld	l, 1
+	jp	BB14_21
+BB14_5:
+	ld	hl, 4
+BB14_6:
+	push	hl
+	ld	hl, _mario1
+	push	hl
+	call	_PlayerMove
+	pop	hl
+	pop	hl
+BB14_7:
+	ld	bc, 40
+	ld	iy, _enemyLog
+	ld	a, (_game_data+1)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	(ix - 9), hl
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	(ix - 6), iy
+	ld	bc, 20
+	ld	iy, 0
+BB14_8:
+	lea	de, iy
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB14_11
+	ld	iy, (ix - 6)
+	add	iy, de
+	ld	iy, (iy - 20)
+	ld	a, iyh
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	c, iyl
+	ld	(ix - 12), de
+	push	de
+	pop	iy
+	ld	de, 2
+	add	iy, de
+	ld	hl, (ix - 3)
+	or	a, a
+	sbc	hl, bc
+	ld	bc, 20
+	jr	nz, BB14_8
+	ld	hl, (ix - 9)
+	ld	bc, 40
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _enemyLog
+	push	hl
+	pop	iy
+	add	iy, bc
+	ld	de, (ix - 12)
+	add	iy, de
+	ld	a, (iy - 40)
+	ld	(ix - 3), a
+	call	_rand
+	ld	bc, 1
+	call	__iand
+	ld	de, (_gameFrame)
+	push	de
+	push	hl
+	ld	l, (ix - 3)
+	push	hl
+	call	_SpawnEnemy
+	pop	hl
+	pop	hl
+	pop	hl
+BB14_11:
+	ld	a, (_levelEnemies+1)
+	or	a, a
+	jr	nz, BB14_15
+	ld	a, (_game_data+8)
+	ld	l, a
+	and	a, 1
+	bit	0, a
+	jr	nz, BB14_14
+	ld	de, (_gameFrame)
+	ld	(_game_data+5), de
+	ld	a, l
+	or	a, 1
+	ld	(_game_data+8), a
+BB14_14:
+	call	_EndLevel
+BB14_15:
+	ld	a, (_game_data+8)
+	and	a, 1
+	bit	0, a
+	jr	nz, BB14_17
+	ld	hl, (_gameFrame)
+	push	hl
+	ld	hl, _mario1
+	push	hl
+	call	_UpdatePlayer
+	pop	hl
+	pop	hl
+BB14_17:
+	ld	hl, (_gameFrame)
+	push	hl
+	ld	hl, _mario1
+	push	hl
+	call	_UpdateEnemies
+	pop	hl
+	pop	hl
+	ld	hl, (_gameFrame)
+	push	hl
+	ld	hl, _mario1
+	push	hl
+	call	_DrawScene
+	pop	hl
+	pop	hl
+	ld	hl, (_gameFrame)
+	inc	hl
+	ld	(_gameFrame), hl
+	ld	a, 1
+	jr	BB14_19
+BB14_18:
+	call	_UnloadLevel
+	xor	a, a
+BB14_19:
+	ld	sp, ix
+	pop	ix
+	ret
+BB14_20:
+	ld	l, 4
+BB14_21:
+	push	hl
+	ld	hl, _mario1
+	push	hl
+	call	_PlayerMove
+	pop	hl
+	pop	hl
+	ld	hl, -720878
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	bit	5, a
+	ld	hl, 2
+	jp	nz, BB14_6
+	jp	BB14_7
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_UnloadLevel
+_UnloadLevel:
+	call	_FreeEnemies
+	call	_FreePlatforms
+	jp	_FreePows
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_EndLevel
+_EndLevel:
+	ld	hl, -3
+	call	__frameset
+	ld	iy, 0
+	ld	bc, (_gameFrame)
+	ld	de, (_game_data+5)
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	ld	de, 150
+	or	a, a
+	sbc	hl, de
+	jp	nz, BB16_7
+	lea	de, iy
+	ld	iy, _enemyLog
+	ld	hl, -20
+	ld	(ix - 3), hl
+	ld	hl, _game_data+1
+	inc	(hl)
+	ld	a, (hl)
+	ld	(_game_data+2), bc
+	ld	hl, _game_data+8
+	res	0, (hl)
+	ex	de, hl
+	ld	l, a
+	ld	bc, 40
+	call	__imulu
+	push	hl
+	pop	bc
+	add	iy, bc
+	ld.sis	bc, -1
+	xor	a, a
+BB16_2:
+	ld	hl, (ix - 3)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jp	z, BB16_5
+	ld	de, (ix - 3)
+	lea	hl, iy
+	add	hl, de
+	ld	hl, (hl)
+	or	a, a
+	sbc.sis	hl, bc
+	jr	z, BB16_6
+	inc	a
+	ld	de, 2
+	ld	hl, (ix - 3)
+	add	hl, de
+	ld	(ix - 3), hl
+	jp	BB16_2
+BB16_5:
+	ld	a, 10
+BB16_6:
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld.sis	de, 205
+	ld	iy, _mario1+8
+	ld	hl, -8388608
+	ld	(_levelEnemies+1), a
+	ld	(_mario1), hl
+	ld	a, 65
+	ld	(_mario1+3), a
+	ld	(iy), e
+	ld	(iy + 1), d
+	ld	hl, _mario1+33
+	res	1, (hl)
+	ld	(_mario1+16), bc
+	xor	a, a
+	ld	(_mario1+19), a
+	ld	(_mario1+12), bc
+	ld	(_mario1+15), a
+BB16_7:
+	pop	hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_LoadLevel
+_LoadLevel:
+	ld	hl, -4
+	call	__frameset
+	ld	hl, -20
+	ld	(ix - 3), hl
+	xor	a, a
+	ld	(ix - 4), a
+	call	_DrawBackground
+	call	_InitPipeBackgroundData
+	call	_InitPlatformData
+	ld	hl, 112
+	push	hl
+	ld	hl, -80
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_CreatePlatform
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 112
+	push	hl
+	ld	hl, -80
+	push	hl
+	ld	hl, 208
+	push	hl
+	call	_CreatePlatform
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 48
+	push	hl
+	ld	hl, -128
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_CreatePlatform
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 48
+	push	hl
+	ld	hl, -128
+	push	hl
+	ld	hl, 272
+	push	hl
+	call	_CreatePlatform
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, -112
+	push	hl
+	ld	hl, 120
+	push	hl
+	ld	hl, 88
+	push	hl
+	call	_CreatePlatform
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, -112
+	push	hl
+	ld	hl, 72
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_CreatePlatform
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, -112
+	push	hl
+	ld	hl, 72
+	push	hl
+	ld	hl, 176
+	push	hl
+	call	_CreatePlatform
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_InitPows
+	ld	hl, -80
+	push	hl
+	ld	hl, 152
+	push	hl
+	call	_CreatePow
+	pop	hl
+	pop	hl
+	call	_InitEnemies
+	ld	hl, _mario1
+	push	hl
+	call	_PlayerInit
+	ld	iy, _enemyLog
+	pop	hl
+	ld	a, 72
+	ld	(_hudData), a
+	ld	l, 8
+	ld	a, l
+	ld	(_hudData+1), a
+	ld	a, 56
+	ld	(_hudData+578), a
+	ld	a, l
+	ld	(_hudData+579), a
+	ld	a, 80
+	ld	(_hudData+1028), a
+	ld	a, 15
+	ld	(_hudData+1029), a
+	ld	a, (_game_data+1)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	bc, 40
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld.sis	de, -1
+BB17_1:
+	ld	hl, (ix - 3)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jp	z, BB17_4
+	ld	bc, (ix - 3)
+	lea	hl, iy
+	add	hl, bc
+	ld	hl, (hl)
+	or	a, a
+	sbc.sis	hl, de
+	jr	z, BB17_5
+	ld	a, (ix - 4)
+	inc	a
+	ld	(ix - 4), a
+	ld	bc, 2
+	ld	hl, (ix - 3)
+	add	hl, bc
+	ld	(ix - 3), hl
+	jp	BB17_1
+BB17_4:
+	ld	a, 10
+	ld	e, 1
+	jr	BB17_6
+BB17_5:
+	ld	e, 1
+	ld	a, (ix - 4)
+BB17_6:
+	ld	(_levelEnemies+1), a
+	ld	hl, (_gameFrame)
+	ld	(_game_data+2), hl
+	ld	hl, 2
+	ld	(_currentScreen), hl
+	ld	a, e
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_main
+_main:
+	ld	hl, (-851900)
+	ld	a, (-851897)
+	push	hl
+	call	_srand
+	pop	hl
+	call	_gfx_Begin
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetDraw
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 144
+	push	hl
+	ld	hl, _global_palette
+	push	hl
+	call	_gfx_SetPalette
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 3
+	push	hl
+	call	_gfx_SetTransparentColor
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_FillScreen
+	pop	hl
+BB18_1:
+	call	_kb_Scan
+	ld	hl, (_currentScreen)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _cur_scr_r
+	add	hl, de
+	ld	hl, (hl)
+	call	__indcallhl
+	bit	0, a
+	jr	nz, BB18_1
+	call	_gfx_End
+	or	a, a
+	sbc	hl, hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_InitPipeBackgroundData
+_InitPipeBackgroundData:
+	ld	hl, -3
+	call	__frameset
+	ld	iy, 0
+BB19_1:
+	ld	de, 4888
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jr	z, BB19_3
+	lea	de, iy
+	ld	(ix - 3), iy
+	ld	iy, _pipes
+	add	iy, de
+	ld	de, (iy + 2)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, e
+	ld	de, 0
+	ld	e, (iy + 4)
+	push	de
+	push	hl
+	pea	iy + 10
+	call	_gfx_GetSprite
+	ld	iy, (ix - 3)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, 2444
+	add	iy, de
+	jr	BB19_1
+BB19_3:
+	pop	hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_RedrawPipesWithNewSprite
+_RedrawPipesWithNewSprite:
+	call	__frameset0
+	ld	a, (ix + 9)
+	ld	de, (ix + 12)
+	ld	iy, _pipes
+	or	a, a
+	sbc	hl, hl
+	ld	l, (ix + 6)
+	ld	bc, 2444
+	call	__imulu
+	push	hl
+	pop	bc
+	add	iy, bc
+	set	0, (iy + 1)
+	ld	(iy + 7), de
+	ld	(iy + 5), a
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_InitPlatformData
+_InitPlatformData:
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_malloc
+	pop	de
+	ld	(_levelPlatforms+1), hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_CreatePlatform
+_CreatePlatform:
+	ld	hl, -18
+	call	__frameset
+	ld	hl, (ix + 6)
+	ld	(ix - 12), hl
+	ld	a, (ix + 9)
+	ld	(ix - 9), a
+	ld	l, (ix + 12)
+	ld	(ix - 3), hl
+	ld	iy, _levelPlatforms
+	ld	bc, 21
+	inc	(iy)
+	ld	de, (_levelPlatforms+1)
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy)
+	call	__imulu
+	push	hl
+	push	de
+	call	_realloc
+	push	hl
+	pop	de
+	pop	hl
+	pop	hl
+	ld	(_levelPlatforms+1), de
+	ld	a, (_levelPlatforms)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	dec	hl
+	ld	bc, 21
+	call	__imulu
+	push	hl
+	pop	bc
+	push	de
+	pop	iy
+	add	iy, bc
+	ld	(ix - 6), iy
+	ld	hl, (ix - 12)
+	ld	(iy), l
+	ld	(iy + 1), h
+	ld	(iy + 2), l
+	ld	(iy + 3), h
+	ld	a, (ix - 9)
+	ld	(iy + 4), a
+	ld	(iy + 5), a
+	ld	de, (ix - 3)
+	ld	d, 0
+	ld	(ix - 3), de
+	ld	(iy + 6), e
+	ld	(iy + 7), d
+	or	a, a
+	sbc	hl, hl
+	ld	l, e
+	ld	c, 4
+	call	__ishl
+	ld	de, 2
+	add	hl, de
+	ld	(ix - 18), hl
+	push	hl
+	call	_malloc
+	ld	(ix - 15), hl
+	pop	de
+	push	hl
+	pop	de
+	push	hl
+	pop	bc
+	ld	iy, (ix - 6)
+	ld	(iy + 8), de
+	ld	hl, (ix - 3)
+	push	bc
+	pop	iy
+	ld	(iy), l
+	ld	(iy + 1), 16
+	ld	iy, (ix - 6)
+	ld	(iy + 14), 0
+	res	0, (iy + 15)
+	ld	hl, (ix - 18)
+	push	hl
+	call	_malloc
+	push	hl
+	pop	de
+	pop	hl
+	push	de
+	pop	hl
+	ld	iy, (ix - 6)
+	ld	(iy + 11), hl
+	ld	hl, (ix - 3)
+	push	de
+	pop	iy
+	ld	(iy), l
+	ld	(iy + 1), 16
+	ld	de, (ix - 12)
+	ld	a, d
+	rlc	a
+	sbc	hl, hl
+	ld	h, d
+	ld	l, e
+	ld	(ix - 6), hl
+	ld	de, 0
+	ld	e, (ix - 9)
+	ld	(ix - 9), de
+	push	de
+	push	hl
+	ld	hl, (ix - 15)
+	push	hl
+	call	_gfx_GetSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 3)
+	ld	a, l
+	ld	b, 3
+	call	__bshru
+	ld	bc, 0
+	ld	c, a
+	ld	iy, (ix - 6)
+BB22_1:
+	push	bc
+	pop	hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB22_3
+	ld	hl, (ix - 9)
+	push	hl
+	push	iy
+	ld	hl, _level1_block_data
+	push	hl
+	ld	(ix - 3), bc
+	ld	(ix - 12), iy
+	call	_gfx_Sprite
+	ld	iy, (ix - 12)
+	ld	bc, (ix - 3)
+	pop	hl
+	pop	hl
+	pop	hl
+	dec	bc
+	ld	de, 8
+	add	iy, de
+	jr	BB22_1
+BB22_3:
+	ld	iy, (_levelPlatforms+1)
+	ld	a, (_levelPlatforms)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	dec	hl
+	ld	bc, 21
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	hl, (iy + 11)
+	ld	de, -8
+	ld	iy, (ix - 9)
+	add	iy, de
+	ld	(ix + 6), hl
+	ld	hl, (ix - 6)
+	ld	(ix + 9), hl
+	ld	(ix + 12), iy
+	ld	sp, ix
+	pop	ix
+	jp	_gfx_GetSprite
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_FreePlatforms
+_FreePlatforms:
+	ld	hl, -9
+	call	__frameset
+	ld	iy, 0
+	ld	(ix - 3), iy
+	lea	bc, iy
+BB23_1:
+	ld	a, (_levelPlatforms)
+	lea	de, iy
+	ld	e, a
+	ld	iy, (_levelPlatforms+1)
+	ld	(ix - 6), bc
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jr	nc, BB23_3
+	ld	de, (ix - 3)
+	ld	(ix - 9), de
+	add	iy, de
+	ld	hl, (iy + 8)
+	push	hl
+	call	_free
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	ld	de, (ix - 9)
+	add	iy, de
+	ld	hl, (iy + 11)
+	push	hl
+	call	_free
+	ld	bc, 0
+	push	bc
+	pop	iy
+	pop	hl
+	ld	bc, (ix - 6)
+	inc	bc
+	ld	de, 21
+	ld	hl, (ix - 3)
+	add	hl, de
+	ld	(ix - 3), hl
+	jr	BB23_1
+BB23_3:
+	push	iy
+	call	_free
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_BumpPlatform
+_BumpPlatform:
+	ld	hl, -32
+	call	__frameset
+	ld	iy, (_levelPlatforms+1)
+	or	a, a
+	sbc	hl, hl
+	ld	l, (ix + 9)
+	ld	bc, 21
+	ld	(ix - 12), hl
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	(iy + 14), 1
+	ld	hl, (ix + 12)
+	ld	(iy + 18), hl
+	ld	bc, (iy)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	ld	(ix - 6), iy
+	ld	bc, (iy + 6)
+	or	a, a
+	sbc	hl, hl
+	ld	l, c
+	ld	h, b
+	add	hl, de
+	push	hl
+	pop	iy
+	add	iy, iy
+	push	hl
+	pop	bc
+	sbc	hl, hl
+	ld	(ix - 3), bc
+	ld	a, l
+	call	__ltof
+	ld	iy, (ix + 6)
+	lea	hl, iy
+	ld	hl, (hl)
+	ld	d, (iy + 3)
+	push	hl
+	pop	iy
+	ld	e, d
+	call	__fsub
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, 0
+	ld	a, 65
+	call	__fcmp
+	jp	m, BB24_2
+	ld	e, 0
+	jr	BB24_3
+BB24_2:
+	ld	e, 1
+BB24_3:
+	ld.sis	bc, -8
+	ld	hl, (ix - 3)
+	add.sis	hl, bc
+	lea	bc, iy
+	ld	a, d
+	call	__ftol
+	bit	0, e
+	jr	nz, BB24_5
+	ld	l, c
+	ld	h, b
+BB24_5:
+	ld	de, 35
+	ld	(ix - 3), de
+	ld	iy, (ix - 6)
+	ld	(iy + 16), l
+	ld	(iy + 17), h
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	iy
+	ld	bc, 0
+	push	bc
+	pop	de
+BB24_6:
+	ld	a, (_levelEnemies)
+	ld	e, a
+	lea	bc, iy
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jp	nc, BB24_36
+	ld	(ix - 6), bc
+	ld	iy, (_levelEnemies+2)
+	ld	de, (ix - 3)
+	ld	(ix - 9), iy
+	add	iy, de
+	bit	0, (iy - 34)
+	jp	z, BB24_34
+	ld	de, (ix - 3)
+	ld	iy, (ix - 9)
+	add	iy, de
+	ld	bc, (iy - 28)
+	ld	a, (iy - 25)
+	ld	(ix - 27), bc
+	ld	(ix - 28), a
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 15), bc
+	ld	(ix - 18), a
+	ld	iy, (ix + 6)
+	ld	bc, (iy)
+	ld	d, (iy + 3)
+	push	bc
+	pop	iy
+	ld	a, d
+	or	a, a
+	sbc	hl, hl
+	ld	e, -63
+	call	__fadd
+	ld	(ix - 21), bc
+	ld	(ix - 24), a
+	ld	(ix - 31), iy
+	lea	bc, iy
+	ld	(ix - 32), d
+	ld	a, d
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	push	bc
+	pop	iy
+	ld	d, a
+	ld	hl, (ix - 21)
+	ld	e, (ix - 24)
+	ld	bc, (ix - 15)
+	ld	a, (ix - 18)
+	call	__fcmp
+	jp	p, BB24_34
+	ld	hl, (ix - 27)
+	ld	e, (ix - 28)
+	lea	bc, iy
+	ld	a, d
+	call	__fcmp
+	jp	p, BB24_34
+	ld	de, (ix - 3)
+	ld	iy, (ix - 9)
+	add	iy, de
+	ld	bc, (iy - 20)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	(ix - 15), hl
+	ld	bc, 16
+	add	hl, bc
+	ld	(ix - 9), hl
+	ld	iy, (_levelPlatforms+1)
+	ld	hl, (ix - 12)
+	ld	bc, 21
+	call	__imulu
+	push	hl
+	pop	bc
+	add	iy, bc
+	lea	hl, iy
+	ld	bc, 0
+	push	bc
+	pop	iy
+	lea	de, iy
+	push	hl
+	pop	iy
+	ld	e, (iy + 4)
+	push	de
+	pop	iy
+	lea	hl, iy
+	ld	de, -8
+	add	hl, de
+	ld	de, 8
+	add	iy, de
+	ld	de, (ix - 9)
+	or	a, a
+	sbc	hl, de
+	call	pe, __setflag
+	jp	p, BB24_34
+	lea	bc, iy
+	ld	hl, (ix - 15)
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB24_34
+	ld	iy, (ix + 6)
+	ld	iy, (iy + 8)
+	ld	a, iyh
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	c, iyl
+	ld	hl, (ix - 15)
+	or	a, a
+	sbc	hl, bc
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	iy
+	ld	d, a
+	ld	bc, (ix - 27)
+	ld	a, (ix - 28)
+	ld	hl, (ix - 31)
+	ld	e, (ix - 32)
+	call	__fsub
+	push	bc
+	pop	hl
+	ld	e, a
+	lea	bc, iy
+	ld	a, d
+	call	__fdiv
+	ld	l, a
+	push	hl
+	push	bc
+	call	_atan
+	push	hl
+	pop	bc
+	ld	a, e
+	pop	hl
+	pop	hl
+	ld	hl, 6631142
+	ld	e, 66
+	call	__fmul
+	ld	(ix - 18), bc
+	ld	(ix - 15), a
+	ld	iy, (_levelEnemies+2)
+	ld	de, (ix - 3)
+	ld	(ix - 9), iy
+	add	iy, de
+	ld	l, (iy - 32)
+	ld	a, (iy - 31)
+	cp	a, 2
+	jr	nz, BB24_16
+	ld	a, l
+	cp	a, 1
+	jp	nz, BB24_23
+	ld	de, (ix - 3)
+	ld	iy, (ix - 9)
+	add	iy, de
+	ld	l, (iy - 33)
+	ld	a, l
+	and	a, 1
+	bit	0, a
+	ld	bc, -6946816
+	jp	z, BB24_24
+	ld	a, l
+	and	a, -2
+	ld	(iy - 33), a
+	ld	hl, (_levelEnemies+2)
+	ld	(ix - 9), hl
+	jp	BB24_24
+BB24_16:
+	ld	a, l
+	cp	a, 1
+	jr	nz, BB24_19
+	ld	de, (ix - 3)
+	ld	hl, (ix - 9)
+	add	hl, de
+	push	hl
+	pop	de
+	lea	bc, iy
+	push	hl
+	pop	iy
+	ld	l, (iy - 33)
+	push	bc
+	pop	iy
+	ld	a, l
+	and	a, 1
+	bit	0, a
+	jr	nz, BB24_19
+	ld	a, l
+	or	a, 1
+	push	de
+	pop	iy
+	ld	(iy - 33), a
+	jr	BB24_20
+BB24_19:
+	ld	(iy - 31), 2
+	ld	de, (ix - 3)
+	ld	iy, (ix - 9)
+	add	iy, de
+	ld	(iy - 2), 0
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	hl, (iy + 39)
+	ld	de, 10
+	add	hl, de
+	ld	(iy + 39), hl
+BB24_20:
+	ld	bc, -7602176
+	ld	d, (ix - 15)
+	ld	iy, (ix - 18)
+	lea	hl, iy
+	ld	e, d
+	ld	a, -62
+	call	__fcmp
+	jp	m, BB24_22
+	push	bc
+	pop	hl
+	ld	e, 66
+	lea	bc, iy
+	ld	a, d
+	call	__fcmp
+	jp	p, BB24_27
+BB24_22:
+	ld	hl, (_levelEnemies+2)
+	ld	(ix - 9), hl
+	ld	bc, (ix - 3)
+	push	bc
+	pop	de
+	add	hl, de
+	ex	de, hl
+	or	a, a
+	sbc	hl, hl
+	push	de
+	pop	iy
+	ld	(iy - 10), hl
+	ld	(iy - 7), h
+	ld	iy, (ix - 9)
+	push	bc
+	pop	hl
+	jp	BB24_33
+BB24_23:
+	ld	bc, -6946816
+BB24_24:
+	ld	de, (ix - 3)
+	ld	iy, (ix - 9)
+	add	iy, de
+	ld	(iy - 34), 0
+	ld	(iy - 31), 0
+	ld	hl, 2097152
+	ld	(iy - 6), hl
+	ld	(iy - 3), 64
+	ld	(iy - 2), -4
+	ld	iy, (ix - 18)
+	lea	hl, iy
+	ld	d, (ix - 15)
+	ld	e, d
+	ld	a, -62
+	call	__fcmp
+	jp	m, BB24_26
+	push	bc
+	pop	hl
+	ld	e, 66
+	lea	bc, iy
+	ld	a, d
+	call	__fcmp
+	jp	p, BB24_29
+BB24_26:
+	ld	de, (ix - 3)
+	ld	iy, (ix - 9)
+	add	iy, de
+	or	a, a
+	sbc	hl, hl
+	ld	(iy - 10), hl
+	ld	(iy - 7), h
+	jp	BB24_34
+BB24_27:
+	ld	hl, (_levelEnemies+2)
+	ld	bc, (ix - 3)
+	push	bc
+	pop	de
+	ld	(ix - 9), hl
+	add	hl, de
+	ld	(ix - 21), hl
+	ld	iy, (ix - 21)
+	ld	hl, (iy - 10)
+	ld	iy, (ix - 21)
+	ld	e, (iy - 7)
+	push	de
+	push	hl
+	call	_fabsf
+	ld	iy, (ix - 21)
+	ld	(ix - 24), hl
+	ld	d, e
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	ld	e, h
+	ld	bc, (ix - 18)
+	ld	a, (ix - 15)
+	call	__fcmp
+	ld	bc, (ix - 24)
+	ld	hl, (ix - 3)
+	jp	p, BB24_31
+	ld	a, d
+	call	__fneg
+	ld	(iy - 10), bc
+	ld	(iy - 7), a
+	jr	BB24_32
+BB24_29:
+	ld	a, d
+	ld	de, (ix - 3)
+	lea	bc, iy
+	ld	iy, (ix - 9)
+	add	iy, de
+	ld	hl, (iy)
+	ld	(ix - 21), hl
+	ld	d, (iy + 3)
+	or	a, a
+	sbc	hl, hl
+	ld	e, h
+	call	__fcmp
+	ld	hl, (ix - 3)
+	ld	iy, (ix - 9)
+	jp	p, BB24_35
+	ld	bc, (ix - 21)
+	ld	a, d
+	call	__fneg
+	ex	de, hl
+	add	iy, de
+	ld	(iy - 10), bc
+	ld	(iy - 7), a
+	ld	(iy - 35), 1
+	jr	BB24_34
+BB24_31:
+	ld	(iy - 10), bc
+	ld	(iy - 7), d
+BB24_32:
+	ld	iy, (ix - 9)
+BB24_33:
+	ld	(ix - 3), hl
+	ex	de, hl
+	add	iy, de
+	ld	hl, 2097152
+	ld	(iy - 6), hl
+	ld	(iy - 3), 64
+	ld	hl, (ix + 12)
+	ld	(iy - 13), hl
+	ld	(iy - 34), 0
+	ld	(iy - 30), 3
+BB24_34:
+	ld	iy, (ix - 6)
+	inc	iy
+	ld	de, 297
+	ld	hl, (ix - 3)
+	add	hl, de
+	ld	(ix - 3), hl
+	ld	de, 0
+	jp	BB24_6
+BB24_35:
+	push	hl
+	pop	bc
+	add	iy, bc
+	ld	hl, (ix - 21)
+	ld	(iy - 10), hl
+	ld	(iy - 7), d
+	ld	(iy - 35), 0
+	jr	BB24_34
+BB24_36:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_PlayerInit
+_PlayerInit:
+	call	__frameset0
+	ld	iy, (ix + 6)
+	lea	hl, iy + 4
+	ld	(iy + 4), 0
+	push	hl
+	pop	de
+	inc	de
+	ld	bc, 407
+	ldir
+	ld	(iy + 42), 16
+	ld	(iy + 43), 23
+	ld.sis	hl, 205
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	ld	hl, -8388608
+	ld	(iy), hl
+	ld	(iy + 3), 65
+	ld	(iy + 30), 4
+	ld	(iy + 29), 2
+	ld	hl, -4194304
+	ld	(iy + 24), hl
+	ld	(iy + 27), 63
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_PlayerMove
+_PlayerMove:
+	ld	hl, -10
+	call	__frameset
+	ld	a, (ix + 9)
+	cp	a, 5
+	jp	nc, BB26_30
+	ld	iy, (ix + 6)
+	ld	e, 62
+	ld	bc, 0
+	ld	c, a
+	ld	hl, JTI26_0
+	add	hl, bc
+	add	hl, bc
+	add	hl, bc
+	ld	hl, (hl)
+	jp	(hl)
+BB26_2:
+	ld	iy, (ix + 6)
+	lea	de, iy + 16
+	ld	iy, (ix + 6)
+	ld	hl, (iy + 16)
+	ld	(ix - 3), hl
+	push	de
+	pop	iy
+	lea	hl, iy + 3
+	ld	iy, (ix + 6)
+	ld	e, (hl)
+	ld	bc, (iy + 24)
+	ld	a, (iy + 27)
+	ld	hl, (ix - 3)
+	ld	(ix - 6), e
+	ld	(ix - 10), bc
+	ld	(ix - 7), a
+	call	__fcmp
+	jp	m, BB26_17
+	ld	d, 0
+	jp	BB26_18
+BB26_4:
+	ld	iy, (ix + 6)
+	lea	de, iy + 16
+	ld	iy, (ix + 6)
+	ld	hl, (iy + 16)
+	ld	(ix - 6), hl
+	push	de
+	pop	iy
+	lea	hl, iy + 3
+	ld	iy, (ix + 6)
+	ld	d, (hl)
+	ld	bc, (iy + 24)
+	ld	a, (iy + 27)
+	call	__fneg
+	ld	(ix - 10), bc
+	push	bc
+	pop	hl
+	ld	(ix - 7), a
+	ld	e, a
+	ld	bc, (ix - 6)
+	push	bc
+	pop	iy
+	ld	(ix - 3), d
+	ld	a, d
+	call	__fcmp
+	jp	m, BB26_23
+	ld	d, 0
+	jp	BB26_24
+BB26_6:
+	bit	0, (iy + 32)
+	jp	z, BB26_30
+	ld	a, (iy + 29)
+	cp	a, 3
+	jp	z, BB26_30
+	ld	hl, -7340032
+	ld	(iy + 12), hl
+	ld	(iy + 15), 64
+	ld	(iy + 32), h
+	ld	(iy + 28), 4
+	ld	(iy + 20), hl
+	ld	(iy + 23), 64
+	jp	BB26_30
+BB26_9:
+	ld	hl, (iy + 16)
+	ld	d, (iy + 19)
+	push	hl
+	pop	iy
+	ld	a, e
+	ld	e, d
+	ld	bc, 5033165
+	call	__fcmp
+	jp	p, BB26_12
+	ld	hl, 5033165
+	ld	e, -66
+	lea	bc, iy
+	ld	a, d
+	call	__fcmp
+	jp	p, BB26_12
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 16), hl
+	ld	(iy + 19), h
+	jp	BB26_30
+BB26_12:
+	or	a, a
+	sbc	hl, hl
+	ld	e, h
+	lea	bc, iy
+	ld	(ix - 3), d
+	ld	a, d
+	call	__fcmp
+	jp	p, BB26_14
+	lea	hl, iy
+	ld	iy, (ix + 6)
+	bit	0, (iy + 32)
+	push	hl
+	pop	iy
+	jp	nz, BB26_31
+BB26_14:
+	ld	(ix - 6), iy
+	lea	hl, iy
+	ld	e, (ix - 3)
+	ld	bc, 0
+	xor	a, a
+	call	__fcmp
+	ld	hl, 5033165
+	ld	iy, (ix + 6)
+	ld	e, 62
+	jp	p, BB26_30
+	bit	0, (iy + 32)
+	jr	z, BB26_30
+	ld	bc, (ix - 6)
+	ld	a, (ix - 3)
+	call	__fadd
+	jr	BB26_32
+BB26_17:
+	ld	d, 1
+BB26_18:
+	ld	hl, 5033165
+	ld	bc, (ix - 3)
+	ld	a, (ix - 6)
+	ld	e, 62
+	call	__fadd
+	bit	0, d
+	jr	nz, BB26_20
+	ld	bc, (ix - 10)
+BB26_20:
+	bit	0, d
+	jr	nz, BB26_22
+	ld	a, (ix - 7)
+BB26_22:
+	ld	(iy + 16), bc
+	ld	(iy + 19), a
+	ld	a, (iy + 33)
+	and	a, -4
+	inc	a
+	jr	BB26_29
+BB26_23:
+	ld	d, 1
+BB26_24:
+	ld	hl, 5033165
+	ld	e, -66
+	lea	bc, iy
+	ld	a, (ix - 3)
+	call	__fadd
+	bit	0, d
+	jr	nz, BB26_26
+	ld	bc, (ix - 10)
+BB26_26:
+	bit	0, d
+	jr	nz, BB26_28
+	ld	a, (ix - 7)
+BB26_28:
+	ld	iy, (ix + 6)
+	ld	(iy + 16), bc
+	ld	(iy + 19), a
+	ld	a, (iy + 33)
+	or	a, 3
+BB26_29:
+	ld	(iy + 33), a
+BB26_30:
+	ld	sp, ix
+	pop	ix
+	ret
+BB26_31:
+	lea	bc, iy
+	ld	a, (ix - 3)
+	ld	hl, 5033165
+	ld	e, -66
+	call	__fadd
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+BB26_32:
+	ld	(iy + 16), bc
+	ld	(iy + 19), a
+	jr	BB26_30
+	section	.text,"ax",@progbits
+	section	.rodata,"a",@progbits
+	private	JTI26_0
+JTI26_0:
+	dl	BB26_2
+	dl	BB26_4
+	dl	BB26_6
+	dl	BB26_30
+	dl	BB26_9
+
+	section	.text,"ax",@progbits
+	public	_UpdatePlayer
+_UpdatePlayer:
+	ld	hl, -69
+	call	__frameset
+	ld	iy, (ix + 6)
+	ld	de, 5033165
+	ld	a, (iy + 29)
+	cp	a, 2
+	lea	bc, iy + 12
+	jr	nz, BB27_4
+	ld	iy, (ix + 6)
+	ld	hl, (iy + 12)
+	push	bc
+	pop	iy
+	lea	iy, iy + 3
+	push	hl
+	pop	bc
+	ld	a, (iy)
+	ex	de, hl
+	ld	e, -66
+	call	__fadd
+	ld	iy, (ix + 6)
+	ld	(iy + 12), bc
+	ld	(iy + 15), a
+	lea	hl, iy + 20
+	ld	bc, (iy + 20)
+	push	hl
+	pop	iy
+	lea	hl, iy + 3
+	ld	a, (hl)
+	ld	hl, 5033165
+	call	__fadd
+	ld	iy, (ix + 6)
+	ld	(iy + 20), bc
+	ld	(iy + 23), a
+BB27_2:
+	ld	a, -63
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	hl, (iy)
+	ld	d, (iy + 3)
+	ld	(ix - 3), hl
+	ld	e, d
+	ld	iy, -8388608
+	lea	bc, iy
+	call	__fcmp
+	jp	p, BB27_7
+	ld	a, 67
+	ld	iy, (ix + 6)
+	ld	bc, -6291456
+	jr	BB27_8
+BB27_4:
+	cp	a, 3
+	jp	nz, BB27_63
+	ld	(ix - 6), bc
+	ld	iy, (ix + 6)
+	ld	bc, (iy + 36)
+	ld	hl, (ix + 9)
+	or	a, a
+	sbc	hl, bc
+	push	hl
+	pop	bc
+	ld	de, 10
+	or	a, a
+	sbc	hl, de
+	ld	(ix - 3), bc
+	jp	nz, BB27_44
+	ld	hl, 4194304
+	ld	de, (ix + 6)
+	push	de
+	pop	iy
+	ld	(iy + 12), hl
+	ld	(iy + 15), 64
+	jp	BB27_46
+BB27_7:
+	ld	hl, -6291456
+	ld	e, 67
+	ld	bc, (ix - 3)
+	ld	(ix - 6), d
+	ld	a, d
+	call	__fcmp
+	lea	bc, iy
+	ld	iy, (ix + 6)
+	ld	hl, (ix - 3)
+	ld	a, -63
+	jp	p, BB27_9
+BB27_8:
+	ld	(iy), bc
+	ld	(iy + 3), a
+	push	bc
+	pop	hl
+	ld	(ix - 6), a
+BB27_9:
+	ld	(ix - 3), hl
+	ld	a, (iy + 32)
+	ld	(ix - 12), a
+	bit	0, a
+	jp	z, BB27_12
+	ld	bc, (ix - 3)
+	ld	a, (ix - 6)
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	ld	hl, (iy + 16)
+	ld	e, (iy + 19)
+	ld	(ix - 21), hl
+	ld	(ix - 24), e
+	call	__fadd
+	ld	(ix - 9), bc
+	ld	(ix - 15), a
+	ld	de, (_levelPlatforms+1)
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy + 31)
+	ld	bc, 21
+	ld	(ix - 27), hl
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	(ix - 18), de
+	ex	de, hl
+	add	hl, bc
+	ld	de, (hl)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	(ix - 30), de
+	ld	c, e
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix + 6)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, (ix - 9)
+	ld	a, (ix - 15)
+	call	__fcmp
+	jp	p, BB27_12
+	ld	de, (ix - 30)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, e
+	ld	(ix - 15), hl
+	ld	bc, (ix - 3)
+	ld	a, (ix - 6)
+	ld	hl, (ix - 21)
+	ld	e, (ix - 24)
+	call	__fadd
+	ld	(ix - 21), bc
+	ld	(ix - 9), a
+	ld	bc, 21
+	ld	hl, (ix - 27)
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, (ix - 18)
+	add	iy, bc
+	ld	de, (iy + 6)
+	ld	bc, 0
+	push	bc
+	pop	hl
+	ld	l, e
+	ld	h, d
+	ld	bc, (ix - 15)
+	add	hl, bc
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix + 6)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 21)
+	ld	e, (ix - 9)
+	call	__fcmp
+	jp	m, BB27_14
+BB27_12:
+	ld	de, (iy + 8)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	(ix - 15), de
+	ld	c, e
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix + 6)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (iy + 12)
+	ld	d, (iy + 15)
+	ld	(ix - 21), hl
+	ld	e, d
+	call	__fsub
+	ld	hl, 5046272
+	ld	e, 67
+	ld	(ix - 9), a
+	call	__fcmp
+	jp	p, BB27_15
+	ld.sis	hl, 205
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+BB27_14:
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+	ld	(iy + 20), hl
+	ld	(iy + 23), h
+	ld	(iy + 32), 1
+	jp	BB27_55
+BB27_15:
+	ld	(ix - 46), d
+	ld	a, (_levelPlatforms)
+	ld	(ix - 18), a
+	ld	de, (ix - 15)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	iy
+	ld	iyh, a
+	ld	iyl, e
+	ld	(ix - 39), bc
+	ld	a, (ix - 9)
+	ld	hl, -6815744
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 24), bc
+	ld	(ix - 27), a
+	ld	hl, (_levelPlatforms+1)
+	ld	(ix - 15), hl
+	ld	(ix - 52), iy
+	ld	bc, 19
+	add	iy, bc
+	ld	(ix - 49), iy
+	ld	iy, 0
+	push	af
+	ld	a, (ix - 18)
+	ld	iyl, a
+	pop	af
+	ld	bc, (ix - 3)
+	ld	d, (ix - 6)
+	ld	a, d
+	ld	hl, -8388608
+	call	__fadd
+	ld	(ix - 42), bc
+	lea	hl, iy
+	ld	(ix - 43), a
+	ld	iy, (ix - 15)
+	lea	iy, iy + 6
+	xor	a, a
+BB27_16:
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jp	z, BB27_26
+	ld	(ix - 30), hl
+	ld	(ix - 15), a
+	ld	a, (iy - 2)
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	(ix - 53), a
+	ld	c, a
+	ld	(ix - 36), bc
+	ld	a, h
+	call	__ultof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, (ix - 24)
+	ld	a, (ix - 27)
+	call	__fcmp
+	jp	p, BB27_25
+	ld	hl, (ix - 36)
+	ld	bc, 8
+	add	hl, bc
+	ld	(ix - 56), hl
+	push	hl
+	pop	bc
+	ld	(ix - 33), iy
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix - 33)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 39)
+	ld	e, (ix - 9)
+	call	__fcmp
+	jp	p, BB27_25
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	hl, (iy + 16)
+	ld	e, (iy + 19)
+	ld	bc, (ix - 42)
+	ld	a, (ix - 43)
+	ld	(ix - 65), hl
+	ld	(ix - 66), e
+	call	__fadd
+	ld	(ix - 59), bc
+	ld	(ix - 62), a
+	ld	iy, (ix - 33)
+	ld	(ix - 6), d
+	ld	de, (iy - 6)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	(ix - 69), de
+	ld	c, e
+	ld	d, (ix - 6)
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix - 33)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, (ix - 59)
+	ld	a, (ix - 62)
+	call	__fcmp
+	jp	p, BB27_25
+	ld	de, (ix - 69)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	ld	h, a
+	ld	l, e
+	ld	(ix - 62), hl
+	ld	d, (ix - 6)
+	ld	bc, (ix - 3)
+	ld	a, d
+	ld	hl, (ix - 65)
+	ld	e, (ix - 66)
+	call	__fadd
+	ld	(ix - 59), bc
+	ld	e, a
+	ld	iy, (iy)
+	ld	bc, 0
+	push	bc
+	pop	hl
+	ex	de, hl
+	ld	e, iyl
+	ld	d, iyh
+	ex	de, hl
+	ld	bc, (ix - 62)
+	add	hl, bc
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix - 33)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 59)
+	call	__fcmp
+	jp	p, BB27_25
+	ld	hl, (ix - 21)
+	ld	e, (ix - 46)
+	ld	bc, 0
+	xor	a, a
+	call	__fcmp
+	jp	p, BB27_23
+	ld	hl, (ix - 36)
+	ld	bc, (ix - 49)
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB27_51
+BB27_23:
+	or	a, a
+	sbc	hl, hl
+	ld	e, h
+	ld	bc, (ix - 21)
+	ld	a, (ix - 46)
+	call	__fcmp
+	jp	p, BB27_25
+	ld	hl, (ix - 52)
+	ld	bc, (ix - 56)
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB27_52
+BB27_25:
+	ld	a, (ix - 15)
+	inc	a
+	lea	iy, iy + 21
+	ld	hl, (ix - 30)
+	dec	hl
+	jp	BB27_16
+BB27_26:
+	ld	l, (ix - 12)
+	ld	e, (ix - 18)
+	ld	a, e
+	ld	iy, (ix + 6)
+BB27_27:
+	bit	0, l
+	jr	z, BB27_30
+	cp	a, e
+	jr	nz, BB27_30
+	ld	(iy + 32), 0
+	jr	BB27_31
+BB27_30:
+	bit	0, l
+	jp	nz, BB27_55
+BB27_31:
+	ld	a, (_levelPows+3)
+	ld	iy, (_levelPows)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	lea	de, iy + 3
+	ld	(ix - 3), de
+	xor	a, a
+	ld	c, a
+BB27_32:
+	ld	(ix - 6), hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jp	z, BB27_43
+	ld	hl, (ix - 3)
+	ld	a, (hl)
+	cp	a, 3
+	jp	z, BB27_42
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	(ix - 12), hl
+	ld	iy, (ix + 6)
+	ld	de, (iy + 8)
+	ld	iyl, d
+	ld	a, iyl
+	rlc	a
+	sbc	hl, hl
+	ld	(ix - 27), hl
+	ld	a, iyl
+	rlc	a
+	sbc	hl, hl
+	ld	(ix - 9), bc
+	push	hl
+	pop	bc
+	push	af
+	ld	a, iyl
+	ld	(ix - 39), a
+	pop	af
+	ld	b, iyl
+	ld	(ix - 36), de
+	ld	c, e
+	push	bc
+	pop	hl
+	ld	de, (ix - 3)
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	iy, (ix + 6)
+	ld	hl, (iy + 12)
+	ld	e, (iy + 15)
+	ld	(ix - 30), hl
+	ld	(ix - 33), e
+	call	__fsub
+	ld	(ix - 21), bc
+	ld	(ix - 24), a
+	ld	hl, -6815744
+	ld	e, 65
+	call	__fadd
+	ld	(ix - 15), bc
+	ld	(ix - 18), a
+	ld	iy, (ix - 3)
+	ld	a, (iy - 1)
+	ld	(ix - 43), a
+	ld	de, 0
+	ld	e, a
+	ld	hl, (ix - 12)
+	ld	c, 1
+	call	__ishl
+	ld	(ix - 12), de
+	push	de
+	pop	bc
+	add	hl, bc
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(ix - 42), bc
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, (ix - 15)
+	ld	a, (ix - 18)
+	call	__fcmp
+	ld	bc, (ix - 9)
+	jp	p, BB27_42
+	ld	bc, 16
+	ld	hl, (ix - 12)
+	add	hl, bc
+	ld	(ix - 12), hl
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 21)
+	ld	e, (ix - 24)
+	call	__fcmp
+	ld	bc, (ix - 9)
+	jp	p, BB27_42
+	ld	iy, (ix + 6)
+	ld	bc, (iy)
+	ld	a, (iy + 3)
+	ld	(ix - 46), bc
+	ld	(ix - 49), a
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
+	ld	hl, (iy + 16)
+	ld	e, (iy + 19)
+	ld	(ix - 21), hl
+	ld	(ix - 24), e
+	call	__fadd
+	ld	(ix - 15), bc
+	ld	(ix - 18), a
+	ld	iy, (ix - 3)
+	ld	de, (iy - 3)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	(ix - 52), de
+	ld	c, e
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, (ix - 15)
+	ld	a, (ix - 18)
+	call	__fcmp
+	ld	bc, (ix - 9)
+	jp	p, BB27_42
+	ld	de, (ix - 52)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	iy
+	ld	iyh, a
+	ld	iyl, e
+	ld	bc, (ix - 46)
+	ld	a, (ix - 49)
+	ld	hl, (ix - 21)
+	ld	e, (ix - 24)
+	call	__fadd
+	push	bc
+	pop	de
+	ld	(ix - 15), a
+	ld	bc, 16
+	add	iy, bc
+	lea	hl, iy
+	lea	bc, iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ex	de, hl
+	ld	e, (ix - 15)
+	call	__fcmp
+	ld	bc, (ix - 9)
+	jp	p, BB27_42
+	ld	iy, (ix - 27)
+	push	af
+	ld	a, (ix - 39)
+	ld	iyh, a
+	pop	af
+	ld	hl, (ix - 36)
+	ex	de, hl
+	ld	iyl, e
+	ex	de, hl
+	ld	(ix - 27), iy
+	ld	bc, 19
+	add	iy, bc
+	ld	hl, (ix - 30)
+	ld	e, (ix - 33)
+	ld	bc, 0
+	xor	a, a
+	call	__fcmp
+	jp	p, BB27_40
+	lea	de, iy
+	ld	hl, (ix - 42)
+	or	a, a
+	sbc	hl, de
+	call	pe, __setflag
+	jp	p, BB27_53
+BB27_40:
+	or	a, a
+	sbc	hl, hl
+	ld	e, h
+	ld	bc, (ix - 30)
+	ld	a, (ix - 33)
+	call	__fcmp
+	ld	bc, (ix - 9)
+	jp	p, BB27_42
+	ld	hl, (ix - 27)
+	ld	bc, (ix - 12)
+	or	a, a
+	sbc	hl, bc
+	ld	bc, (ix - 9)
+	call	pe, __setflag
+	jp	p, BB27_54
+BB27_42:
+	inc	c
+	push	bc
+	pop	de
+	ld	bc, 262
+	ld	hl, (ix - 3)
+	add	hl, bc
+	ld	(ix - 3), hl
+	push	de
+	pop	bc
+	ld	hl, (ix - 6)
+	dec	hl
+	jp	BB27_32
+BB27_43:
+	ld	iy, (ix + 6)
+	ld	d, 4
+	jp	BB27_60
+BB27_44:
+	ld	de, 11
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jr	c, BB27_46
+	ld	iy, (ix + 6)
+	ld	bc, (iy + 12)
+	ld	iy, (ix - 6)
+	lea	hl, iy + 3
+	ld	a, (hl)
+	ld	hl, 5033165
+	ld	e, -66
+	call	__fadd
+	ld	iy, (ix + 6)
+	ld	(iy + 12), bc
+	ld	(iy + 15), a
+BB27_46:
+	or	a, a
+	sbc	hl, hl
+	ld	de, (ix + 6)
+	push	de
+	pop	iy
+	ld	(iy + 16), hl
+	ld	(iy + 19), h
+	ld	hl, (iy + 8)
+	ld.sis	de, 241
+	sbc.sis	hl, de
+	call	pe, __setflag
+	jp	m, BB27_63
+	ld	de, 151
+	ld	hl, (ix - 3)
+	or	a, a
+	sbc	hl, de
+	jp	c, BB27_63
+	ld	iy, (ix + 6)
+	ld	a, (iy + 30)
+	or	a, a
+	jr	nz, BB27_50
+	ld	hl, _.str.125
+	ld	de, 100
+	push	de
+	push	de
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	ld	iy, (ix + 6)
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+	ld	a, (iy + 29)
+	cp	a, 2
+	jp	z, BB27_2
+	jp	BB27_63
+BB27_50:
+	ld	(iy + 29), 2
+	ld.sis	hl, 205
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	ld	hl, -8388608
+	push	hl
+	pop	bc
+	ld	d, 65
+	ld	a, d
+	jp	BB27_8
+BB27_51:
+	ld	h, 0
+	ld	l, (ix - 53)
+	ld.sis	de, -19
+	add.sis	hl, de
+	ld	iy, (ix + 6)
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+	ld	(iy + 20), hl
+	ld	(iy + 23), h
+	ld	a, (ix - 15)
+	ld	(iy + 31), a
+	ld	(iy + 32), 1
+	inc	l
+	ld	e, (ix - 18)
+	jp	BB27_27
+BB27_52:
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	hl, (ix - 56)
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+	ld	hl, (ix + 9)
+	push	hl
+	ld	l, (ix - 15)
+	push	hl
+	push	iy
+	call	_BumpPlatform
+	ld	iy, (ix + 6)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	l, (iy + 32)
+	ld	a, (_levelPlatforms)
+	ld	e, a
+	ld	a, (ix - 15)
+	jp	BB27_27
+BB27_53:
+	ld.sis	de, -19
+	ld	hl, (ix - 42)
+	add.sis	hl, de
+	ld	iy, (ix + 6)
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	ld	bc, 0
+	ld	(iy + 12), bc
+	ld	(iy + 15), b
+	ld	(iy + 20), bc
+	ld	(iy + 23), b
+	ld	(iy + 32), 1
+	ld	hl, (ix - 21)
+	ld	e, (ix - 24)
+	jr	BB27_56
+BB27_54:
+	ld	h, 0
+	ld	l, (ix - 43)
+	ld.sis	de, 8
+	add.sis	hl, de
+	ld	de, (ix + 6)
+	push	de
+	pop	iy
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+	ld	(iy + 20), hl
+	ld	(iy + 23), h
+	ld	hl, (ix + 9)
+	push	hl
+	push	bc
+	push	iy
+	call	_BumpPow
+	ld	d, 4
+	ld	iy, (ix + 6)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	a, (iy + 32)
+	or	a, a
+	jr	z, BB27_60
+BB27_55:
+	ld	hl, (iy + 16)
+	ld	e, (iy + 19)
+	ld	bc, 0
+BB27_56:
+	xor	a, a
+	call	__fcmp
+	ld	d, a
+	jr	z, BB27_60
+	ld	bc, 5
+	ld	de, (ix + 9)
+	push	de
+	pop	hl
+	call	__idivs
+	push	hl
+	pop	iy
+	ld	bc, -5
+	call	__imulu
+	push	hl
+	pop	bc
+	ex	de, hl
+	call	__ineg
+	push	hl
+	pop	de
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jr	nz, BB27_61
+	ld	bc, 3
+	lea	hl, iy
+	call	__irems
+	push	hl
+	pop	de
+	or	a, a
+	sbc	hl, bc
+	jr	nc, BB27_61
+	ld	a, 2
+	sub	a, e
+	ld	d, a
+	ld	iy, (ix + 6)
+BB27_60:
+	ld	(iy + 28), d
+BB27_61:
+	ld	iy, (ix + 6)
+	ld	bc, (iy + 20)
+	ld	hl, (iy + 12)
+	ld	e, (iy + 15)
+	ld	a, (iy + 23)
+	call	__fcmp
+	jp	p, BB27_63
+	or	a, a
+	sbc	hl, hl
+	ld	de, (ix + 6)
+	push	de
+	pop	iy
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+BB27_63:
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	hl, (iy + 12)
+	ld	(ix - 3), hl
+	ld	a, (iy + 15)
+	ld	(ix - 6), a
+	ld	de, (iy + 8)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	c, e
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 3)
+	ld	e, (ix - 6)
+	call	__fsub
+	call	__ftol
+	ld	iy, (ix + 6)
+	ld	(iy + 8), c
+	ld	(iy + 9), b
+	ld	bc, (iy + 16)
+	ld	hl, (iy)
+	lea	de, iy + 3
+	ld	a, (iy + 19)
+	push	de
+	pop	iy
+	ld	e, (iy)
+	call	__fadd
+	ld	iy, (ix + 6)
+	ld	(iy), bc
+	ld	(iy + 3), a
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_KillPlayer
+_KillPlayer:
+	call	__frameset0
+	ld	iy, (ix + 6)
+	ld	hl, (ix + 9)
+	ld	bc, 0
+	ld.sis	de, -4
+	ld	(iy + 29), 3
+	ld	(iy + 12), bc
+	ld	(iy + 15), b
+	res	1, (iy + 33)
+	ld	(iy + 28), 5
+	ld	(iy + 36), hl
+	ld	hl, (iy + 8)
+	add.sis	hl, de
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	dec	(iy + 30)
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_PlayerAddScore
+_PlayerAddScore:
+	call	__frameset0
+	ld	iy, (ix + 6)
+	ld	hl, (ix + 9)
+	ld	de, 0
+	ld	e, l
+	ld	d, h
+	ld	hl, (iy + 39)
+	add	hl, de
+	ld	(iy + 39), hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_InitPows
+_InitPows:
+	xor	a, a
+	sbc	hl, hl
+	ld	(_levelPows+3), a
+	push	hl
+	call	_malloc
+	pop	de
+	ld	(_levelPows), hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_CreatePow
+_CreatePow:
+	call	__frameset0
+	ld	iy, _levelPows+3
+	ld	bc, 262
+	inc	(iy)
+	ld	de, (_levelPows)
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy)
+	call	__imulu
+	push	hl
+	push	de
+	call	_realloc
+	push	hl
+	pop	iy
+	pop	hl
+	pop	hl
+	ld	(_levelPows), iy
+	ld	a, (_levelPows+3)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	dec	hl
+	ld	bc, 262
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	hl, (ix + 6)
+	ld	(iy), l
+	ld	(iy + 1), h
+	ld	a, (ix + 9)
+	ld	(iy + 2), a
+	ld	(iy + 3), 0
+	ld	(iy + 4), 16
+	ld	(iy + 5), 16
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_FreePows
+_FreePows:
+	ld	hl, (_levelPows)
+	push	hl
+	call	_free
+	pop	hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_BumpPow
+_BumpPow:
+	ld	hl, -12
+	call	__frameset
+	ld	hl, 22
+	ld	(ix - 3), hl
+	ld	iy, (_levelPows)
+	or	a, a
+	sbc	hl, hl
+	ld	l, (ix + 9)
+	ld	bc, 262
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	inc	(iy + 3)
+	ld	bc, 0
+	ld	de, 0
+BB33_1:
+	ld	a, (_levelEnemies)
+	ld	c, a
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jp	nc, BB33_16
+	ld	iy, (_levelEnemies+2)
+	ld	hl, (ix - 3)
+	push	hl
+	pop	bc
+	ld	(ix - 9), de
+	ld	(ix - 6), iy
+	add	iy, bc
+	bit	0, (iy - 21)
+	ld	de, (ix - 9)
+	jp	z, BB33_15
+	push	hl
+	pop	bc
+	ld	(ix - 3), hl
+	ld	iy, (ix - 6)
+	add	iy, bc
+	lea	hl, iy
+	ld	a, (iy - 18)
+	cp	a, 2
+	jr	nz, BB33_8
+	ld	hl, (ix - 3)
+	push	hl
+	pop	bc
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	a, (iy - 19)
+	cp	a, 1
+	jr	nz, BB33_7
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	l, (iy - 20)
+	ld	a, l
+	and	a, 1
+	bit	0, a
+	jr	z, BB33_7
+	ld	a, l
+	and	a, -2
+	ld	(iy - 20), a
+	ld	hl, (_levelEnemies+2)
+	ld	(ix - 6), hl
+BB33_7:
+	ld	de, (ix - 3)
+	push	de
+	pop	bc
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	(iy - 21), 0
+	ld	(iy - 18), 0
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 7), hl
+	ld	(iy + 10), 64
+	ld	(iy + 11), -4
+	ld	(iy + 3), hl
+	ex	de, hl
+	ld	(iy + 6), 0
+	jp	BB33_14
+BB33_8:
+	ld	(ix - 12), hl
+	cp	a, 4
+	ld	hl, (ix - 3)
+	jr	z, BB33_15
+	push	hl
+	pop	bc
+	ld	de, (ix - 6)
+	push	de
+	pop	iy
+	add	iy, bc
+	ld	a, (iy - 19)
+	cp	a, 1
+	ex	de, hl
+	push	bc
+	pop	de
+	jr	nz, BB33_12
+	push	de
+	pop	bc
+	push	hl
+	pop	iy
+	add	iy, bc
+	ld	c, (iy - 20)
+	ld	a, c
+	and	a, 1
+	bit	0, a
+	jr	nz, BB33_12
+	ld	a, c
+	or	a, 1
+	ld	(iy - 20), a
+	ld	iy, (_levelEnemies+2)
+	jr	BB33_13
+BB33_12:
+	ld	iy, (ix - 12)
+	ld	(iy - 18), 2
+	push	de
+	pop	bc
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	(iy + 11), 0
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	hl, (iy + 39)
+	ld	bc, 10
+	add	hl, bc
+	ld	(iy + 39), hl
+	ld	iy, (ix - 6)
+BB33_13:
+	push	de
+	pop	bc
+	add	iy, bc
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 3), hl
+	ld	(iy + 6), h
+	ld	(iy + 7), hl
+	ld	(iy + 10), 64
+	ld	hl, (ix + 12)
+	ld	(iy), hl
+	ld	(iy - 21), 0
+	ld	(iy - 17), 3
+	ex	de, hl
+BB33_14:
+	ld	de, (ix - 9)
+BB33_15:
+	inc	de
+	ld	bc, 297
+	add	hl, bc
+	ld	(ix - 3), hl
+	ld	bc, 0
+	jp	BB33_1
+BB33_16:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_RunScreen
+_RunScreen:
+	ld	iy, _cur_scr_r
+	ld	hl, (_currentScreen)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	add	iy, de
+	ld	hl, (iy)
+	jp	(hl)
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_ChangeScreen
+_ChangeScreen:
+	call	__frameset0
+	or	a, a
+	sbc	hl, hl
+	ld	l, (ix + 6)
+	ld	(_currentScreen), hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_LoadTitle
+_LoadTitle:
+	ld	hl, -3
+	call	__frameset
+	ld	hl, 2
+	push	hl
+	call	_gfx_FillScreen
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 72
+	push	hl
+	ld	hl, -56
+	push	hl
+	call	_gfx_AllocSprite
+	push	hl
+	pop	iy
+	ld	(ix - 3), iy
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, _mario_title_card_compressed
+	push	hl
+	pea	iy + 2
+	call	_zx7_Decompress
+	pop	hl
+	pop	hl
+	ld	hl, 80
+	push	hl
+	ld	hl, 10
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_Sprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_free
+	pop	hl
+	call	_gfx_SwapDraw
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_Blit
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	ld	(_currentScreen), hl
+	ld	a, 1
+	pop	hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_RunTitle
+_RunTitle:
+	ld	hl, -3
+	call	__frameset
+	ld	iy, -720868
+	ld.sis	bc, 1
+	ld.sis	de, 64
+	ld	l, (iy)
+	ld	h, (iy + 1)
+	call	__sand
+	bit	0, l
+	jr	z, BB37_2
+	ld	hl, 3
+	ld	(_currentScreen), hl
+BB37_2:
+	ld	l, (iy)
+	ld	h, (iy + 1)
+	ld	c, e
+	ld	b, d
+	call	__sand
+	ld	(ix - 3), hl
+	ld	a, l
+	or	a, a
+	call	z, _gfx_SwapDraw
+	ld	hl, (ix - 3)
+	ld	a, l
+	or	a, a
+	jr	z, BB37_4
+	ld	a, 0
+	jr	BB37_5
+BB37_4:
+	ld	a, -1
+BB37_5:
+	pop	hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.data,"aw",@progbits
+	public	_mario_sprites
+_mario_sprites:
+	dl	_stand_right_data
+	dl	_walk1_right_data
+	dl	_walk2_right_data
+	dl	_walk3_right_data
+	dl	_jump_right_data
+	dl	_dead_data
+	dl	_stand_left_data
+	dl	_walk1_left_data
+	dl	_walk2_left_data
+	dl	_walk3_left_data
+	dl	_jump_left_data
+	dl	_dead_data
+
+	section	.data,"aw",@progbits
+	public	_platform_bump_sprites
+_platform_bump_sprites:
+	dl	_level1_block_bump1_data
+	dl	_level1_block_bump2_data
+	dl	_level1_block_bump3_data
+
+	section	.data,"aw",@progbits
+	public	_enemy_sprites
+_enemy_sprites:
+	dl	_spike_walk1_right_data
+	dl	_spike_walk2_right_data
+	dl	_spike_walk3_right_data
+	dl	_spike_upsidedown1_right_data
+	dl	0
+	dl	0
+	dl	0
+	dl	_spike_walk1_left_data
+	dl	_spike_walk2_left_data
+	dl	_spike_walk3_left_data
+	dl	_spike_upsidedown1_left_data
+	dl	0
+	dl	0
+	dl	0
+	dl	_crab_walk1_right_data
+	dl	_crab_walk2_right_data
+	dl	_crab_walk3_right_data
+	dl	_crab_upsidedown1_right_data
+	dl	_crab_walk1_mad_right_data
+	dl	_crab_walk2_mad_right_data
+	dl	_crab_walk3_mad_right_data
+	dl	_crab_walk1_left_data
+	dl	_crab_walk2_left_data
+	dl	_crab_walk3_left_data
+	dl	_crab_upsidedown1_left_data
+	dl	_crab_walk1_mad_left_data
+	dl	_crab_walk2_mad_left_data
+	dl	_crab_walk3_mad_left_data
+
+	section	.data,"aw",@progbits
+	public	_pow_sprites
+_pow_sprites:
+	dl	_pow_full_data
+	dl	_pow_medium_data
+	dl	_pow_low_data
+
+	section	.data,"aw",@progbits
+	public	_pipe_sprites
+_pipe_sprites:
+	dl	_pipe_stationary_right_data
+	dl	_pipe_stationary_left_data
+
+	section	.data,"aw",@progbits
+	public	_platform_bump_sprite_sheet
+_platform_bump_sprite_sheet:
+	db	0, ""
+
+	section	.data,"aw",@progbits
+	public	_bg_pipes_bottom_left_compressed
+_bg_pipes_bottom_left_compressed:
+	db	"`	", 0, "", 10, 10, "	", 0, "Ñ", 0, "	R", 0, "O	\ğ_,""~à", 0, "ƒ~", 0, "~", 0, "6n>h", 0, 10, "ÿ~", 0, "å~p$ÒĞBP~	‚é", 0, "£~çRŸ", 0, "~û ~	ŠnB–", 0, "‚ë", 0, "~¥È|‰", 10, "~«	Šnãç", 0, "Aw", 0, "~QC­˜qW", 0, "üÅ	qnóÀ", 0, "†~ƒ˜~/", 0, "~5ábü‚¡ü~0û=Ü~Á~‚øüB?+~ÏZ+øñ~©ø=}ğ~", 13, "9ó~ ~ª~!", 0, "»~ÛÙüâ", 0, "¡nI`J~ºË¾P›ò…ÎúàVsğØa~", 13, "á‹", 0, "Æ~h¸•–a[~o‡³~Â~A:", 0, "	ê5ç®\", 26, "h_ï A~î8ç­ï¡d~	5óP E~B", 0, "È~kğ`ş~8úá$~?~gúøÃãüÚ~	~œµx}öÀƒş~¢~°	…ÚÀø~uøg°iù", 10, "#", 0, "c~8", 0, "~~v°¸~¶À~", 13, "iîû~‹", 0, "~=‘Ã=ï7", 0, "6~œ£+øp", 0, 13, ",~}òÁùúÁ4'	~", 0, "›,øfÔCP'¯ÎÁú~¢‡ı§	", 10, "|ÎŸú°ü", 0, "lW,(	ŒÎùà%j~‹Îøù~", 0, "Âƒ~ŒÎø", 26, "÷<úáx9ãú!÷ ñ  H~9ò¸<šÈ~", 0, "'÷’Ï", 0, "<", 0, "æú	—", 0, "”ø'", 0, "@Í~6t±ú¸", 0, "¹~®t~i", 0, "`~ú8¡~ø", 0, 13, "Ô~	¨", 0, "P", 0, "ˆ", 0, "í", 0, "	", 0, "½ ", 0, "? ", 0, "?rñ", 0, "'¯ï ", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_bg_pipes_bottom_right_compressed
+_bg_pipes_bottom_right_compressed:
+	db	"""	Ä", 0, "", 10, "<", 0, "q", 0, "z/", 0, "	‚", 0, "	U<M6£ ", 0, "…M", 0, 10, "ƒú?‚", 0, "	f,­W", 0, "gM8æÃ÷'’ĞCü'TE\%", 0, "ÜWQåÆÏ*	c", 0, "!*~‚”Æ", 0, "BPX‚ø", 0, "à ÿaóÿƒaÿ€¡ãZØ6® şVÿ=	8¸\0U„Ê¬ÿDİÆÙ-¸Ô2T", 13, "_01Xi»À…EÃÇ", 13, "Â", 0, "1Q", 0, "ğc", 0, "4ÿ	ÿ8àŸÿ%ëÿ¬§ 2½ÿhR~¸aÿ„±&ÿ¸&", 0, "šÿš¨U´ J†6ÿQÿ†n¶Ä	ƒÿEÿÔ¹œÿ<†Ğ/ÏÁ~oL", 0, "<2ÿ²C•»áş¸òÃ\ÁqşÄ|¸ĞÚ±Ã‚è¿¸šÿé¾", 0, "àzº7¸æ†jÿá(/½	£àş", 0, "òÿo—»Ñ8£", 0, "îÿ„€FVÿ6íàp'", 0, "—§ gÿiÎ­âş°tÿ€ˆy	ª8ÿàqÿhøÚÿd†Nÿ>ôÿ€Y`ÿ‘", 10, "÷çrÿGìçÿçÚ", 10, "ç", 0, "„8$ÿqÿÀá"".à", 0, "rEœ–", 10, "ğù®ÿ.À1µÿÏ.©¤\", 0, "HÈ", 0, "ºÿ>", 0, "õÿ€[ ¨¯àö", 0, ">ç¦¢?çæ¦;ç¦şƒÿçù h…ÿ˜?¯h d~", 0, "@ü", 0, "€ş", 0, "@/È", 0, "	ù", 0, "ı", 0, "ÿÿ?ıÿ", 0, 0, "€"
+
+	section	.data,"aw",@progbits
+	public	_bg_pipes_top_left_compressed
+_bg_pipes_top_left_compressed:
+	db	"€~", 0, "Ü", 0, "åü", 0, "í2÷R", 0, 10, 10, "iàf~", 0, "§p", 0, "–m~i	|", 0, "~óx ", 10, "e", 0, "û~iš~tx	", 13, "~¹úÀÍ", 0, "aò)m	cş<", 13, "Š~", 0, "‹~@Ï", 0, "øı@Bï~~;öÀ0p~©ù…~Ôº*~K†ñ¸	Zá	@°÷Ò¡~	…", 0, "j	.¡~", 0, "~Áıê~", 0, "ª~‚=~", 0, "À~¸úpØüÚ~~m4~d", 0, " ~B~‰Ş)""U;9yG†–øX?ú;~”Ï$Uˆ9€ ~à1C~x		Ã~5", 0, "yEûÁ%û÷Gœúw~", 0, "~éùp7XïGy`ƒ", 10, "^~	µğ-", 0, """Eà", 0, "«Ç ˜¶!Wˆ°NE5À £Ç£f~ÇèJ7z÷¹&Où4ğíÊÅÅ", 0, "ò~", 0, "ÔËT{ LŞÒno~", 10, ">Æ3~–Ë¢ĞÜ~í®qm¾Æ~ËÇÑ3ÜL2%_9êñ", 0, "u~Ï", 0, "~ÅñÇú4N¬øüÅ~ÛŞI9gÔ<ğ", 0, "(ğ~", 13, "-Ü~ÍC¨~¹~Ş§È~mønË§", 26, "ç", 0, "§xù~Ÿîò", 10, "Ó~	Â~[ø1£À¡~'ÇM}q+ë©4", 0, "¦£ƒX~¶£‹7’[—~!>", 0, "WŸA¬~3óVõvÜ\?~Ü", 0, "~>úpqñ—~", 13, "Œü±ıï~5q~ÿ§(~!~§š~á5ø¸1øXø", 0, "g§àh~…~§~àD~‹", 0, "…á~", 0, "Ÿzˆ?~†~§~’œ `ø[„¯òy’ø~?ğØ>~†>îÂ–ô~ıÇ÷~", 13, "4Á.ùúÆó7", 0, "tÇ@", 0, "«~ËPı", 0, " ~	O~æÇè ", 0, "ø~1ù~", 10, "úÇà~Dú4	OÇCğ", 0, ")'~	Çè)~¬cú·%~ğØÎÇ‚ ı¸ş·‚ø~íÈ‚øí1¦ç§èg· ", 0, "p}m~?§Gô·Ç~ôÇD~t§lÕ~¾#	úÇe", 0, "~œêãú·", 10, "ø~", 0, "şÇ‚ˆ~?øXù", 0, "!y[ò\ğ+O~", 0, "Ï~ğ°+Ç~¼Æ", 10, "ÿî<sÆÃ~sòp¾‰F=ÆFOÍ~%Ô~[ÆÂğ~", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_bg_pipes_top_right_compressed
+_bg_pipes_top_right_compressed:
+	db	"‚", 0, "	l	", 0, "", 0, "", 10, " ", 10, "q", 0, "€WC", 0, "Æ", 0, "ròÿ€Úÿ‚", 10, "1", 0, 10, "4", 13, "ë", 0, "", 0, "L", 10, "‚", 0, "È8", 0, "OywKM,Léy	¥¢ÿ8", 26, "]", 10, "FŒñ±J!", 0, "ŠAÜ", 0, "\Dáÿü¼ÿT€o", 0, "Â@¤ÿú	*", 0, "3ÿŠ", 0, "àrO", 0, "|Àòÿ3@Üÿp?", 0, "ëÿJ	¬2	%´\", 26, "Å„ÿÇ«-", 0, "*Íçÿ*~6á~", 0, "Âÿ´	ĞÕÇÕ‘/", 0, "T„0WA?", 13, "p", 0, "%B—wÿÂ3ÁÿB7~%ÿÜL\", 0, "ã—", 13, " Ò;g%ÿî@*ÿYã×ÿ.‡b€:giûnôXÄ	", 26, "CÇşgsvÔ:.ÿ{>ƒhÉgc¢ê9Õ", 0, "ÿ%ÇËg¡cÿ…{~5ƒ8ùg¡Uÿ‹§^p‰¾-zˆÙàıÿ¡ø?ÿØ~>ïÿşáTqF â", 0, "6ç˜", 26, "¡måùèÿğ", 0, "4ÿÄ·q~", 0, "", 26, "ÿÏ", 0, "*Y2àj¥~	L“ü·	Çÿ", 13, "Ü}&èn", 0, "Õî“È", 26, "ê}ãm N—8£", 0, "àg+¬ş`z\$", 10, "/ÿ—he¥@œÿqœ", 0, "3V	E", 10, "†º", 0, "!¸7P9Ãû‡<", 0, "ğ,$ÿù	", 0, "<W^Œ±€:ÛËM<bÿAşmäS@ÙZyÇÒd	t9Œğ Eó", 0, "H@Òÿ9 ¦ÿæ€ĞÿØö—‡ã", 0, 10, "”8æ—‡ç~¹b•á—‡®", 0, "4¯ ûÿ£Ú—Ø", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_crab_upsidedown1_left_data
+_crab_upsidedown1_left_data:
+	db	"", 0, "5555", 0, "55335533..33...55555...	553333355", 10, "3333333.	..3333.55.......55555.....55355", 0, "5355333;333", 0, "33;3333;;33", 0, "3;;3DDDD;..", 0, ".;.DDD;..", 0, ".;;;;;.;;;;"
+
+	section	.data,"aw",@progbits
+	public	_crab_upsidedown1_right_data
+_crab_upsidedown1_right_data:
+	db	"555555335533..33...55555...	553333355", 10, ".33333335.	3333..555.......5", 0, "55355.....55", 0, "333;3335535", 0, "33;;3333;33..;DDDD3;;3..;DDD.;.;;;;;.;;;;."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk1_left_data
+_crab_walk1_left_data:
+	db	"5", 0, "5;", 0, "5;DD;55", 0, "5;;DDD;55", 0, "3;;5DDD;;55", 0, 10, "33;5.DDD5;5;5", 0, ".33.;DD;35;33..33....5.55555...5555;5;5555553333333355353.33333.35", 0, "3.", 10, "3.....3555", 0, "55.....55", 0, "353", 0, ".."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk1_mad_left_data
+_crab_walk1_mad_left_data:
+	db	"53;;3", 0, "5;3;;3", 0, "5;D33D;55", 0, "5;;D5D;55", 0, "5;;5DDD;;55", 0, "35;53DDDD5;;3", 0, ".33.3335;53..55555.33.533;3;33..553.....3555	5.DDD.5.5	5DDDDD5535DDDDD335.533.."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk1_mad_right_data
+_crab_walk1_mad_right_data:
+	db	"3;;353;;3;555;D33D;555;D5D;;5", 0, "55;;DDD5;;5", 0, "3;;5DDDD35;53", 0, "35;5333.33.", 0, ".33.55555....33;3;3355553.....3555.	5.DDD.55	5DDDDD533DDDDD535.533.."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk1_right_data
+_crab_walk1_right_data:
+	db	"5;555;DD;555;DDD;;5", 0, "55;;DDD5;;3", 0, "5;5;5", 10, "DDD.5;33", 0, "33;53;DD;.33.", 0, "....33.....55555.555555;5;55555533333333553.33333.353", 10, "5553.....3.355.....55353.."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk2_left_data
+_crab_walk2_left_data:
+	db	"DD;55DDD;5555;DDD;;5555;DDD5;;5", 0, "55;;;DD;35;33", 0, "535;333....", 0, "33;3333..", 0, "..5.55555.5..", 10, "55;5;55555", 10, "553333333553.33333.355.3.....5.55	55.....55555555333..."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk2_mad_left_data
+_crab_walk2_mad_left_data:
+	db	";553;;3;5555;3;;3;;5555;D33D5;;3", 0, "35;;D5D35;33", 0, 10, "355;5DDD.33.", 0, "33533DD..", 0, ".33.555555", 10, "..533;3;3355	333333333", 13, "3553.....3555", 0, "3.	5.DDD.5.5", 0, "53DDDDD55", 0, "3333", 0, ".	."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk2_mad_right_data
+_crab_walk2_mad_right_data:
+	db	"55;55;3;;3", 0, "55;;3;;3;55", 0, "3;;5D33D;55", 0, "33;53D5D;;53", 0, ".33.", 10, "DDD5;553..DD33533555555.33.55", 10, "33;3;335..	333333333", 13, "5553.....35535.	5.DDD.5.355DDDDD353333.	."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk2_right_data
+_crab_walk2_right_data:
+	db	"55;DD55;DDD", 0, "55;;DDD;55", 0, "5;;5DDD;55", 0, "33;53;DD;;;55", 0, "....333;535..3333;335.55555.5..", 10, "55555;5;55..", 10, "533333335553.33333.355.5.....3.55	55.....55555553335..."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk3_left_data
+_crab_walk3_left_data:
+	db	"", 13, ";555;	;355;DD;3", 0, "55;;DDD;;5", 0, 10, "333;3DDD3;;3", 0, 10, "33;33DDD33;33", 0, "....;DD;.....33..5.55555.555555;5;55555553333333553.33333.35355535....33.355.....35333.."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk3_mad_left_data
+_crab_walk3_mad_left_data:
+	db	"3;;35555;3;;3;555;D33D;5", 0, "55;;D5D;;5", 0, 10, "355;5DDD5;;5", 0, "33553DDDD35;33", 0, "..3.33.3....55555..", 10, "533;3;335555333....33", 0, "35	5.DDD.5", 0, "5	5DDDDD5", 0, "33DDDDD355.533.."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk3_mad_right_data
+_crab_walk3_mad_right_data:
+	db	"553;;3", 0, "5;3;;3;55", 0, "5;D33D;55", 0, "5;;D5D;;55", 0, "5;;5", 10, "DDD5;553", 0, "33;53DDDD35533.3.33.3....55555...", 10, "5533;3;33533....33355	5.DDD.553	5DDDDD5553DDDDD335.533.."
+
+	section	.data,"aw",@progbits
+	public	_crab_walk3_right_data
+_crab_walk3_right_data:
+	db	"5;", 13, 0, "3;	;55", 0, "3;DD;55", 0, "5;;DDD;;55", 0, "3;;3", 10, "DDD3;333", 0, "33;33", 10, "DDD33;33...;DD;......33..55.55555.55555;5;555553333333555353.33333.353.33....5355553.....55333.."
+
+	section	.data,"aw",@progbits
+	public	_dead_data
+_dead_data:
+	db	"??****", 0, "?**7AA7**?", 10, "*7117*", 10, "*11**11*9DD9", 10, "D99D99D>>D99", 0, "DD>9>>9>DD", 0, "AA>>>>AA", 0, "9>>77>>9*7199779917***1991**", 10, 13, 13, "", 13, "", 13, "", 13, 13, "", 13, "", 13, "D", 13, "11", 13, "D", 13, "", 13, "", 13, "", 13, "", 13, "", 13, "88#", 13, 13, 13, 13, "###"
+
+	section	.data,"aw",@progbits
+	public	_jump_left_data
+_jump_left_data:
+	db	"****###*7A77*", 0, "#DD##*18117*", 0, 13, "D117*", 0, "8AD>D917*", 13, "D>D91*71>D9>919>>>>>>>>9", 13, "1>>9>>>99*1>9***9A11**", 13, "11", 13, "DD11**", 13, "", 13, 13, "DDDA***", 13, "DADDA***A8", 13, "AA1", 13, 13, "#8#", 13, "####", 13, 13, 13, 13, "", 13, "#8", 13, 13, 13, "8A", 13, ""
+
+	section	.data,"aw",@progbits
+	public	_jump_right_data
+_jump_right_data:
+	db	"*****77A7*###*71181*##DD#", 13, "*711D*719D>DA8", 13, "*19D>D9>9D>179>>>>>>>>91", 13, "99>>>9>>19>1**11A9*****11DD", 13, "11", 13, "****ADDD", 13, 13, "", 13, "", 13, "***ADDAD", 13, 13, "1AA", 13, "8A", 0, "##", 13, "#8#", 0, "8#", 13, "", 13, 13, 13, 13, "##", 0, "A8", 13, 13, 13, "", 13
+
+	section	.data,"aw",@progbits
+	public	_level1_block_bump1_data
+_level1_block_bump1_data:
+	db	"%%%%D%DDDD%DDDD%%D%%%%%%D%D%%%%%DDDDD%%DDDD%DDD%%DDD%D%%D%%%%%%"
+
+	section	.data,"aw",@progbits
+	public	_level1_block_bump2_data
+_level1_block_bump2_data:
+	db	"%%%%D%DDDD%%DDDDD%%D%%%%%%D%%D%%%DD%%DD%%%DDDD%%DDDD%DD%%DD%D%%%%"
+
+	section	.data,"aw",@progbits
+	public	_level1_block_bump3_data
+_level1_block_bump3_data:
+	db	"%%%%D%DDDD%%%DDDDD%%%D%D%%D%%D%%D%%DD%%DD%%DD%D%DD%%DDD%DDD%%%%%%"
+
+	section	.data,"aw",@progbits
+	public	_level1_ground_data
+_level1_ground_data:
+	db	"EEE&&&&EEE&&&&&&E&&&&&&E&&&&&&&&&&&&&&&&&&&&&&EEE&&&&EEE&&&&&&E&&&&&&E&&&&&&&&&&&&&&EEE&&&&EEE&&&&&&E&&&&&&E&&&&&&&&&&&&&&&&&&&&&&EEE&&&&EEE&&&&&&E&&&&&&E&&&&&&&&&&&&&&"
+
+	section	.data,"aw",@progbits
+	public	_pipe_stationary_left_data
+_pipe_stationary_left_data:
+	db	"@&::(#(((-", 26, "&((((-('''''''((((((((((((((((((((((---=)''0022200''(((((((((((((((((((((---=*'00'''0'''00'--------------------(====+'0'''''''0'-------------------(====,'0'(-'0'-('0'==================(====,'0'(=-'0'-=('0'==================(====-'0'---'0'---'0'(=================-CCC=-'0''0'0''0'CCCCCCCCCCCCCCCCC(-CCC=-'2'''''0'C'0'''''2'CCCCCCCCCCCCCCCCC(-CCC=.'20'000'C2C'000'02'=================-CCC=.'2'''''0'C'0'''''2'=================(====.'0''0'0''0'=================(====.'0'---'0'---'0'(-----------------(====.'0'(=-'0'-=('0'------------------(====", 0, "@'0'(-'0'-('0'((((((((((((((((((---=", 0, "@(('0'''''''0'(((((((((((((((((((---=", 0, "@(((((((((((((((((((((('00'''0'''00'(((-", 0, "@(((((((((((((((((((((--''0022200''(((-", 0, "&-----------------------='''''''((", 0, "&----------------------====((-((", 0, "&==========================CCC===--((", 26, 0, "&==========================CC====--((", 26, 0, "&========================CCCC===--((", 26, 0, "%CCCCCCCCCCCCCCCCCCCCCCCCCCC====--((", 0, "%CCCCCCCCCCCCCCCCCCCCCCCCC=====---((", 0, "%=============================---((", 0, "$============================----((", 0, "$==========================-----((", 0, "#-----------------------------(((", 0, """--------------------------(((((", 0, "!(((((((((((((((((((((((((((((", 0, " (((((((((((((((((((((((((( ", 0, """", 0, "%"
+
+	section	.data,"aw",@progbits
+	public	_pipe_stationary_right_data
+_pipe_stationary_right_data:
+	db	"@&", 0, ":", 0, "(:", 0, "#-(((", 0, "&-((((", 26, 0, "(=---(((((((((((((((((((((('''''''", 0, ")=---(((((((((((((((((((((''0022200''", 0, "*====(--------------------'00'''0'''00'", 0, "+====(-------------------'0'''''''0'", 0, ",====(=================='0'(-'0'-('0'", 0, ",====(=================='0'(=-'0'-=('0'", 0, "-=CCC-=================('0'---'0'---'0'", 0, "-=CCC-(CCCCCCCCCCCCCCCCC'0''0'0''0'", 0, "-=CCC-(CCCCCCCCCCCCCCCCC'2'''''0'C'0'''''2'", 0, ".=CCC-================='20'000'C2C'000'02'", 0, ".====(================='2'''''0'C'0'''''2'", 0, ".====(================='0''0'0''0'", 0, ".====(-----------------('0'---'0'---'0'", 0, ".====(------------------'0'(=-'0'-=('0'", 0, "@=---(((((((((((((((((('0'(-'0'-('0'", 0, "@=---((((((((((((((((((('0'''''''0'((", 0, "@-((('00'''0'''00'((((((((((((((((((((((", 0, "@-(((''0022200''--(((((((((((((((((((((", 0, "(&('''''''=-----------------------", 0, "&((-((====----------------------", 26, "&((--===CCC==========================", 26, "&((--====CC==========================", 26, "&((--===CCCC========================%((--====CCCCCCCCCCCCCCCCCCCCCCCCCCC%((---=====CCCCCCCCCCCCCCCCCCCCCCCCC%((---=============================$((----============================$((-----==========================#(((-----------------------------""(((((--------------------------!(((((((((((((((((((((((((((((  ((((((((((((((((((((((((((""%"
+
+	section	.data,"aw",@progbits
+	public	_pow_full_data
+_pow_full_data:
+	db	"", 26, 26, 26, 26, 26, 26, "", 0, "", 26, "  ))DD))  ", 26, "", 0, "", 0, "DDDDDDDDD", 0, "DDDDDDDDDDDD", 0, "DDDDDDDD", 0, "DDDDDDDD", 0, "DDDDDDDD", 0, "DDDDDDDDDDD", 0, "DDDDDDDDDDD", 0, "DDDDDD", 0, "", 0, "", 26, "  ))DD))  ", 26, "", 26, 26, 26, 26, 26, 26, ""
+
+	section	.data,"aw",@progbits
+	public	_pow_low_data
+_pow_low_data:
+	db	"", 0, "", 26, "  ))DD))  ", 26, "", 0, "", 0, "DDDDDDDDDDD", 0, "DDDDDDDD", 0, "", 0, "", 26, "  ))DD))  ", 26, ""
+
+	section	.data,"aw",@progbits
+	public	_pow_medium_data
+_pow_medium_data:
+	db	"", 26, 26, 26, "      ", 26, 26, 26, "", 0, "", 26, "  )))DD)))  ", 26, "", 0, "", 0, "DDDDDDDDDDD", 0, "DDDDDDDD", 0, "DDDDDDDDDDD", 0, "DDDDDDDD", 0, "", 0, "", 26, "  )))DD)))  ", 26, "", 26, 26, 26, "      ", 26, 26, 26, ""
+
+	section	.data,"aw",@progbits
+	public	_spike_upsidedown1_left_data
+_spike_upsidedown1_left_data:
+	db	"", 13, "<::BBBB:::8<:BBD//DBB:8BD//////DBBB::BD///B//////", 0, "BBD/44DDB/////", 0, "DDD/444DDD/////6BB444D44/BBBBB64444DBB", 13, "DDDB66B66DDDBDD66DBB66DBDDDBDDDBDDD"
+
+	section	.data,"aw",@progbits
+	public	_spike_upsidedown1_right_data
+_spike_upsidedown1_right_data:
+	db	"", 13, "::BBBB::<BBD//DBB:<8:", 0, "BBBD//////DB8://////B///DB:://///BDD44/DBB/////DDD444/DDDBB/44D444BB6BBD44446BBB", 13, "BDDD66B66BDDDBD66BBD66DD", 0, "DBDDDBDDDDD"
+
+	section	.data,"aw",@progbits
+	public	_spike_walk1_left_data
+_spike_walk1_left_data:
+	db	"DDDDDBDDDBDDD66DBB66DB", 13, "DDDB66B66DDDBBBB64444DBB6BB444D44/BB", 0, "DDD/444DDD/////", 0, "BBD/44DDB/////::BD///B//////:8BD//////DBBB:8<:BBD//DBB", 13, "<::BBBB::"
+
+	section	.data,"aw",@progbits
+	public	_spike_walk1_right_data
+_spike_walk1_right_data:
+	db	"DDDBDD", 0, "DBDDDBD66BBD66DD", 13, "BDDD66B66BDDDBBD44446BBBBB/44D444BB6/////DDD444/DDD/////BDD44/DBB//////B///DB::", 0, "BBBD//////DB8:BBD//DBB:<8:", 13, "::BBBB::<"
+
+	section	.data,"aw",@progbits
+	public	_spike_walk2_left_data
+_spike_walk2_left_data:
+	db	"DDDDDBDDDBDDD66DBB66DB", 13, "DDDB66B66DDDBBBB64444DBB6BB444D44/BB", 0, "DDD/444DDD/////", 0, "BBD/44DDB/////::BD///B//////:8BD//////DBBB:8<:BBD//DBB<<:BBBB:<<<:"
+
+	section	.data,"aw",@progbits
+	public	_spike_walk2_right_data
+_spike_walk2_right_data:
+	db	"DDDBDD", 0, "DBDDDBD66BBD66DD", 13, "BDDD66B66BDDDBBD44446BBBBB/44D444BB6/////DDD444/DDD/////BDD44/DBB//////B///DB::", 0, "BBBD//////DB8:BBD//DBB:<8::BBBB:<<:<<<"
+
+	section	.data,"aw",@progbits
+	public	_spike_walk3_left_data
+_spike_walk3_left_data:
+	db	"DDDDDBDDDBDDD66DBB66DB", 13, "DDDB66B66DDDBBBB64444DBB6BB444D44/BB", 0, "DDD/444DDD/////", 0, "BBD/44DDB/////::BD///B//////:8BD//////DBBB:88:BBD//DBB<::BBBB:::<<:"
+
+	section	.data,"aw",@progbits
+	public	_spike_walk3_right_data
+_spike_walk3_right_data:
+	db	"DDDBDD", 0, "DBDDDBD66BBD66DD", 13, "BDDD66B66BDDDBBD44446BBBBB/44D444BB6/////DDD444/DDD/////BDD44/DBB//////B///DB::", 0, "BBBD//////DB8:", 0, "BBD//DBB:88:", 0, ":::BBBB::<:<<"
+
+	section	.data,"aw",@progbits
+	public	_stand_left_data
+_stand_left_data:
+	db	"*****8A77**77117*117*D>D917*	>D91*>D9>9", 13, "9>>>>>>>>9>>9>>>99", 10, ">9	DA11*", 10, 13, "DDAA77*", 13, "AA111*", 10, 13, "D11**	", 13, "", 13, "", 13, "", 13, "###", 13, "A8##"
+
+	section	.data,"aw",@progbits
+	public	_stand_right_data
+_stand_right_data:
+	db	"*****77A8**71177**711*719D>D	*19D>9>9D>", 13, "9>>>>>>>>999>>>9>>", 10, "9>	*11AD", 10, "*77AADD", 13, "*111AA", 13, "", 10, "**11D", 13, "	", 13, "", 13, "", 13, "", 13, "", 13, "#####8A"
+
+	section	.data,"aw",@progbits
+	public	_walk1_left_data
+_walk1_left_data:
+	db	"*****8A77**77117*117*D>D917*	>D91*>D9>9", 13, "9>>>>>>>>9>>9>>>99", 10, ">99*1**", 13, "D11DD777*", 13, "DDAA1*", 13, "AA111****8A", 13, 13, "##888###8#"
+
+	section	.data,"aw",@progbits
+	public	_walk1_right_data
+_walk1_right_data:
+	db	"*****77A8**71177**711*719D>D	*19D>9>9D>", 13, "9>>>>>>>>999>>>9>>", 10, "9>**1*9", 13, "*777DD11D*1AADD", 13, "*111AA", 13, "***#", 13, 13, "A8#888##8##"
+
+	section	.data,"aw",@progbits
+	public	_walk2_left_data
+_walk2_left_data:
+	db	"*****8A77**77117*117*D>D917*	>D91*>D99>9", 13, "9>>>>>9>>9>>9>>>99", 10, ">999917*DD", 13, "17", 13, "*17*DA", 13, 13, 13, "DD1*DDADDA", 13, "#8AA", 13, "88###", 13, 13, 13, "", 13, "#8", 13, 13, 13, "8A"
+
+	section	.data,"aw",@progbits
+	public	_walk2_right_data
+_walk2_right_data:
+	db	"*****77A8**71177**711*719D>D	*19D>9>99D>", 13, "9>>9>>>>>999>>>9>>", 10, "9>*71999*71*", 13, "71", 13, "DD*1DD", 13, 13, 13, "ADADDADD", 13, "", 13, "AA8###888#", 13, "", 13, 13, 13, "#A8", 13, 13, 13, ""
+
+	section	.data,"aw",@progbits
+	public	_walk3_left_data
+_walk3_left_data:
+	db	",,,,,,,,,,,,,,,,FF", 10, "FFFFFFFFFFFFFFFFFF	FFFFFFFFFFFFFF,,,,,", 0, "FF,,,,,,,", 0, "FF", 10, ",,,,,,,,,", 0, "FF,,,,,,,,FF", 13, ",,,,F,,,FFFFFFF,,,,,,,,,,,"
+
+	section	.data,"aw",@progbits
+	public	_walk3_right_data
+_walk3_right_data:
+	db	",,,,,,,,,,,,,,,,FF", 10, "FFFFFFFFFFFFFFFFFF	FFFFFFFFFFFFFF,,,,,,,,,,,,FF", 10, ",,,,,,,,,FFFF,,,,,,,,FF", 13, "FFF,,,F,,,,FFF,F,,,,,,,,,,"
+
+	section	.data,"aw",@progbits
+	public	_phase_number0_data
+_phase_number0_data:
+	db	"", 0, "@@@@", 0, "@@@@@@", 0, "@@""""@@", 0, "@@""""@@", 0, "@@@@", 0, "@@@@", 0, "@@@@", 0, "@@@@", 0, "@@@@", 0, "@@@@@@", 0, """@@@@""", 0, """""""""""""", 0, """"""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_number1_data
+_phase_number1_data:
+	db	"@@@@@@@@""@@""@@@@@@@@@@@@@@@@@@"""""""""""""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_number2_data
+_phase_number2_data:
+	db	"", 0, "@@@@", 0, "@@@@@@", 0, "@@""""@@", 0, "@@""""@@", 0, """""@@", 0, """""@@@", 0, "@@@@""", 0, "@@@""""""", 0, "@@""""""", 0, "@@@@@@", 0, "@@@@@@", 0, """""""""""""", 0, """""""""""""", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_phase_number3_data
+_phase_number3_data:
+	db	"", 0, "@@@@", 0, "@@@@@@", 0, "@@""""@@", 0, """""""""@@", 0, """""@@@""", 0, "@@@""""""@@", 0, """""@@", 0, "@@@@", 0, "@@@@@@", 0, """@@@@""", 0, """""""""""""", 0, """"""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_number4_data
+_phase_number4_data:
+	db	"@@@@@@@@@@@@", 0, "@""@@", 0, "@@""@@", 0, "@@@@", 0, "@@@@@@", 0, "@@@@@@", 0, """""""@@""", 0, """""""@@""", 0, """"""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_number5_data
+_phase_number5_data:
+	db	"", 0, "", 0, "@@@@@@", 0, "@@@@@@", 0, "@@""""""""", 0, "@@""""""""", 0, "@@@@@", 0, "@@@@@@", 0, """""""""@@", 0, """""""""@@", 0, "@@@@", 0, "@@@@@@", 0, """@@@@""", 0, """""""""""""", 0, """"""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_number6_data
+_phase_number6_data:
+	db	"", 0, "@@@@", 0, "@@@@@@", 0, "@@""""@@", 0, "@@""""""""", 0, "@@@@@""", 0, "@@@@@@", 0, "@@""""@@", 0, "@@""""@@", 0, "@@@@", 0, "@@@@@@", 0, """@@@@""", 0, """""""""""""", 0, """"""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_number7_data
+_phase_number7_data:
+	db	"", 0, "", 0, "@@@@@@", 0, "@@@@@@", 0, """""""""@@", 0, """""""""@@", 0, "@@@@@""@@@""@@""@@""@@@@"""""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_number8_data
+_phase_number8_data:
+	db	"", 0, "@@@@", 0, "@@@@@@", 0, "@@""""@@", 0, "@@""""@@", 0, """@@@@""", 0, "@@@@@@", 0, "@@""""@@", 0, "@@""""@@", 0, "@@@@", 0, "@@@@@@", 0, """@@@@""", 0, """""""""""""", 0, """"""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_number9_data
+_phase_number9_data:
+	db	"", 0, "@@@@", 0, "@@@@@@", 0, "@@""""@@", 0, "@@""""@@", 0, "@@@@", 0, "@@@@@@", 0, """@@@@@", 0, """""""""@@", 0, "@@""""@@", 0, "@@@@@@", 0, """@@@@""", 0, """""""""""""", 0, """"""""""
+
+	section	.data,"aw",@progbits
+	public	_phase_numbers
+_phase_numbers:
+	dl	_phase_number0_data
+	dl	_phase_number1_data
+	dl	_phase_number2_data
+	dl	_phase_number3_data
+	dl	_phase_number4_data
+	dl	_phase_number5_data
+	dl	_phase_number6_data
+	dl	_phase_number7_data
+	dl	_phase_number8_data
+	dl	_phase_number9_data
+
+	section	.bss,"aw",@nobits
+	private	_hudData
+_hudData:
+	rb	2230
+
+	section	.rodata,"a",@progbits
+	private	_.str
+_.str:
+	db	"Lives: ", 0
+
+	section	.data,"aw",@progbits
+	public	_phase_card_data
+_phase_card_data:
+	db	"(", 0, "", 0, "(@@@@@@@@@@@@@@@@@@@@@@@", 0, "(@@@@@@@@@@@@@@@@@@@@@@@@@@@@", 0, "(@@""""@@@@@@@@""""@@@@""""@@@@""""""""", 0, "(@@""""@@@@@@@@""""@@@@@""""""@@""""""""", 0, "(@@@@@@@@@@@@@@""@@@""""@@@@@", 0, "'@@@@@@@@@@@@@@""""@@@@@@@@", 0, "'@@@@@@@@""""@@@@@@@@""""@@@@@""""""", 0, "'@@@@@""@@""""@@@@@@@@@@""""@@@@""""""", 0, "(@@""""""""@@@@@@""""@@@@""@@@@", 0, "(@@""""""@@@@@@""""@@@@@@@@@@@@@@", 0, "@@ @@@@@@@@""@@@@""@@@@@@", 0, """"" """"""""""""""""""""""""""""""""""""""""", 0, """"" """"""""""""""""""""""""""""""""""""", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_phase_clear_data
+_phase_clear_data:
+	db	"1++++++++++++++++++DDD++DD++DDDD++D++DDD++DD++DD+D$DDDDD+", 10, "+DD+DDD$DD$D+DDDDD++DD+DDDDDDDDDD+D$DD++DDD$D$DDDDD", 0, "+D$DDD+D$DD$DD++DDDDDD+DD+DD", 0, "D$D+D$D+DD", 13, "+DDDD$DD$D+D$D+", 0, "DDDDDD", 13, "+D$+D$DDDDDD", 0, "DDD$D+DDD+", 13, "+DDD$DDDDD", 0, "DD+++DDD$$D+D$DDDDD+DD+", 0, "DD+DDD$DDDD+DD$$D+D++D+", 0, "#DDDDDD+DDDD++DDDD+DD++DD+", 0, "#+DDDDDDDDDDD$DDDD""D$DDDDDDD+DDDDDDDD+DDDD++DDDDD++DDDDD++DD+	+D+DD++DD+DD++DD+"
+
+	section	.bss,"aw",@nobits
+	public	_gameFrame
+_gameFrame:
+	rb	3
+
+	section	.data,"aw",@progbits
+	public	_game_data
+_game_data:
+	db	0
+	db	1
+	dl	0
+	dl	999999
+	db	0
+
+	section	.data,"aw",@progbits
+	public	_enemyLog
+_enemyLog:
+	db	20 dup 0
+	dw	200
+	dw	500
+	dw	800
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	db	20 dup 0
+	dw	200
+	dw	400
+	dw	600
+	dw	800
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	0
+	db	20 dup 0
+	dw	250
+	dw	350
+	dw	450
+	dw	600
+	dw	750
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	0
+	db	20 dup 0
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	65535
+	dw	0
+
+	section	.bss,"aw",@nobits
+	public	_mario1
+_mario1:
+	rb	412
+
+	section	.data,"aw",@progbits
+	public	_global_palette
+_global_palette:
+	db	"|ÿÿ", 0, 0, "·¨E", 0, "@‚šƒ†¦„ÉŒ)", 13, "Y", 13, "„ĞıÅ+n™Œ™ç×Úİ!ï!I)=**œ6Í9%=`=¾¾""ÃºEàH0JË", 0, "P„P", 0, "R~×YµÚ h êdlmŒmuRvGyŠyËyz0zŠzÒúûûRû`û•ûŞ{ÇûÌûÒûİûŞûÌıTÿÿ"
+
+	section	.data,"aw",@progbits
+	public	_pipes
+_pipes:
+	db	0
+	db	1
+	dw	256
+	db	25
+	db	0
+	db	1
+	dl	0
+	db	64
+	db	38
+	db	2432 dup 0
+	db	1
+	db	1
+	dw	0
+	db	25
+	db	0
+	db	1
+	dl	0
+	db	64
+	db	38
+	db	2432 dup 0
+
+	section	.data,"aw",@progbits
+	public	_level1_block_data
+_level1_block_data:
+	db	"D%%%%%%DDDDD%DDD%D%%%"
+
+	section	.rodata,"a",@progbits
+	private	_.str.125
+_.str.125:
+	db	"Game Over", 0
+
+	section	.bss,"aw",@nobits
+	public	_levelPlatforms
+_levelPlatforms:
+	rb	4
+
+	section	.bss,"aw",@nobits
+	public	_levelPows
+_levelPows:
+	rb	4
+
+	section	.bss,"aw",@nobits
+	public	_levelEnemies
+_levelEnemies:
+	rb	5
+
+	section	.rodata,"a",@progbits
+	private	_cur_scr_r
+_cur_scr_r:
+	dl	_RunTitle
+	dl	_LoadTitle
+	dl	_LevelLoop
+	dl	_LoadLevel
+
+	section	.data,"aw",@progbits
+	private	_currentScreen
+_currentScreen:
+	dl	1
+
+	section	.data,"aw",@progbits
+	public	_mario_title_card_compressed
+_mario_title_card_compressed:
+	db	"‘", 0, "Ç", 0, "[<a|c", 0, 13, "ScÀ", 10, "ZÄ", 0, "½¨§", 0, "nj_ÂÀnÜÇ9", 0, "‚ÂpÆ€µÕ9ÂÈ@Ë”ÅG*O", 0, "pÅ]„¼ÍíÜ	g˜Ç\_ÇÙ)Or[", 0, " µNSªŸÌS‚ÇGäÇG¡Ço†°€Ç	,j", 0, "xË…¥''á", 0, "Ø/ø_r", 13, "Ç", 0, "x", 26, "øN>'W'‡ààÇ.@$åcáXø'rW2'ƒ Ç¨@Ğ„cá'ØW¨'~üÇ FW¦ÇbàãÒç·HøF'>W?†V§", 0, "€/€Ç", 0, 0, "©Ç", 0, "‡ò¯Ç'7‰€ÇÇ", 0, "ÇCáÇÃ/€Ç,œÇ\ÇÂw€¹(Øw•Ÿã", 0, "`.AÇÇ", 0, "T¾‡Ç@8€ÇO", 0, "NÀÇ!!GG°Ç\ì‡??n‡¹¿Å@=Ç/", 10, "„ÇËg", 0, "šÇ³	BÁÇg", 10, "G7À/ŞÇÇrFwÇ|g-7/xÇ]ÂœW|g57<Ç4", 0, "—‚ÇGÜÆ#Ç .", 10, "(Ç,¸", 0, "B²˜Ç&(g", 0, "rf_Á½9\iÇsW•IÀZJ", 0, "¹ÃÙ", 10, "ó", 0, "Àp·aaÂ<¸ÇNÀğ", 0, "@½i", 0, "Tcpe3Àa", 0, " "
+
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 5f8512f22751066573aa48ac848a6d2195838ac3)"
+	extern	_fabsf
+	extern	__Unwind_SjLj_Register
+	extern	_malloc
+	extern	_srand
+	extern	__bremu
+	extern	__fadd
+	extern	_gfx_SetPalette
+	extern	__idivs
+	extern	_gfx_Blit
+	extern	_gfx_PrintUInt
+	extern	__ltof
+	extern	_gfx_Sprite
+	extern	__ineg
+	extern	_free
+	extern	_realloc
+	extern	_log10
+	extern	_gfx_SetTransparentColor
+	extern	__indcallhl
+	extern	_gfx_RLETSprite_NoClip
+	extern	_gfx_GetSprite
+	extern	__ishru
+	extern	__fmul
+	extern	__sdivs
+	extern	_gfx_FillScreen
+	extern	__fdiv
+	extern	__imulu
+	extern	_gfx_End
+	extern	__fcmp
+	extern	__bshru
+	extern	__frameset0
+	extern	_gfx_SetTextXY
+	extern	_gfx_SetTextFGColor
+	extern	_gfx_Begin
+	extern	__sshl
+	extern	_rand
+	extern	__sand
+	extern	_gfx_PrintString
+	extern	__ftoul
+	extern	__ishl
+	extern	__ftol
+	extern	__setflag
+	extern	__iand
+	extern	_gfx_AllocSprite
+	extern	_zx7_Decompress
+	extern	_gfx_Sprite_NoClip
+	extern	__fsub
+	extern	_atan
+	extern	_gfx_RLETSprite
+	extern	__frameset
+	extern	_kb_Scan
+	extern	_pow
+	extern	__ultof
+	extern	_gfx_SwapDraw
+	extern	_gfx_SetDraw
+	extern	_floorf
+	extern	__Unwind_SjLj_Unregister
+	extern	__fneg
+	extern	__irems
+	extern	__iremu
+	extern	__bshl
+	extern	_gfx_PrintStringXY
+	extern	_gfx_TransparentSprite
