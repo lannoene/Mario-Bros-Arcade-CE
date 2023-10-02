@@ -8,6 +8,8 @@
 bool LoadTitle(void) {
 	gfx_FillScreen(2);
 	
+	
+	zx7_Decompress(gfx_vbuffer, bg_title_compressed);
 	gfx_sprite_t* tmp_title_card = gfx_MallocSprite(mario_title_card_width, mario_title_card_height);
 	zx7_Decompress(tmp_title_card->data, mario_title_card_compressed);
 	

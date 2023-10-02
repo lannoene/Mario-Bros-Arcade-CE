@@ -12,11 +12,22 @@ converts:
     palette: global_palette
     transparent-color-index: 0
     images:
-      - level/level1_block.png
       - level/level1_ground.png
       - level/level1_block_bump1.png
       - level/level1_block_bump2.png
       - level/level1_block_bump3.png
+      - level/lava_block_bump1.png
+      - level/lava_block_bump2.png
+      - level/lava_block_bump3.png
+      - level/castle_block_bump1.png
+      - level/castle_block_bump2.png
+      - level/castle_block_bump3.png
+      - level/snowy_iced_block_bump1.png
+      - level/snowy_iced_block_bump2.png
+      - level/snowy_iced_block_bump3.png
+      - level/snowy_normal_block_bump1.png
+      - level/snowy_normal_block_bump2.png
+      - level/snowy_normal_block_bump3.png
 
   - name: compressed
     palette: global_palette
@@ -24,10 +35,11 @@ converts:
     width-and-height: false
     images:
       - title/mario_title_card.png
-      - background/bg_pipes_top_right.png
-      - background/bg_pipes_top_left.png
-      - background/bg_pipes_bottom_right.png
-      - background/bg_pipes_bottom_left.png
+      - background/bg_pipes.png
+      - background/bg_lava.png
+      - background/bg_snowy.png
+      - background/bg_castle.png
+      - background/bg_title.png
   - name: rlet_sprites
     palette: global_palette
     style: rlet
@@ -49,6 +61,12 @@ converts:
       - level/pow_full.png
       - level/pow_medium.png
       - level/pow_low.png
+      - level/coin1.png
+      - level/pipes_block.png
+      - level/snowy_normal_block.png
+      - level/snowy_iced_block.png
+      - level/lava_block.png
+      - level/castle_block.png
       - enemy/spike_walk1_right.png
       - enemy/spike_walk2_right.png
       - enemy/spike_walk3_right.png
@@ -71,6 +89,11 @@ converts:
       - enemy/crab_walk1_mad_left.png
       - enemy/crab_walk2_mad_left.png
       - enemy/crab_walk3_mad_left.png
+      - enemy/fly_ground.png
+      - enemy/fly_wing1.png
+      - enemy/fly_wing2.png
+      - enemy/fly_dead_left.png
+      - enemy/fly_dead_right.png
       - font/phase/phase_card.png
       - font/phase/phase_number0.png
       - font/phase/phase_number1.png

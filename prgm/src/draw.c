@@ -10,23 +10,26 @@
 #include "pipes.h"
 #include "hud.h"
 #include "pow.h"
+#include "bonus.h"
+#include "level.h"
 
 #define SET_OLD_TO_NEW_COORDS(varName) \
 (varName)->x_old = (varName)->x; (varName)->y_old = (varName)->y;
 
 gfx_rletsprite_t* mario_sprites[2][6] = {{stand_right, walk1_right, walk2_right, walk3_right, jump_right, dead}, {stand_left, walk1_left, walk2_left, walk3_left, jump_left, dead}};
-gfx_sprite_t* platform_bump_sprites[3] = {level1_block_bump1, level1_block_bump2, level1_block_bump3};
-gfx_rletsprite_t* enemy_sprites[2][2][7] = 
+gfx_sprite_t* platform_bump_sprites[5][3] = {{level1_block_bump1, level1_block_bump2, level1_block_bump3}, {lava_block_bump1, lava_block_bump2, lava_block_bump3}, {castle_block_bump1, castle_block_bump2, castle_block_bump3}, {snowy_normal_block_bump1, snowy_normal_block_bump2, snowy_normal_block_bump3}, {snowy_iced_block_bump1, snowy_iced_block_bump2, snowy_iced_block_bump3}};
+gfx_rletsprite_t* enemy_sprites[3][2][7] = 
 {
 	{{spike_walk1_right, spike_walk2_right, spike_walk3_right, spike_upsidedown1_right}, {spike_walk1_left, spike_walk2_left, spike_walk3_left, spike_upsidedown1_left}},
-	{{crab_walk1_right, crab_walk2_right, crab_walk3_right, crab_upsidedown1_right, crab_walk1_mad_right, crab_walk2_mad_right, crab_walk3_mad_right}, {crab_walk1_left, crab_walk2_left, crab_walk3_left, crab_upsidedown1_left, crab_walk1_mad_left, crab_walk2_mad_left, crab_walk3_mad_left}}
+	{{crab_walk1_right, crab_walk2_right, crab_walk3_right, crab_upsidedown1_right, crab_walk1_mad_right, crab_walk2_mad_right, crab_walk3_mad_right}, {crab_walk1_left, crab_walk2_left, crab_walk3_left, crab_upsidedown1_left, crab_walk1_mad_left, crab_walk2_mad_left, crab_walk3_mad_left}},
+	{{fly_ground, fly_wing1, fly_wing2, fly_dead_right}, {fly_ground, fly_wing1, fly_wing2, fly_dead_left}}
 };
 gfx_rletsprite_t* pow_sprites[3] = {pow_full, pow_medium, pow_low};
 gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationary_left}};
 
 uint8_t platform_bump_sprite_sheet[4] = {0, 1, 2, 1};
 
-void DrawScene(player_t* player, unsigned int gameFrame) {
+void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame) {
 	uint8_t i;
 	// get bgs under sprites before 
 	// player
@@ -45,11 +48,16 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 		gfx_GetSprite((gfx_sprite_t*)levelPows.powArray[i].backgroundData, levelPows.powArray[i].x, levelPows.powArray[i].y);
 	}
 	
+	// coins
+	for (i = 0; i < levelCoins.numCoins; i++) {
+		gfx_GetSprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
+	}
+	
 	// draw sprites over bgs
 	// draw platforms
 	// platforms are pre rendered, and a mask is put under the bump when it is needed
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
-		if (levelPlatforms.platformArray[i].needsRefresh || gameFrame == 1) { // if gameFrame is 1 because we draw the platform once on frame 0, but we need to draw it on the other buffer on frame 1
+		if (levelPlatforms.platformArray[i].needsRefresh || (gameFrame - game_data.levelStartTime) == 1) { // if gameFrame is 1 because we draw the platform once on frame 0, but we need to draw it on the other buffer on frame 1
 			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
 		}
 		if (!levelPlatforms.platformArray[i].beingBumped) {// if the platform isn't being bumped, show every tile
@@ -69,16 +77,16 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 				bgFill[0] = BLOCK_SIZE;
 				bgFill[1] = BLOCK_SIZE*3;
 				gfx_GetSprite((gfx_sprite_t*)bgFill, levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
-				gfx_TransparentSprite(platform_bump_sprites[platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width - (2*BLOCK_SIZE), levelPlatforms.platformArray[i].y - BLOCK_SIZE);
+				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width - (2*BLOCK_SIZE), levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 				gfx_Sprite((gfx_sprite_t*)bgFill, levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 			} else if (flooredXpos - levelPlatforms.platformArray[i].x < 0) {
 				bgFill[0] = BLOCK_SIZE;
 				bgFill[1] = BLOCK_SIZE*3;
 				gfx_GetSprite((gfx_sprite_t*)bgFill, levelPlatforms.platformArray[i].x - BLOCK_SIZE, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
-				gfx_TransparentSprite(platform_bump_sprites[platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], levelPlatforms.platformArray[i].x - BLOCK_SIZE, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
+				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], levelPlatforms.platformArray[i].x - BLOCK_SIZE, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 				gfx_Sprite((gfx_sprite_t*)bgFill, levelPlatforms.platformArray[i].x - BLOCK_SIZE, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 			} else { // otherwise, play animation as normal
-				gfx_TransparentSprite(platform_bump_sprites[platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], flooredXpos, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
+				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], flooredXpos, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 			}
 			
 		}
@@ -103,6 +111,12 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 	for (i = 0; i < levelPows.numPows; i++) {
 		if (levelPows.powArray[i].state != POW_EMPTY)
 			gfx_RLETSprite(pow_sprites[levelPows.powArray[i].state], levelPows.powArray[i].x, levelPows.powArray[i].y);
+	}
+	
+	// coins
+	for (i = 0; i < levelCoins.numCoins; i++) {
+		if (levelCoins.coinArray[i].alive)
+			gfx_RLETSprite(coin1, levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
 	}
 	
 	// draw player over everything physical
@@ -162,24 +176,29 @@ void DrawScene(player_t* player, unsigned int gameFrame) {
 		gfx_Sprite_NoClip((gfx_sprite_t*)levelPows.powArray[i].backgroundData, levelPows.powArray[i].x, levelPows.powArray[i].y);
 	}
 	
+	// coins
+	for (i = 0; i < levelCoins.numCoins; i++) {
+		gfx_Sprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
+	}
+	
 }
 
-void DrawBackground(void) {
+void DrawBackground(uint8_t backgroundId) {
 	// draw bg in buffer
-	gfx_sprite_t* levelBg = gfx_MallocSprite(127, 120);
-	zx7_Decompress(levelBg->data, bg_pipes_top_left_compressed);
-	gfx_Sprite(levelBg, 0, 0);
-	gfx_Sprite(levelBg, 255, 0);
-	zx7_Decompress(levelBg->data, bg_pipes_bottom_left_compressed);
-	gfx_Sprite(levelBg, 0, 120);
-	gfx_Sprite(levelBg, 255, 120);
-	free(levelBg);
-	levelBg = gfx_MallocSprite(128, 120);
-	zx7_Decompress(levelBg->data, bg_pipes_top_right_compressed);
-	gfx_Sprite(levelBg, 127, 0);
-	zx7_Decompress(levelBg->data, bg_pipes_bottom_right_compressed);
-	gfx_Sprite(levelBg, 127, 120);
-	free(levelBg);
+	switch (backgroundId) {
+		case BG_PIPES:
+			zx7_Decompress(gfx_vbuffer, bg_pipes_compressed);
+			break;
+		case BG_LAVA:
+			zx7_Decompress(gfx_vbuffer, bg_lava_compressed);
+			break;
+		case BG_CASTLE:
+			zx7_Decompress(gfx_vbuffer, bg_castle_compressed);
+			break;
+		case BG_SNOWY:
+			zx7_Decompress(gfx_vbuffer, bg_snowy_compressed);
+			break;
+	}
 	
 	for (uint8_t i = 0; i < 20; i++)
 		gfx_TransparentSprite(level1_ground, i*level1_ground_width, 224);

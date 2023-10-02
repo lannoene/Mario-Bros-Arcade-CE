@@ -56,3 +56,9 @@ void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame) {
 		}
 	}
 }
+
+void ResetPows(void) {
+	for (uint8_t i = 0; i < levelPows.numPows; i++) {
+		levelPows.powArray[i].state = POW_FULL;
+	}
+}

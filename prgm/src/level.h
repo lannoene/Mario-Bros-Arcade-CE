@@ -6,7 +6,7 @@ typedef struct {
 	uint8_t numPlatforms;
 	uint8_t level;
 	unsigned int levelStartTime, levelEndTime;
-	bool levelEnded : 1;
+	bool levelEnded, isBonusLevel : 1;
 } gameData_t;
 
 extern gameData_t game_data;

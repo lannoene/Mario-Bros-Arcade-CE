@@ -10,9 +10,8 @@
 typedef struct {
 	bool dir, grounded, crabIsMad : 1; // crabIsMad is only for crab type enemies
 	uint8_t type, state, sprite, lastGroundedPlatformIndex;
-	float x, x_old;
-	int16_t y, y_old;
-	unsigned int spawnTime, layStartTime;
+	float x, x_old, y, y_old;
+	unsigned int spawnTime, layStartTime, groundedStartTime;
 	float horAccel, verAccel;
 	int8_t verSpriteOffset, verSpriteOffset_old;
 	float maxSpeed;
@@ -20,13 +19,15 @@ typedef struct {
 } enemy_t;
 
 typedef struct {
-	uint8_t numEnemies, enemiesLeft;
+	uint8_t numEnemies, enemiesLeft, lastSpawnedPipe;
+	unsigned int lastSpawnedTime;
 	enemy_t* enemyArray;
 } levelEnemies_t;
 
 enum ENEMY_TYPE_IDS {
 	ENEMY_SPIKE = 0,
-	ENEMY_CRAB
+	ENEMY_CRAB,
+	ENEMY_FLY
 };
 
 enum ENEMY_STATE_IDS {

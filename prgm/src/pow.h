@@ -29,3 +29,4 @@ void InitPows(void);
 void CreatePow(int16_t x, uint8_t y);
 void FreePows(void);
 void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame);
+void ResetPows(void);

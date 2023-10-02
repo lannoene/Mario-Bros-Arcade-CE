@@ -9,6 +9,9 @@
 #include "gfx/gfx.h"
 
 levelPlatformData_t levelPlatforms = {};
+
+gfx_rletsprite_t* platformBlocks[5] = {pipes_block, lava_block, castle_block, snowy_normal_block, snowy_iced_block};
+
 /* ---- CURRENTLY UNUSED AS COLISION IS VERY EXPENSIVE AND HAVING IT IN ANOTHER FUNCTION JUST SLOWED THINGS DOWN ----
 colision_t CheckColision(int16_t* x, int16_t* y, uint8_t width, uint8_t height, float* verAccel, float* horAccel, bool requireBottomColision) {
 	
@@ -70,13 +73,14 @@ void CreatePlatform(int16_t x, uint8_t y, uint8_t width) {
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData[1] = PLATFORM_HEIGHT*2;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].beingBumped = false;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].needsRefresh = false;
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].icy = false;
 	// preprocess tile image
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage = malloc(width*PLATFORM_HEIGHT*2 + 2);
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[0] = width;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[1] = PLATFORM_HEIGHT*2;
 	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // get bg
 	for (uint8_t i = 0; i < width/BLOCK_SIZE; i++)
-		gfx_Sprite((gfx_sprite_t*)level1_block, x + i*BLOCK_SIZE, y); // process image
+		gfx_RLETSprite(pipes_block, x + i*BLOCK_SIZE, y); // process image
 	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage, x, y - PLATFORM_HEIGHT);
 	//gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // return bg to original place
 }
@@ -99,7 +103,7 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = player->x;
 	
 	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
-		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].x + ENEMY_SPIKE_SIZE > player->x - BLOCK_SIZE && levelEnemies.enemyArray[i].x < player->x + 2*BLOCK_SIZE && levelEnemies.enemyArray[i].y + ENEMY_SPIKE_SIZE > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelEnemies.enemyArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
+		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING && levelEnemies.enemyArray[i].x + ENEMY_SPIKE_SIZE > player->x - BLOCK_SIZE && levelEnemies.enemyArray[i].x < player->x + 2*BLOCK_SIZE && levelEnemies.enemyArray[i].y + ENEMY_SPIKE_SIZE > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelEnemies.enemyArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
 			float playerVsEnemySlope = 57.2958*atan((levelEnemies.enemyArray[i].y - player->y)/(levelEnemies.enemyArray[i].x - player->x));
 			
 			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING) {
@@ -117,7 +121,7 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 				} else {
 					levelEnemies.enemyArray[i].horAccel = fabsf(levelEnemies.enemyArray[i].horAccel);
 				}
-				levelEnemies.enemyArray[i].verAccel = 2.5;
+				levelEnemies.enemyArray[i].verAccel = (levelEnemies.enemyArray[i].type != ENEMY_FLY) ? 2.5 : 1.7;
 				levelEnemies.enemyArray[i].layStartTime = gameFrame;
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].sprite = 3;
@@ -126,7 +130,6 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 					levelEnemies.enemyArray[i].crabIsMad = false;
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].state = ENEMY_WALKING;
-				levelEnemies.enemyArray[i].verAccel = 2.5;
 				levelEnemies.enemyArray[i].verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
 				if (playerVsEnemySlope < -75 || playerVsEnemySlope > 75)
 					levelEnemies.enemyArray[i].horAccel = 0;
@@ -137,8 +140,27 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 					levelEnemies.enemyArray[i].horAccel = levelEnemies.enemyArray[i].maxSpeed;
 					levelEnemies.enemyArray[i].dir = RIGHT;
 				}
-				
 			}
+			levelEnemies.enemyArray[i].verAccel = (levelEnemies.enemyArray[i].type != ENEMY_FLY) ? 2.5 : 1.7;
 		}
 	}
+}
+
+void RefreshPlatformBackgroundData(uint8_t type) {
+	for (uint8_t i = 0; i < levelPlatforms.numPlatforms; i++) {
+		gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
+		for (uint8_t j = 0; j < levelPlatforms.platformArray[i].width/BLOCK_SIZE; j++)
+			gfx_RLETSprite(platformBlocks[type], levelPlatforms.platformArray[i].x + j*BLOCK_SIZE, levelPlatforms.platformArray[i].y); // process image
+		gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
+		levelPlatforms.platformArray[i].icy = false;
+	}
+}
+
+void FreezePlatform(uint8_t index) {
+	levelPlatforms.platformArray[index].icy = true;
+	
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[index].backgroundData, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y);
+	for (uint8_t j = 0; j < levelPlatforms.platformArray[index].width/BLOCK_SIZE; j++)
+		gfx_RLETSprite(platformBlocks[4], levelPlatforms.platformArray[index].x + j*BLOCK_SIZE, levelPlatforms.platformArray[index].y); // process image
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[index].processedTileImage, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y - PLATFORM_HEIGHT);
 }

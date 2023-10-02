@@ -5,6 +5,7 @@
 
 #include "gfx/gfx.h"
 #include "level.h"
+#include "bonus.h"
 
 #define TEXT_WIDTH	8
 #define TEXT_HEIGHT	15
@@ -14,6 +15,10 @@ typedef struct {
 	uint8_t livesBackgroundData[TEXT_SIZE*9*TEXT_SIZE + 2];
 	uint8_t scoreBackgroundData[TEXT_SIZE*7*TEXT_SIZE + 2];
 	uint8_t phaseCardBackgroundData[phase_card_width*phase_card_height*2 + 2];
+	uint8_t bonusTimerBackgroundData[TEXT_SIZE*4*TEXT_SIZE + 2];
+#ifdef DEBUG
+	uint8_t gameFrameBGData[TEXT_SIZE*9*TEXT_SIZE + 2];
+#endif
 } hud_t;
 
 static hud_t hudData;
@@ -29,7 +34,13 @@ void InitHud(player_t* player) {
 	hudData.scoreBackgroundData[1] = TEXT_SIZE;
 	hudData.phaseCardBackgroundData[0] = phase_card_width*2;
 	hudData.phaseCardBackgroundData[1] = phase_card_height;
+	hudData.bonusTimerBackgroundData[0] = TEXT_SIZE*4;
+	hudData.bonusTimerBackgroundData[1] = TEXT_SIZE;
 	
+#ifdef DEBUG
+	hudData.gameFrameBGData[0] = TEXT_SIZE*9;
+	hudData.gameFrameBGData[1] = TEXT_SIZE;
+#endif
 }
 
 // lives text width TEXT_SIZE*9
@@ -41,7 +52,12 @@ void HudGetBackground(void) {
 	gfx_GetSprite((gfx_sprite_t*)hudData.scoreBackgroundData, 272, 0);
 	
 	// phase card (only when round starts)
-	gfx_GetSprite((gfx_sprite_t*)hudData.phaseCardBackgroundData, 100, 100);
+	gfx_GetSprite((gfx_sprite_t*)hudData.phaseCardBackgroundData, 120, 100);
+	
+	gfx_GetSprite((gfx_sprite_t*)hudData.bonusTimerBackgroundData, 100, 0);
+#ifdef DEBUG
+	gfx_GetSprite((gfx_sprite_t*)hudData.gameFrameBGData, 0, 100);
+#endif
 }
 
 void HudDraw(player_t* player, unsigned int gameFrame) {
@@ -58,26 +74,41 @@ void HudDraw(player_t* player, unsigned int gameFrame) {
 	
 	// draw phase card
 	if (gameFrame - game_data.levelStartTime < 150) {
-		gfx_RLETSprite_NoClip(phase_card, 100, 100);
+		gfx_RLETSprite_NoClip(phase_card, 120, 100);
 		DrawPhaseText();
 	}
 	
-	// draw level end card
-	if (gameFrame - game_data.levelEndTime < 150) {
-		gfx_RLETSprite_NoClip(phase_clear, 100, 100);
+	if (game_data.isBonusLevel) {
+		gfx_SetTextXY(100, 0);
 		
+		gfx_PrintUInt(levelCoins.bonusTimer/10, 3);
 	}
+	
+	// draw level end card
+	if (gameFrame - game_data.levelEndTime < 150 && !game_data.isBonusLevel) {
+		gfx_RLETSprite_NoClip(phase_clear, 130, 100);
+	}
+	
+#ifdef DEBUG
+	gfx_SetTextXY(0, 100);
+	gfx_PrintUInt(gameFrame, 10);
+#endif
 }
 
 void HudRefresh(void) {
 	gfx_Sprite_NoClip((gfx_sprite_t*)hudData.livesBackgroundData, 0, 0);
 	gfx_Sprite_NoClip((gfx_sprite_t*)hudData.scoreBackgroundData, 272, 0);
-	gfx_Sprite((gfx_sprite_t*)hudData.phaseCardBackgroundData, 100, 100);
+	gfx_Sprite((gfx_sprite_t*)hudData.phaseCardBackgroundData, 120, 100);
+	gfx_Sprite((gfx_sprite_t*)hudData.bonusTimerBackgroundData, 100, 0);
+#ifdef DEBUG
+	gfx_Sprite((gfx_sprite_t*)hudData.gameFrameBGData, 0, 100);
+#endif
 }
 
 void DrawPhaseText(void) {
-	uint8_t numDigits = floor(log10(game_data.level) + 0.0000001); // get number of digits
+	float gameLevelLogged = log10(game_data.level);
+	uint8_t numDigits = floor(gameLevelLogged + 0.000002); // get number of digits
 	for (uint8_t i = 0; i < numDigits + 1; i++) { // for every digit
-		gfx_RLETSprite_NoClip(phase_numbers[((uint8_t)(game_data.level/pow(10, i)))%10], 160 - TEXT_WIDTH*i, 100); // display the digit there at correct x coord
+		gfx_RLETSprite_NoClip(phase_numbers[((uint8_t)(game_data.level/pow(10, i)))%10], 176 - TEXT_WIDTH*i, 100); // display the digit there at correct x coord
 	}
 }

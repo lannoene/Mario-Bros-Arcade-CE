@@ -7,6 +7,7 @@
 
 #include "platforms.h"
 #include "pow.h"
+#include "bonus.h"
 
 #define FRAME_DELAY 5
 #define PLAYER_ACCELERATION	0.2
@@ -173,6 +174,8 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 		} else if (player->horAccel == 0 && player->grounded) {
 			player->sprite = 0;
 		}
+		
+		CheckCoinColision(player);
 		
 		if (player->verAccelPassive > player->verAccel) // if you hit under the ground but your ver accel passive hasn't reached its peak yet, just wait at the bottom of the platform
 			player->verAccel = 0;
