@@ -106,8 +106,7 @@ void HudRefresh(void) {
 }
 
 void DrawPhaseText(void) {
-	float gameLevelLogged = log10(game_data.level);
-	uint8_t numDigits = floor(gameLevelLogged + 0.000002); // get number of digits
+	uint8_t numDigits = floor(log10(game_data.level) + 0.000002); // get number of digits
 	for (uint8_t i = 0; i < numDigits + 1; i++) { // for every digit
 		gfx_RLETSprite_NoClip(phase_numbers[((uint8_t)(game_data.level/pow(10, i)))%10], 176 - TEXT_WIDTH*i, 100); // display the digit there at correct x coord
 	}

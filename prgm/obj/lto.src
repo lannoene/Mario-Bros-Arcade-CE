@@ -367,7 +367,7 @@ _DrawScene:
 	ld	(iy), hl
 	push	de
 	pop	iy
-	lea	hl, iy + 42
+	lea	hl, iy + 50
 	push	ix
 	ld	de, -215
 	add	ix, de
@@ -386,7 +386,7 @@ _DrawScene:
 	ld	d, a
 	ld	e, iyl
 	ld	iy, (ix + 6)
-	ld	a, (iy + 35)
+	ld	a, (iy + 42)
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
@@ -671,13 +671,54 @@ BB5_10:
 	add	hl, de
 	pop	af
 	ld	hl, (hl)
-	jr	nz, BB5_14
+	jp	nz, BB5_14
 BB5_13:
 	ex	de, hl
+	ld	bc, -224
+	lea	hl, ix
+	add	hl, bc
+	ld	(hl), de
+	ld	bc, -206
+	lea	iy, ix
+	add	iy, bc
+	ld	iy, (iy)
+	add	iy, de
+	ld	hl, (iy + 8)
+	push	ix
+	ld	de, -206
+	add	ix, de
+	ld	(ix), hl
+	pop	ix
+	ld	bc, (iy)
+	ld	a, b
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	d, a
+	ld	e, c
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy + 4)
+	ld	bc, -8
+	add	hl, bc
+	push	hl
+	push	de
 	ld	bc, -206
 	lea	hl, ix
 	add	hl, bc
-	ld	iy, (hl)
+	ld	hl, (hl)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_levelPlatforms+1)
+	ld	bc, -224
+	lea	hl, ix
+	add	hl, bc
+	ld	de, (hl)
 	add	iy, de
 	ld	de, (iy + 11)
 	ld	bc, (iy)
@@ -687,9 +728,7 @@ BB5_13:
 	sbc	hl, hl
 	ld	h, a
 	ld	l, c
-	ld	a, (iy + 4)
-	add	a, -8
-	ld	c, a
+	ld	c, (iy + 4)
 	push	bc
 	push	hl
 	push	de
@@ -809,9 +848,7 @@ BB5_15:
 	sbc	hl, hl
 	ld	h, a
 	ld	l, c
-	ld	a, (iy + 4)
-	add	a, -8
-	ld	c, a
+	ld	c, (iy + 4)
 	push	bc
 	push	hl
 	push	de
@@ -1011,8 +1048,8 @@ BB5_20:
 	sbc	hl, de
 	ld	c, 2
 	call	__ishru
-	ld	bc, 3
-	call	__iand
+	ld	bc, 5
+	call	__iremu
 	push	hl
 	pop	de
 	ld	hl, _platform_bump_sprite_sheet
@@ -1199,8 +1236,8 @@ BB5_23:
 	sbc	hl, de
 	ld	c, 2
 	call	__ishru
-	ld	bc, 3
-	call	__iand
+	ld	bc, 5
+	call	__iremu
 	push	hl
 	pop	de
 	ld	hl, _platform_bump_sprite_sheet
@@ -1344,8 +1381,8 @@ BB5_27:
 	sbc	hl, bc
 	ld	c, 2
 	call	__ishru
-	ld	bc, 3
-	call	__iand
+	ld	bc, 5
+	call	__iremu
 	push	hl
 	pop	bc
 	ld	hl, _platform_bump_sprite_sheet
@@ -1853,14 +1890,14 @@ BB5_49:
 	ld	hl, (ix + 6)
 	push	hl
 	pop	iy
-	ld	a, (iy + 33)
+	ld	a, (iy + 40)
 	srl	a
 	and	a, 1
 	ld	de, 0
 	push	de
 	pop	hl
 	ld	l, a
-	ld	e, (iy + 28)
+	ld	e, (iy + 36)
 	ld	bc, 18
 	call	__imulu
 	push	hl
@@ -1896,7 +1933,7 @@ BB5_49:
 	pop	de
 	ld	d, a
 	ld	e, c
-	ld	a, (iy + 34)
+	ld	a, (iy + 41)
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
@@ -1946,7 +1983,7 @@ BB5_49:
 	ld	d, a
 	ld	e, iyl
 	ld	iy, (ix + 6)
-	ld	a, (iy + 35)
+	ld	a, (iy + 42)
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
@@ -1973,8 +2010,8 @@ BB5_49:
 	ld	hl, (iy + 8)
 	ld	(iy + 10), l
 	ld	(iy + 11), h
-	ld	a, (iy + 34)
-	ld	(iy + 35), a
+	ld	a, (iy + 41)
+	ld	(iy + 42), a
 	push	bc
 	pop	iy
 	ld	a, (_levelPlatforms)
@@ -2028,7 +2065,7 @@ BB5_50:
 	ld	hl, (ix + 12)
 	or	a, a
 	sbc	hl, de
-	ld	de, 20
+	ld	de, 24
 	or	a, a
 	sbc	hl, de
 	ld	bc, (ix - 3)
@@ -2084,7 +2121,7 @@ BB5_55:
 	or	a, a
 	sbc	hl, de
 	ld	a, (_levelPlatforms)
-	ld	de, 16
+	ld	de, 20
 	or	a, a
 	sbc	hl, de
 	ld	bc, (ix - 3)
@@ -2763,37 +2800,37 @@ BB13_1:
 	ld	iy, (_levelEnemies+6)
 	push	bc
 	pop	hl
-	ld	(ix - 3), bc
+	ld	(ix - 6), bc
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	(ix - 6), iy
+	ld	(ix - 3), iy
 	add	iy, de
 	ld	a, (iy + 4)
 	cp	a, 4
 	jp	z, BB13_140
 	ld	(ix - 9), a
 	ld	(ix - 15), iy
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	de, 304
 	push	de
 	pop	bc
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, bc
 	ld	a, (iy + 3)
 	cp	a, 2
 	jp	nc, BB13_14
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	push	de
 	pop	bc
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, bc
 	ld	(ix - 12), iy
 	lea	hl, iy + 36
@@ -2816,14 +2853,14 @@ BB13_1:
 	ld	hl, (ix - 12)
 	ld	a, (hl)
 	ld	(ix - 9), a
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	(ix - 12), bc
 	ld	bc, 304
 	call	__imulu
 	ld	(ix - 15), e
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	a, (iy + 1)
 	xor	a, b
@@ -2844,9 +2881,9 @@ BB13_7:
 	jp	nz, BB13_31
 	bit	0, a
 	ld	bc, 304
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	jp	nz, BB13_38
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	de
@@ -2871,12 +2908,12 @@ BB13_13:
 BB13_14:
 	cp	a, 2
 	jp	nz, BB13_138
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, bc
 	ld	(ix - 12), iy
 	lea	hl, iy + 36
@@ -2895,12 +2932,12 @@ BB13_14:
 	ld	a, l
 	or	a, a
 	jp	nz, BB13_43
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (ix + 9)
 	ld	a, l
@@ -2912,13 +2949,13 @@ BB13_14:
 	ld	(iy + 5), a
 	bit	0, (iy + 1)
 	jp	z, BB13_23
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
 	ld	(ix - 9), iy
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	or	a, a
 	sbc	hl, hl
@@ -2942,12 +2979,12 @@ BB13_14:
 	ld	iy, (ix - 12)
 	ld	(iy + 36), hl
 	ld	(iy + 39), 63
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	a, (iy)
 	xor	a, b
@@ -2985,12 +3022,12 @@ BB13_23:
 	call	__fadd
 	ld	(ix - 9), bc
 	ld	(ix - 12), a
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	bc, (iy + 7)
 	ld	d, (iy + 10)
@@ -3007,13 +3044,13 @@ BB13_23:
 	ld	bc, (ix - 9)
 	ld	a, (ix - 12)
 	call	__fcmp
-	jp	p, BB13_106
+	jp	p, BB13_104
 	ld	hl, (ix - 15)
 	ld	e, (ix - 18)
 	ld	bc, (ix - 24)
 	ld	a, (ix - 21)
 	call	__fcmp
-	jp	p, BB13_106
+	jp	p, BB13_104
 	ld	iy, (ix + 6)
 	ld	de, (iy + 8)
 	ld	a, d
@@ -3034,19 +3071,19 @@ BB13_23:
 	ld	a, l
 	call	__ltof
 	ld	(ix - 9), bc
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 15)
 	ld	e, (iy + 18)
-	ld	(ix - 6), hl
+	ld	(ix - 3), hl
 	ld	bc, (ix - 9)
 	call	__fcmp
-	jp	p, BB13_106
+	jp	p, BB13_104
 	ld	iy, (ix - 12)
 	ld	a, iyh
 	ld	l, a
@@ -3067,7 +3104,7 @@ BB13_23:
 	push	bc
 	pop	iy
 	ld	d, a
-	ld	bc, (ix - 6)
+	ld	bc, (ix - 3)
 	ld	a, e
 	ld	hl, 4194304
 	ld	e, 65
@@ -3075,9 +3112,9 @@ BB13_23:
 	lea	hl, iy
 	ld	e, d
 	call	__fcmp
-	jp	p, BB13_106
+	jp	p, BB13_104
 	ld	iy, (ix + 6)
-	ld	a, (iy + 29)
+	ld	a, (iy + 37)
 	cp	a, 2
 	ld	hl, (ix + 9)
 	push	hl
@@ -3085,17 +3122,17 @@ BB13_23:
 	call	z, _KillPlayer
 	pop	hl
 	pop	hl
-	jp	BB13_106
+	jp	BB13_104
 BB13_28:
 	ld	a, l
 	cp	a, 2
 	jp	nz, BB13_59
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	de, (iy + 26)
 	ld	hl, (ix + 9)
@@ -3107,11 +3144,11 @@ BB13_28:
 	jp	c, BB13_64
 	ld	iy, (ix - 15)
 	ld	(iy + 4), 0
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	(iy + 40), -4
 	res	0, (iy + 2)
@@ -3125,9 +3162,9 @@ BB13_28:
 BB13_31:
 	bit	0, a
 	ld	bc, 304
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	jr	nz, BB13_38
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	de
@@ -3155,18 +3192,18 @@ BB13_37:
 	push	bc
 	pop	de
 	ld	bc, 304
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, bc
 	ld	(iy + 32), de
 	ld	(iy + 35), a
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	ld	bc, 304
 BB13_38:
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	de
@@ -3238,16 +3275,16 @@ BB13_38:
 	ld	a, l
 	call	__ltof
 	ld	(ix - 9), bc
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 15)
 	ld	e, (iy + 18)
-	ld	(ix - 6), hl
+	ld	(ix - 3), hl
 	ld	bc, (ix - 9)
 	call	__fcmp
 	jp	p, BB13_78
@@ -3271,7 +3308,7 @@ BB13_38:
 	push	bc
 	pop	iy
 	ld	d, a
-	ld	bc, (ix - 6)
+	ld	bc, (ix - 3)
 	ld	a, e
 	ld	hl, 4194304
 	ld	e, 65
@@ -3281,7 +3318,7 @@ BB13_38:
 	call	__fcmp
 	jp	p, BB13_78
 	ld	iy, (ix + 6)
-	ld	a, (iy + 29)
+	ld	a, (iy + 37)
 	cp	a, 2
 	ld	hl, (ix + 9)
 	push	hl
@@ -3293,13 +3330,13 @@ BB13_38:
 BB13_43:
 	ld	a, l
 	cp	a, 2
-	jp	nz, BB13_101
-	ld	hl, (ix - 3)
+	jp	nz, BB13_99
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	de, (iy + 26)
 	ld	hl, (ix + 9)
@@ -3311,31 +3348,31 @@ BB13_43:
 	jr	c, BB13_46
 	ld	iy, (ix - 15)
 	ld	(iy + 4), 0
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	(iy + 40), -4
 	ld	a, (iy)
 	xor	a, 1
 	ld	(iy), a
 BB13_46:
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	bit	0, (iy + 1)
 	jr	z, BB13_49
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 32)
 	ld	e, (iy + 35)
@@ -3349,9 +3386,9 @@ BB13_46:
 	ld	(iy + 35), h
 BB13_49:
 	ld	iy, (ix + 6)
-	ld	a, (iy + 29)
+	ld	a, (iy + 37)
 	cp	a, 2
-	jp	nz, BB13_106
+	jp	nz, BB13_104
 	ld	hl, (ix + 6)
 	push	hl
 	pop	iy
@@ -3364,12 +3401,12 @@ BB13_49:
 	call	__fadd
 	ld	(ix - 9), bc
 	ld	(ix - 18), a
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	bc, (iy + 7)
 	ld	d, (iy + 10)
@@ -3386,13 +3423,13 @@ BB13_49:
 	ld	bc, (ix - 9)
 	ld	a, (ix - 18)
 	call	__fcmp
-	jp	p, BB13_106
+	jp	p, BB13_104
 	ld	hl, (ix - 21)
 	ld	e, (ix - 24)
 	ld	bc, (ix - 30)
 	ld	a, (ix - 27)
 	call	__fcmp
-	jp	p, BB13_106
+	jp	p, BB13_104
 	ld	iy, (ix + 6)
 	ld	de, (iy + 8)
 	ld	a, d
@@ -3413,19 +3450,19 @@ BB13_49:
 	ld	a, l
 	call	__ltof
 	ld	(ix - 9), bc
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 15)
 	ld	e, (iy + 18)
 	ld	(ix - 21), hl
 	ld	bc, (ix - 9)
 	call	__fcmp
-	jp	p, BB13_106
+	jp	p, BB13_104
 	ld	iy, (ix - 18)
 	ld	a, iyh
 	ld	l, a
@@ -3454,7 +3491,7 @@ BB13_49:
 	lea	hl, iy
 	ld	e, d
 	call	__fcmp
-	jp	p, BB13_106
+	jp	p, BB13_104
 	or	a, a
 	sbc	hl, hl
 	ld	iy, (ix - 12)
@@ -3463,7 +3500,7 @@ BB13_49:
 	ld	iy, (ix - 15)
 	ld	(iy + 4), 3
 	ld	iy, (ix + 6)
-	bit	1, (iy + 33)
+	bit	1, (iy + 40)
 	ld	a, -1
 	jr	z, BB13_56
 	ld	a, 0
@@ -3471,7 +3508,7 @@ BB13_56:
 	bit	0, a
 	bit	0, a
 	ld	a, 63
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	jr	nz, BB13_58
 	ld	a, -65
 BB13_58:
@@ -3479,19 +3516,19 @@ BB13_58:
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, -4194304
 	ld	(iy + 32), hl
 	ld	(iy + 35), a
 	ld	iy, (ix + 6)
-	ld	hl, (iy + 39)
+	ld	hl, (iy + 47)
 	ld	de, 800
 	add	hl, de
-	ld	(iy + 39), hl
+	ld	(iy + 47), hl
 	ld	hl, _levelEnemies+1
 	dec	(hl)
-	jp	BB13_106
+	jp	BB13_104
 BB13_59:
 	ld	a, l
 	cp	a, 5
@@ -3528,11 +3565,11 @@ BB13_59:
 	bit	0, a
 	ld	a, 63
 	ld	bc, 304
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	jr	nz, BB13_62
 	ld	a, -65
 BB13_62:
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	de
@@ -3552,22 +3589,22 @@ BB13_62:
 	ld	(iy + 4), 0
 	jp	BB13_78
 BB13_64:
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 BB13_65:
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	call	__imulu
 	push	hl
 	pop	de
-	ld	(ix - 6), iy
+	ld	(ix - 3), iy
 	add	iy, de
 	bit	0, (iy + 1)
 	jr	z, BB13_68
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 32)
 	ld	e, (iy + 35)
@@ -3581,7 +3618,7 @@ BB13_65:
 	ld	(iy + 35), h
 BB13_68:
 	ld	iy, (ix + 6)
-	ld	a, (iy + 29)
+	ld	a, (iy + 37)
 	cp	a, 2
 	jp	nz, BB13_78
 	ld	hl, (ix + 6)
@@ -3596,12 +3633,12 @@ BB13_68:
 	call	__fadd
 	ld	(ix - 9), bc
 	ld	(ix - 12), a
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	bc, (iy + 7)
 	ld	d, (iy + 10)
@@ -3645,12 +3682,12 @@ BB13_68:
 	ld	a, l
 	call	__ltof
 	ld	(ix - 9), bc
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 15)
 	ld	e, (iy + 18)
@@ -3687,12 +3724,12 @@ BB13_68:
 	ld	e, d
 	call	__fcmp
 	jp	p, BB13_78
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, 4194304
 	ld	(iy + 36), hl
@@ -3701,7 +3738,7 @@ BB13_68:
 	ld	(iy + 4), 3
 	ld	iy, (ix + 6)
 	lea	bc, iy
-	bit	1, (iy + 33)
+	bit	1, (iy + 40)
 	ld	a, -1
 	jr	z, BB13_75
 	ld	a, 0
@@ -3719,118 +3756,89 @@ BB13_77:
 	ld	(iy + 35), a
 	push	bc
 	pop	iy
-	ld	hl, (iy + 39)
+	ld	hl, (iy + 47)
 	ld	de, 800
 	add	hl, de
-	ld	(iy + 39), hl
+	ld	(iy + 47), hl
 	ld	hl, _levelEnemies+1
 	dec	(hl)
 BB13_78:
-	ld	iy, (_levelEnemies+6)
-	ld	hl, (ix - 3)
-	ld	de, 304
-	push	de
-	pop	bc
+	ld	de, (_levelEnemies+6)
+	ld	hl, (ix - 6)
+	ld	iy, 304
+	lea	bc, iy
 	call	__imulu
 	push	hl
-	pop	de
-	lea	hl, iy
-	add	iy, de
+	pop	bc
+	ld	(ix - 3), de
+	push	de
+	pop	iy
+	add	iy, bc
+	ld	hl, (iy + 7)
+	ld	d, (iy + 10)
 	ld	(ix - 9), iy
 	ld	a, (iy + 4)
 	cp	a, 3
-	ld	(ix - 6), hl
-	jr	nz, BB13_81
-	ld	hl, (ix - 3)
-	ld	de, 304
-	push	de
-	pop	bc
-	call	__imulu
-	push	hl
-	pop	de
-	ld	iy, (ix - 6)
-	add	iy, de
-	ld	bc, (iy + 15)
-	ld	hl, 7340032
-	ld	e, 67
-	ld	a, (iy + 18)
-	call	__fcmp
-	ld	bc, 304
-	ld	hl, (ix - 3)
-	jp	p, BB13_110
-	ld	iy, (ix - 9)
-	ld	(iy + 4), 4
-	jp	BB13_110
-BB13_81:
-	ld	hl, (ix - 3)
-	ld	bc, 304
-	call	__imulu
-	push	hl
-	pop	de
-	ld	iy, (ix - 6)
-	add	iy, de
-	ld	hl, (iy + 7)
-	ld	d, (iy + 10)
+	jp	z, BB13_105
+	ld	(ix - 12), hl
 	ld	e, d
 	ld	bc, -8388608
 	ld	a, -63
 	call	__fcmp
-	push	hl
-	pop	bc
 	ld	hl, -6291456
-	ld	e, 67
+	ld	iyl, 67
+	ld	e, iyl
+	ld	bc, (ix - 12)
 	ld	a, e
-	jp	m, BB13_83
+	jp	m, BB13_81
 	ld	hl, -6291456
 	ld	a, d
 	call	__fcmp
 	ld	hl, -8388608
 	ld	a, -63
-	jp	p, BB13_84
-BB13_83:
+	jp	p, BB13_82
+BB13_81:
+	ld	iy, (ix - 9)
 	ld	(iy + 7), hl
 	ld	(iy + 10), a
 	push	hl
 	pop	bc
 	ld	d, a
-BB13_84:
+BB13_82:
 	ld	(ix - 18), d
-	ld	(ix - 15), bc
-	ld	hl, (ix - 3)
-	ld	iy, 304
-	lea	bc, iy
+	ld	(ix - 12), bc
+	ld	hl, (ix - 6)
+	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	a, (iy + 1)
 	ld	hl, (iy + 36)
 	ld	(ix - 9), hl
 	ld	(ix - 21), iy
 	ld	d, (iy + 39)
-	push	bc
-	pop	iy
 	ld	(ix - 27), a
 	bit	0, a
-	ld	(ix - 12), d
-	jp	z, BB13_89
+	ld	(ix - 15), d
+	jp	z, BB13_87
 	or	a, a
 	sbc	hl, hl
 	ld	e, h
 	ld	bc, (ix - 9)
 	ld	a, d
 	call	__fcmp
-	jp	m, BB13_89
-	ld	hl, (ix - 3)
-	lea	bc, iy
+	jp	m, BB13_87
+	ld	hl, (ix - 6)
+	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 32)
-	ld	bc, (ix - 15)
+	ld	bc, (ix - 12)
 	ld	a, (ix - 18)
 	ld	e, (iy + 35)
 	call	__fadd
@@ -3853,10 +3861,6 @@ BB13_84:
 	ld	(ix - 39), de
 	ex	de, hl
 	add	hl, bc
-	push	af
-	ld	a, (ix - 12)
-	ld	iyl, a
-	pop	af
 	ld	de, (hl)
 	ld	a, d
 	ld	l, a
@@ -3867,13 +3871,11 @@ BB13_84:
 	ld	b, a
 	ld	(ix - 45), de
 	ld	c, e
-	ld	d, iyl
 	push	bc
 	pop	hl
 	push	bc
 	pop	iy
 	add	iy, iy
-	ld	iy, 304
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
@@ -3883,7 +3885,7 @@ BB13_84:
 	ld	bc, (ix - 24)
 	ld	a, (ix - 30)
 	call	__fcmp
-	jp	p, BB13_89
+	jp	p, BB13_87
 	ld	bc, (ix - 45)
 	ld	a, b
 	ld	l, a
@@ -3907,43 +3909,43 @@ BB13_84:
 	ld	h, d
 	ld	de, (ix - 24)
 	add	hl, de
-	ld	d, (ix - 12)
 	push	hl
 	pop	bc
 	push	bc
 	pop	iy
 	add	iy, iy
-	ld	iy, 304
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
 	ld	hl, (ix - 33)
 	ld	e, (ix - 36)
 	call	__fcmp
-	jp	p, BB13_89
+	jp	p, BB13_87
 	or	a, a
 	sbc	hl, hl
 	ld	iy, (ix - 21)
 	jp	BB13_125
-BB13_89:
-	ld	hl, (ix - 3)
-	lea	bc, iy
+BB13_87:
+	ld	hl, (ix - 6)
+	ld	de, 304
+	push	de
+	pop	bc
 	call	__imulu
 	push	hl
-	pop	bc
-	ld	iy, (ix - 6)
-	add	iy, bc
+	pop	de
+	ld	iy, (ix - 3)
+	add	iy, de
 	ld	bc, (iy + 15)
 	ld	a, (iy + 18)
 	ld	hl, (ix - 9)
-	ld	e, d
+	ld	e, (ix - 15)
 	call	__fsub
 	ld	d, a
 	ld	hl, 5505024
 	ld	e, 67
 	ld	(ix - 24), bc
 	call	__fcmp
-	jp	p, BB13_93
+	jp	p, BB13_91
 	ld	(iy + 15), hl
 	ld	(iy + 18), 67
 	or	a, a
@@ -3952,15 +3954,15 @@ BB13_89:
 	ld	(iy + 36), hl
 	ld	(iy + 39), h
 	ld	(iy + 1), 1
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 32)
-	ld	bc, (ix - 15)
+	ld	bc, (ix - 12)
 	ld	a, (ix - 18)
 	ld	e, (iy + 35)
 	call	__fadd
@@ -3972,30 +3974,30 @@ BB13_89:
 	ld	bc, -6291456
 	ld	a, 67
 	call	__fcmp
-	ld	bc, (ix - 3)
-	jp	p, BB13_92
+	ld	bc, (ix - 6)
+	jp	p, BB13_90
 	ld	hl, -8388608
 	ld	e, -63
 	lea	bc, iy
 	ld	a, d
 	call	__fcmp
-	ld	bc, (ix - 3)
+	ld	bc, (ix - 6)
 	jp	m, BB13_139
-BB13_92:
+BB13_90:
 	ld	hl, (ix + 9)
 	push	hl
 	push	bc
 	call	_EnterRespawnPipe
-	ld	bc, (ix - 3)
+	ld	bc, (ix - 6)
 	pop	hl
 	pop	hl
 	ld	hl, (_levelEnemies+6)
-	ld	(ix - 6), hl
+	ld	(ix - 3), hl
 	jp	BB13_139
-BB13_93:
+BB13_91:
 	ld	(ix - 30), iy
 	ld	hl, (ix - 9)
-	ld	e, (ix - 12)
+	ld	e, (ix - 15)
 	ld	bc, 0
 	ld	iyl, b
 	ld	a, iyl
@@ -4013,12 +4015,12 @@ BB13_93:
 	ld	(ix - 36), a
 	ld	hl, (_levelPlatforms+1)
 	ld	(ix - 9), hl
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 3)
 	add	hl, de
 	ld	(ix - 45), hl
 	ld	bc, 0
@@ -4036,8 +4038,8 @@ BB13_93:
 	lea	de, iy + 6
 	ld	(ix - 9), de
 	ld	d, a
-BB13_95:
-	ld	(ix - 12), hl
+BB13_93:
+	ld	(ix - 15), hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
@@ -4053,7 +4055,7 @@ BB13_95:
 	ld	bc, (ix - 33)
 	ld	a, (ix - 36)
 	call	__fcmp
-	jp	p, BB13_100
+	jp	p, BB13_98
 	ld	hl, (ix - 42)
 	ld	bc, 8
 	add	hl, bc
@@ -4069,10 +4071,10 @@ BB13_95:
 	ld	hl, (ix - 24)
 	ld	e, (ix - 39)
 	call	__fcmp
-	jp	p, BB13_100
+	jp	p, BB13_98
 	ld	iy, (ix - 45)
 	ld	hl, (iy + 32)
-	ld	bc, (ix - 15)
+	ld	bc, (ix - 12)
 	ld	a, (ix - 18)
 	ld	e, (iy + 35)
 	call	__fadd
@@ -4111,7 +4113,7 @@ BB13_95:
 	ld	bc, (ix - 52)
 	ld	a, (ix - 55)
 	call	__fcmp
-	jp	p, BB13_100
+	jp	p, BB13_98
 	ld	de, (ix - 62)
 	ld	a, d
 	ld	l, a
@@ -4144,26 +4146,26 @@ BB13_95:
 	ld	e, (ix - 59)
 	call	__fcmp
 	jp	m, BB13_146
-BB13_100:
+BB13_98:
 	inc	d
 	lea	iy, iy + 22
 	ld	(ix - 9), iy
-	ld	hl, (ix - 12)
+	ld	hl, (ix - 15)
 	dec	hl
 	ld	bc, 0
-	jp	BB13_95
-BB13_101:
+	jp	BB13_93
+BB13_99:
 	ld	a, l
 	cp	a, 5
-	jr	nz, BB13_106
-	ld	hl, (ix - 3)
+	jr	nz, BB13_104
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 3)
 	add	hl, de
-	ld	(ix - 6), hl
+	ld	(ix - 3), hl
 	ld	a, (hl)
 	xor	a, b
 	ld	de, 0
@@ -4182,7 +4184,7 @@ BB13_101:
 	ld	hl, (ix + 9)
 	ld	(iy + 7), hl
 	ld	(iy + 5), 0
-	ld	de, (ix - 6)
+	ld	de, (ix - 3)
 	ld	hl, (ix - 12)
 	push	hl
 	pop	iy
@@ -4195,9 +4197,9 @@ BB13_101:
 	bit	0, a
 	bit	0, a
 	ld	a, 63
-	jr	nz, BB13_104
+	jr	nz, BB13_102
 	ld	a, -65
-BB13_104:
+BB13_102:
 	ld	(iy + 32), bc
 	ld	(iy + 35), a
 	ld	de, (iy + 23)
@@ -4207,50 +4209,71 @@ BB13_104:
 	ld	de, 66
 	or	a, a
 	sbc	hl, de
-	jr	c, BB13_106
+	jr	c, BB13_104
 	ld	iy, (ix - 15)
 	ld	(iy + 4), 0
-BB13_106:
+BB13_104:
 	ld	de, (_levelEnemies+6)
-	ld	hl, (ix - 3)
-	ld	bc, 304
+	ld	hl, (ix - 6)
+	ld	iy, 304
+	lea	bc, iy
 	call	__imulu
 	push	hl
 	pop	bc
+	ld	(ix - 3), de
 	push	de
 	pop	iy
 	add	iy, bc
+	ld	hl, (iy + 7)
+	ld	d, (iy + 10)
+	ld	(ix - 9), iy
 	ld	a, (iy + 4)
 	cp	a, 3
-	ld	(ix - 6), de
-	jr	nz, BB13_112
-	ld	(ix - 12), iy
-	ld	hl, (ix - 3)
+	jp	nz, BB13_112
+BB13_105:
+	push	hl
+	pop	iy
+	ld	e, d
+	ld	bc, -8388608
+	ld	a, -63
+	call	__fcmp
+	ld	hl, -6291456
+	ld	e, 67
+	ld	a, e
+	jp	m, BB13_107
+	ld	hl, -6291456
+	lea	bc, iy
+	ld	a, d
+	call	__fcmp
+	ld	hl, -8388608
+	ld	a, -63
+	jp	p, BB13_108
+BB13_107:
+	ld	iy, (ix - 9)
+	ld	(iy + 7), hl
+	ld	(iy + 10), a
+BB13_108:
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	bc
-	ex	de, hl
-	add	hl, bc
-	ld	(ix - 9), hl
-	ld	iy, (ix - 9)
+	ld	iy, (ix - 3)
+	add	iy, bc
 	ld	bc, (iy + 15)
 	ld	hl, 7340032
-	ld	e, 67
-	ld	iy, (ix - 9)
 	ld	a, (iy + 18)
 	call	__fcmp
-	jp	p, BB13_109
-	ld	iy, (ix - 12)
+	jp	p, BB13_110
+	ld	iy, (ix - 9)
 	ld	(iy + 4), 4
-BB13_109:
-	ld	hl, (ix - 3)
-	ld	bc, 304
 BB13_110:
+	ld	hl, (ix - 6)
+	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (iy + 36)
 	ld	e, (iy + 39)
@@ -4262,47 +4285,38 @@ BB13_110:
 	ld	(iy + 39), -64
 	jp	BB13_138
 BB13_112:
-	ld	hl, (ix - 3)
-	ld	bc, 304
-	call	__imulu
-	push	hl
-	pop	bc
-	push	de
-	pop	iy
-	add	iy, bc
-	ld	hl, (iy + 7)
-	ld	d, (iy + 10)
-	ld	(ix - 9), hl
+	ld	(ix - 12), hl
 	ld	e, d
 	ld	bc, -8388608
 	ld	a, -63
 	call	__fcmp
 	ld	hl, -6291456
-	ld	a, 67
+	ld	e, 67
+	ld	a, e
 	jp	m, BB13_114
 	ld	hl, -6291456
-	ld	e, 67
-	ld	bc, (ix - 9)
+	ld	bc, (ix - 12)
 	ld	a, d
 	call	__fcmp
 	ld	hl, -8388608
 	ld	a, -63
 	jp	p, BB13_115
 BB13_114:
+	ld	iy, (ix - 9)
 	ld	(iy + 7), hl
 	ld	(iy + 10), a
-	ld	(ix - 9), hl
+	ld	(ix - 12), hl
 	ld	d, a
 BB13_115:
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, bc
 	ld	hl, (iy + 32)
-	ld	bc, (ix - 9)
+	ld	bc, (ix - 12)
 	ld	a, d
 	ld	e, (iy + 35)
 	call	__fadd
@@ -4321,32 +4335,32 @@ BB13_115:
 	ld	a, d
 	call	__fcmp
 	jp	p, BB13_118
-	ld	de, (ix - 3)
+	ld	de, (ix - 6)
 	jr	BB13_120
 BB13_118:
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	bc, (iy + 15)
 	ld	hl, 4063232
 	ld	e, 67
 	ld	a, (iy + 18)
 	call	__fcmp
-	ld	de, (ix - 3)
+	ld	de, (ix - 6)
 	jp	p, BB13_120
 	ld	hl, (ix + 9)
 	push	hl
 	push	de
 	call	_EnterRespawnPipe
-	ld	de, (ix - 3)
+	ld	de, (ix - 6)
 	pop	hl
 	pop	hl
 	ld	hl, (_levelEnemies+6)
-	ld	(ix - 6), hl
+	ld	(ix - 3), hl
 BB13_120:
 	ex	de, hl
 	ld	iy, 304
@@ -4354,7 +4368,7 @@ BB13_120:
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	a, (iy + 1)
 	ld	hl, (iy + 36)
@@ -4374,12 +4388,12 @@ BB13_120:
 	ld	a, d
 	call	__fcmp
 	jp	m, BB13_126
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	lea	bc, iy
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	bc, (iy + 7)
 	ld	hl, (iy + 32)
@@ -4481,12 +4495,12 @@ BB13_125:
 	ld	(iy + 39), 0
 	jp	BB13_138
 BB13_126:
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	lea	bc, iy
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, bc
 	ld	bc, (iy + 15)
 	ld	a, (iy + 18)
@@ -4508,12 +4522,12 @@ BB13_126:
 	ld	(iy + 39), h
 	bit	0, (ix - 18)
 	jr	nz, BB13_129
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
 	ld	hl, (ix + 9)
 	ld	(iy + 29), hl
@@ -4542,12 +4556,12 @@ BB13_130:
 	ld	(ix - 30), a
 	ld	hl, (_levelPlatforms+1)
 	ld	(ix - 9), hl
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	de
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 3)
 	add	hl, de
 	ld	(ix - 42), hl
 	ld	bc, 0
@@ -4676,7 +4690,7 @@ BB13_137:
 	ld	bc, 0
 	jp	BB13_132
 BB13_138:
-	ld	bc, (ix - 3)
+	ld	bc, (ix - 6)
 BB13_139:
 	push	bc
 	pop	hl
@@ -4686,9 +4700,9 @@ BB13_139:
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, de
-	ld	(ix - 6), iy
+	ld	(ix - 3), iy
 	ld	hl, (iy + 36)
 	ld	(ix - 9), hl
 	lea	hl, iy + 15
@@ -4721,24 +4735,24 @@ BB13_139:
 	pop	iy
 	ld	e, (iy)
 	call	__fadd
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	ld	(iy + 7), bc
 	ld	(iy + 10), a
 BB13_140:
-	ld	bc, (ix - 3)
+	ld	bc, (ix - 6)
 	inc	bc
 	ld	de, 0
 	jp	BB13_1
 BB13_141:
 	bit	0, (ix - 27)
-	ld	bc, (ix - 3)
+	ld	bc, (ix - 6)
 	jp	z, BB13_139
 BB13_142:
 	ld	iy, (ix - 21)
 	jr	BB13_145
 BB13_143:
 	bit	0, (ix - 18)
-	ld	bc, (ix - 3)
+	ld	bc, (ix - 6)
 	jp	z, BB13_139
 BB13_144:
 	ld	iy, (ix - 12)
@@ -4766,14 +4780,14 @@ BB13_146:
 	ld	(iy + 36), hl
 	ld	(iy + 39), h
 	ld	(iy + 1), 1
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, bc
-	ld	bc, (ix - 3)
+	ld	bc, (ix - 6)
 	ld	(iy + 6), d
 	ld	hl, (ix + 9)
 	ld	(iy + 29), hl
@@ -4804,14 +4818,14 @@ BB13_147:
 	ld	(iy + 39), h
 	ld	iy, (ix - 12)
 	ld	(iy + 1), 1
-	ld	de, (ix - 3)
+	ld	de, (ix - 6)
 	push	de
 	pop	hl
 	ld	bc, 304
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 3)
 	add	iy, bc
 	push	de
 	pop	bc
@@ -4980,7 +4994,7 @@ _HudDraw:
 	or	a, a
 	sbc	hl, hl
 	ld	iy, (ix + 6)
-	ld	l, (iy + 30)
+	ld	l, (iy + 38)
 	ld	de, 2
 	push	de
 	push	hl
@@ -4996,7 +5010,7 @@ _HudDraw:
 	pop	hl
 	pop	hl
 	ld	iy, (ix + 6)
-	ld	hl, (iy + 39)
+	ld	hl, (iy + 47)
 	ld	de, 6
 	push	de
 	push	hl
@@ -5236,7 +5250,7 @@ _HudRefresh:
 _LevelLoop:
 	ld	hl, -9
 	call	__frameset
-	ld	hl, _mario1+33
+	ld	hl, _mario1+40
 	ld	de, 4
 	res	0, (hl)
 	ld	hl, (_gameFrame)
@@ -5664,7 +5678,7 @@ BB22_20:
 	ld	(hl), c
 	inc	hl
 	ld	(hl), b
-	ld	hl, _mario1+33
+	ld	hl, _mario1+40
 	res	1, (hl)
 	or	a, a
 	sbc	hl, hl
@@ -5673,6 +5687,12 @@ BB22_20:
 	ld	(_mario1+19), a
 	ld	(_mario1+12), hl
 	ld	(_mario1+15), a
+	ld	hl, 5033165
+	ld	(_mario1+28), hl
+	ld	a, 62
+	ld	(_mario1+31), a
+	ld	(_mario1+32), hl
+	ld	(_mario1+35), a
 	ld	bc, 60
 	ex	de, hl
 	call	__imulu
@@ -5866,6 +5886,13 @@ _LoadLevel:
 	pop	hl
 	call	_InitPows
 	ld	hl, -80
+	push	hl
+	ld	hl, 152
+	push	hl
+	call	_CreatePow
+	pop	hl
+	pop	hl
+	ld	hl, 20
 	push	hl
 	ld	hl, 152
 	push	hl
@@ -6086,12 +6113,12 @@ _InitPlatformData:
 	section	.text,"ax",@progbits
 	public	_CreatePlatform
 _CreatePlatform:
-	ld	hl, -18
+	ld	hl, -21
 	call	__frameset
 	ld	hl, (ix + 6)
-	ld	(ix - 12), hl
+	ld	(ix - 15), hl
 	ld	a, (ix + 9)
-	ld	(ix - 9), a
+	ld	(ix - 12), a
 	ld	l, (ix + 12)
 	ld	(ix - 3), hl
 	ld	iy, _levelPlatforms
@@ -6122,13 +6149,13 @@ _CreatePlatform:
 	push	de
 	pop	iy
 	add	iy, bc
-	ld	(ix - 6), iy
-	ld	hl, (ix - 12)
+	ld	(ix - 9), iy
+	ld	hl, (ix - 15)
 	ld	(iy), l
 	ld	(iy + 1), h
 	ld	(iy + 2), l
 	ld	(iy + 3), h
-	ld	a, (ix - 9)
+	ld	a, (ix - 12)
 	ld	(iy + 4), a
 	ld	(iy + 5), a
 	ld	de, (ix - 3)
@@ -6139,31 +6166,32 @@ _CreatePlatform:
 	or	a, a
 	sbc	hl, hl
 	ld	l, e
+	ld	(ix - 6), hl
 	ld	c, 4
 	call	__ishl
 	ld	de, 2
 	add	hl, de
-	ld	(ix - 18), hl
+	ld	(ix - 21), hl
 	push	hl
 	call	_malloc
-	ld	(ix - 15), hl
+	ld	(ix - 18), hl
 	pop	de
 	push	hl
 	pop	de
 	push	hl
 	pop	bc
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 9)
 	ld	(iy + 8), de
 	ld	hl, (ix - 3)
 	push	bc
 	pop	iy
 	ld	(iy), l
 	ld	(iy + 1), 16
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 9)
 	ld	(iy + 14), 0
 	ld	(iy + 15), 0
 	res	0, (iy + 16)
-	ld	hl, (ix - 18)
+	ld	hl, (ix - 21)
 	push	hl
 	call	_malloc
 	push	hl
@@ -6171,26 +6199,30 @@ _CreatePlatform:
 	pop	hl
 	push	de
 	pop	hl
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 9)
 	ld	(iy + 11), hl
 	ld	hl, (ix - 3)
 	push	de
 	pop	iy
 	ld	(iy), l
 	ld	(iy + 1), 16
-	ld	de, (ix - 12)
+	ld	de, (ix - 15)
 	ld	a, d
 	rlc	a
 	sbc	hl, hl
-	ld	h, d
-	ld	l, e
-	ld	(ix - 6), hl
-	ld	de, 0
-	ld	e, (ix - 9)
-	ld	(ix - 9), de
-	push	de
 	push	hl
-	ld	hl, (ix - 15)
+	pop	bc
+	ld	b, d
+	ld	c, e
+	ld	(ix - 9), bc
+	ld	hl, (ix - 6)
+	ld	l, (ix - 12)
+	ld	(ix - 6), hl
+	ld	de, -8
+	add	hl, de
+	push	hl
+	push	bc
+	ld	hl, (ix - 18)
 	push	hl
 	call	_gfx_GetSprite
 	pop	hl
@@ -6202,7 +6234,7 @@ _CreatePlatform:
 	call	__bshru
 	ld	bc, 0
 	ld	c, a
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 9)
 BB28_1:
 	push	bc
 	pop	hl
@@ -6210,7 +6242,7 @@ BB28_1:
 	or	a, a
 	sbc	hl, bc
 	jr	z, BB28_3
-	ld	hl, (ix - 9)
+	ld	hl, (ix - 6)
 	push	hl
 	push	iy
 	ld	hl, _pipes_block_data
@@ -6240,13 +6272,11 @@ BB28_3:
 	pop	de
 	add	iy, de
 	ld	hl, (iy + 11)
-	ld	de, -8
-	ld	iy, (ix - 9)
-	add	iy, de
 	ld	(ix + 6), hl
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 9)
 	ld	(ix + 9), hl
-	ld	(ix + 12), iy
+	ld	hl, (ix - 6)
+	ld	(ix + 12), hl
 	ld	sp, ix
 	pop	ix
 	jp	_gfx_GetSprite
@@ -6636,10 +6666,10 @@ BB30_20:
 	ld	hl, (ix + 6)
 	push	hl
 	pop	iy
-	ld	hl, (iy + 39)
+	ld	hl, (iy + 47)
 	ld	de, 10
 	add	hl, de
-	ld	(iy + 39), hl
+	ld	(iy + 47), hl
 BB30_21:
 	ld	bc, -7602176
 	ld	d, (ix - 15)
@@ -6872,7 +6902,7 @@ _RefreshPlatformBackgroundData:
 	or	a, a
 	sbc	hl, hl
 	ld	(ix - 3), hl
-	ld	(ix - 9), hl
+	ld	(ix - 6), hl
 	ld	de, 0
 	push	de
 	pop	hl
@@ -6883,8 +6913,8 @@ _RefreshPlatformBackgroundData:
 	pop	bc
 	add	iy, bc
 	ld	(ix - 12), iy
-	ld	bc, 22
 BB31_1:
+	ld	bc, 22
 	ld	a, (_levelPlatforms)
 	ld	e, a
 	ld	hl, (ix - 3)
@@ -6897,25 +6927,33 @@ BB31_1:
 	push	hl
 	pop	de
 	add	iy, de
-	ld	de, (iy + 8)
-	ld	bc, (iy)
-	ld	a, b
+	ld	hl, (iy + 8)
+	ld	(ix - 9), hl
+	ld	de, (iy)
+	ld	a, d
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
-	ld	h, a
-	ld	l, c
-	ld	bc, 0
-	ld	c, (iy + 4)
-	push	bc
 	push	hl
-	push	de
+	pop	bc
+	ld	b, a
+	ld	c, e
+	or	a, a
+	sbc	hl, hl
+	ld	l, (iy + 4)
+	ld	de, -8
+	add	hl, de
+	push	hl
+	push	bc
+	ld	hl, (ix - 9)
+	push	hl
 	call	_gfx_GetSprite
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	de, (ix - 9)
-	ld	a, d
+	ld	de, (ix - 6)
+	ld	l, d
+	ld	a, l
 BB31_3:
 	ld	iy, (_levelPlatforms+1)
 	ld	hl, (ix - 3)
@@ -6923,7 +6961,7 @@ BB31_3:
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	(ix - 6), iy
+	ld	(ix - 9), iy
 	add	iy, bc
 	ld	hl, (iy + 6)
 	ld	c, 3
@@ -6931,7 +6969,7 @@ BB31_3:
 	ld	c, l
 	ld	b, h
 	ld	e, a
-	ld	(ix - 9), de
+	ld	(ix - 6), de
 	ld	l, e
 	ld	h, d
 	or	a, a
@@ -6963,7 +7001,7 @@ BB31_3:
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 6)
+	ld	iy, (ix - 9)
 	add	iy, de
 	or	a, a
 	sbc	hl, hl
@@ -6979,7 +7017,7 @@ BB31_3:
 	pop	hl
 	pop	hl
 	inc	a
-	ld	de, (ix - 9)
+	ld	de, (ix - 6)
 	jp	BB31_3
 BB31_5:
 	ld	hl, (ix - 3)
@@ -6990,31 +7028,26 @@ BB31_5:
 	push	hl
 	pop	de
 	ld	(ix - 15), de
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 9)
 	add	hl, de
-	ld	(ix - 6), hl
+	ex	de, hl
 	lea	hl, iy
-	ld	iy, (ix - 6)
-	ld	de, (iy + 11)
-	ld	(ix - 18), de
+	push	de
+	pop	iy
+	ld	bc, (iy + 11)
+	ld	(ix - 9), bc
 	ld	bc, (hl)
 	ld	a, b
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	bc, 0
+	ld	c, (iy + 4)
+	push	bc
 	push	hl
-	pop	de
-	ld	d, a
-	ld	e, c
-	or	a, a
-	sbc	hl, hl
-	ld	iy, (ix - 6)
-	ld	l, (iy + 4)
-	ld	bc, -8
-	add	hl, bc
-	push	hl
-	push	de
-	ld	hl, (ix - 18)
+	ld	hl, (ix - 9)
 	push	hl
 	call	_gfx_GetSprite
 	pop	hl
@@ -7028,9 +7061,6 @@ BB31_5:
 	inc	hl
 	ld	(ix - 3), hl
 	ld	de, 0
-	ld	hl, 22
-	push	hl
-	pop	bc
 	jp	BB31_1
 BB31_6:
 	ld	sp, ix
@@ -7048,56 +7078,37 @@ _FreezePlatform:
 	sbc	hl, hl
 	ld	l, (ix + 6)
 	ld	bc, 22
-	ld	(ix - 6), hl
+	ld	(ix - 3), hl
 	call	__imulu
 	push	hl
 	pop	de
 	add	iy, de
 	set	0, (iy + 16)
-	ld	iy, (_levelPlatforms+1)
-	add	iy, de
-	ld	de, (iy + 8)
-	ld	bc, (iy)
-	ld	a, b
-	ld	l, a
-	rlc	l
-	sbc	hl, hl
-	ld	h, a
-	ld	l, c
-	ld	bc, 0
-	ld	c, (iy + 4)
-	push	bc
-	push	hl
-	push	de
-	call	_gfx_GetSprite
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	h, 0
-	ld	(ix - 9), hl
+	ld	h, b
+	ld	(ix - 6), hl
 	ld	a, h
 BB32_1:
 	ld	iy, (_levelPlatforms+1)
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 3)
 	ld	bc, 22
 	call	__imulu
 	push	hl
 	pop	de
-	ld	(ix - 3), iy
+	ld	(ix - 9), iy
 	add	iy, de
 	ld	hl, (iy + 6)
 	ld	c, 3
 	call	__sshru
 	ld	e, l
 	ld	d, h
-	ld	bc, (ix - 9)
+	ld	bc, (ix - 6)
 	ld	c, a
 	ld	l, c
 	ld	h, b
 	or	a, a
 	sbc.sis	hl, de
 	jr	nc, BB32_3
-	ld	(ix - 9), bc
+	ld	(ix - 6), bc
 	ld	bc, 0
 	ld	c, a
 	ld	hl, (_platformBlocks+12)
@@ -7118,12 +7129,12 @@ BB32_1:
 	call	__ishl
 	add	hl, de
 	ld	(ix - 16), hl
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 3)
 	ld	bc, 22
 	call	__imulu
 	push	hl
 	pop	de
-	ld	iy, (ix - 3)
+	ld	iy, (ix - 9)
 	add	iy, de
 	or	a, a
 	sbc	hl, hl
@@ -7142,35 +7153,30 @@ BB32_1:
 	jp	BB32_1
 BB32_3:
 	ld	bc, 22
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 3)
 	call	__imulu
 	push	hl
 	pop	de
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 9)
 	add	hl, de
-	ld	(ix - 3), hl
+	ex	de, hl
 	lea	hl, iy
-	ld	iy, (ix - 3)
-	ld	de, (iy + 11)
-	ld	(ix - 6), de
+	push	de
+	pop	iy
+	ld	bc, (iy + 11)
+	ld	(ix - 3), bc
 	ld	bc, (hl)
 	ld	a, b
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
+	ld	h, a
+	ld	l, c
+	ld	bc, 0
+	ld	c, (iy + 4)
+	push	bc
 	push	hl
-	pop	de
-	ld	d, a
-	ld	e, c
-	or	a, a
-	sbc	hl, hl
-	ld	iy, (ix - 3)
-	ld	l, (iy + 4)
-	ld	bc, -8
-	add	hl, bc
-	push	hl
-	push	de
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 3)
 	push	hl
 	call	_gfx_GetSprite
 	ld	sp, ix
@@ -7188,21 +7194,26 @@ _PlayerInit:
 	push	hl
 	pop	de
 	inc	de
-	ld	bc, 407
+	ld	bc, 415
 	ldir
-	ld	(iy + 42), 16
-	ld	(iy + 43), 23
+	ld	(iy + 50), 16
+	ld	(iy + 51), 23
 	ld.sis	hl, 205
 	ld	(iy + 8), l
 	ld	(iy + 9), h
 	ld	hl, -8388608
 	ld	(iy), hl
 	ld	(iy + 3), 65
-	ld	(iy + 30), 4
-	ld	(iy + 29), 2
+	ld	(iy + 38), 4
+	ld	(iy + 37), 2
 	ld	hl, -4194304
 	ld	(iy + 24), hl
 	ld	(iy + 27), 63
+	ld	hl, 5033165
+	ld	(iy + 32), hl
+	ld	(iy + 35), 62
+	ld	(iy + 28), hl
+	ld	(iy + 31), 62
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -7210,14 +7221,13 @@ _PlayerInit:
 	section	.text,"ax",@progbits
 	public	_PlayerMove
 _PlayerMove:
-	ld	hl, -10
+	ld	hl, -8
 	call	__frameset
 	ld	a, (ix + 9)
-	cp	a, 5
-	jp	nc, BB34_30
-	ld	iy, (ix + 6)
-	ld	e, 62
 	ld	bc, 0
+	cp	a, 5
+	jp	nc, BB34_22
+	ld	iy, (ix + 6)
 	ld	c, a
 	ld	hl, JTI34_0
 	add	hl, bc
@@ -7226,84 +7236,104 @@ _PlayerMove:
 	ld	hl, (hl)
 	jp	(hl)
 BB34_2:
-	ld	iy, (ix + 6)
-	lea	de, iy + 16
-	ld	iy, (ix + 6)
 	ld	hl, (iy + 16)
-	ld	(ix - 3), hl
-	push	de
-	pop	iy
-	lea	hl, iy + 3
-	ld	iy, (ix + 6)
-	ld	e, (hl)
+	ld	e, (iy + 19)
 	ld	bc, (iy + 24)
 	ld	a, (iy + 27)
-	ld	hl, (ix - 3)
-	ld	(ix - 6), e
-	ld	(ix - 10), bc
-	ld	(ix - 7), a
 	call	__fcmp
-	jp	m, BB34_17
-	ld	d, 0
-	jp	BB34_18
+	jp	p, BB34_4
+	ld	bc, (iy + 28)
+	ld	(ix - 3), bc
+	push	hl
+	pop	bc
+	ld	a, e
+	ld	hl, (ix - 3)
+	ld	e, (iy + 31)
+	call	__fadd
 BB34_4:
-	ld	iy, (ix + 6)
-	lea	de, iy + 16
-	ld	iy, (ix + 6)
+	ld	(iy + 16), bc
+	ld	(iy + 19), a
+	ld	a, (iy + 40)
+	and	a, -4
+	inc	a
+	jr	BB34_8
+BB34_5:
 	ld	hl, (iy + 16)
-	ld	(ix - 6), hl
-	push	de
-	pop	iy
-	lea	hl, iy + 3
-	ld	iy, (ix + 6)
-	ld	d, (hl)
+	ld	(ix - 3), hl
+	ld	d, (iy + 19)
 	ld	bc, (iy + 24)
 	ld	a, (iy + 27)
 	call	__fneg
-	ld	(ix - 10), bc
 	push	bc
 	pop	hl
-	ld	(ix - 7), a
 	ld	e, a
-	ld	bc, (ix - 6)
-	push	bc
-	pop	iy
-	ld	(ix - 3), d
+	ld	bc, (ix - 3)
 	ld	a, d
 	call	__fcmp
-	jp	m, BB34_23
-	ld	d, 0
-	jp	BB34_24
-BB34_6:
-	bit	0, (iy + 32)
-	jp	z, BB34_30
-	ld	a, (iy + 29)
-	cp	a, 3
-	jp	z, BB34_30
-	ld	hl, -7340032
-	ld	(iy + 12), hl
-	ld	(iy + 15), 64
-	ld	(iy + 32), h
-	ld	(iy + 28), 4
-	ld	(iy + 20), hl
-	ld	(iy + 23), 64
-	jp	BB34_30
+	jp	p, BB34_7
+	ld	hl, (iy + 28)
+	ld	bc, (ix - 3)
+	ld	a, d
+	ld	e, (iy + 31)
+	call	__fsub
+	push	bc
+	pop	hl
+	ld	e, a
+BB34_7:
+	ld	(iy + 16), hl
+	ld	(iy + 19), e
+	ld	a, (iy + 40)
+	or	a, 3
+BB34_8:
+	ld	(iy + 40), a
+	jp	BB34_22
 BB34_9:
+	bit	0, (iy + 39)
+	jp	z, BB34_22
+	ld	a, (iy + 37)
+	cp	a, 3
+	jp	z, BB34_22
+	ld	de, -7340032
+	ld	hl, 5033165
+	ld	(iy + 12), de
+	ld	(iy + 15), 64
+	ld	(iy + 39), d
+	ld	(iy + 36), 4
+	ld	(iy + 20), de
+	ld	(iy + 23), 64
+	ld	(iy + 32), hl
+	ld	(iy + 35), 62
+	ld	(iy + 28), hl
+	ld	(iy + 31), 62
+	jp	BB34_22
+BB34_12:
 	ld	hl, (iy + 16)
-	ld	d, (iy + 19)
+	ld	e, (iy + 19)
+	ld	iy, (ix + 6)
+	ld	bc, (iy + 32)
+	ld	iy, (ix + 6)
+	ld	d, (iy + 35)
+	push	bc
+	pop	iy
+	ld	a, d
+	call	__fneg
+	ld	(ix - 3), bc
+	ld	(ix - 4), a
+	ld	(ix - 8), iy
+	lea	bc, iy
 	push	hl
 	pop	iy
-	ld	a, e
-	ld	e, d
-	ld	bc, 5033165
+	ld	(ix - 5), d
+	ld	a, d
+	ld	d, e
 	call	__fcmp
-	jp	p, BB34_12
-	ld	hl, 5033165
-	ld	e, -66
+	jp	p, BB34_15
+	ld	hl, (ix - 3)
+	ld	e, (ix - 4)
 	lea	bc, iy
 	ld	a, d
 	call	__fcmp
-	jp	p, BB34_12
+	jp	p, BB34_15
 	ld	hl, (ix + 6)
 	push	hl
 	pop	iy
@@ -7311,119 +7341,65 @@ BB34_9:
 	sbc	hl, hl
 	ld	(iy + 16), hl
 	ld	(iy + 19), h
-	jp	BB34_30
-BB34_12:
+	jr	BB34_22
+BB34_15:
 	or	a, a
 	sbc	hl, hl
 	ld	e, h
+	ld	(ix - 3), iy
 	lea	bc, iy
-	ld	(ix - 3), d
 	ld	a, d
 	call	__fcmp
-	jp	p, BB34_14
-	lea	hl, iy
 	ld	iy, (ix + 6)
-	bit	0, (iy + 32)
-	push	hl
-	pop	iy
-	jp	nz, BB34_31
-BB34_14:
-	ld	(ix - 6), iy
-	lea	hl, iy
-	ld	e, (ix - 3)
+	jp	p, BB34_17
+	bit	0, (iy + 39)
+	jr	nz, BB34_20
+BB34_17:
+	ld	hl, (ix - 3)
+	ld	e, d
 	ld	bc, 0
 	xor	a, a
 	call	__fcmp
-	ld	hl, 5033165
-	ld	iy, (ix + 6)
-	ld	e, 62
-	jp	p, BB34_30
-	bit	0, (iy + 32)
-	jr	z, BB34_30
-	ld	bc, (ix - 6)
-	ld	a, (ix - 3)
-	call	__fadd
-	jr	BB34_32
-BB34_17:
-	ld	d, 1
-BB34_18:
-	ld	hl, 5033165
+	jp	p, BB34_22
+	bit	0, (iy + 39)
+	jr	z, BB34_22
 	ld	bc, (ix - 3)
-	ld	a, (ix - 6)
-	ld	e, 62
+	ld	a, d
+	ld	hl, (ix - 8)
+	ld	e, (ix - 5)
 	call	__fadd
-	bit	0, d
-	jr	nz, BB34_20
-	ld	bc, (ix - 10)
+	jr	BB34_21
 BB34_20:
-	bit	0, d
-	jr	nz, BB34_22
-	ld	a, (ix - 7)
+	ld	bc, (ix - 3)
+	ld	a, d
+	ld	hl, (ix - 8)
+	ld	e, (ix - 5)
+	call	__fsub
+BB34_21:
+	ld	(iy + 16), bc
+	ld	(iy + 19), a
 BB34_22:
-	ld	(iy + 16), bc
-	ld	(iy + 19), a
-	ld	a, (iy + 33)
-	and	a, -4
-	inc	a
-	jr	BB34_29
-BB34_23:
-	ld	d, 1
-BB34_24:
-	ld	hl, 5033165
-	ld	e, -66
-	lea	bc, iy
-	ld	a, (ix - 3)
-	call	__fadd
-	bit	0, d
-	jr	nz, BB34_26
-	ld	bc, (ix - 10)
-BB34_26:
-	bit	0, d
-	jr	nz, BB34_28
-	ld	a, (ix - 7)
-BB34_28:
-	ld	iy, (ix + 6)
-	ld	(iy + 16), bc
-	ld	(iy + 19), a
-	ld	a, (iy + 33)
-	or	a, 3
-BB34_29:
-	ld	(iy + 33), a
-BB34_30:
 	ld	sp, ix
 	pop	ix
 	ret
-BB34_31:
-	lea	bc, iy
-	ld	a, (ix - 3)
-	ld	hl, 5033165
-	ld	e, -66
-	call	__fadd
-	ld	hl, (ix + 6)
-	push	hl
-	pop	iy
-BB34_32:
-	ld	(iy + 16), bc
-	ld	(iy + 19), a
-	jr	BB34_30
 	section	.text,"ax",@progbits
 	section	.rodata,"a",@progbits
 	private	JTI34_0
 JTI34_0:
 	dl	BB34_2
-	dl	BB34_4
-	dl	BB34_6
-	dl	BB34_30
+	dl	BB34_5
 	dl	BB34_9
+	dl	BB34_22
+	dl	BB34_12
 
 	section	.text,"ax",@progbits
 	public	_UpdatePlayer
 _UpdatePlayer:
-	ld	hl, -69
+	ld	hl, -64
 	call	__frameset
 	ld	iy, (ix + 6)
 	ld	de, 5033165
-	ld	a, (iy + 29)
+	ld	a, (iy + 37)
 	cp	a, 2
 	lea	bc, iy + 12
 	jr	nz, BB35_4
@@ -7438,8 +7414,10 @@ _UpdatePlayer:
 	ex	de, hl
 	ld	e, -66
 	call	__fadd
+	ld	(ix - 6), bc
 	ld	iy, (ix + 6)
 	ld	(iy + 12), bc
+	ld	(ix - 9), a
 	ld	(iy + 15), a
 	lea	hl, iy + 20
 	ld	bc, (iy + 20)
@@ -7451,30 +7429,31 @@ _UpdatePlayer:
 	call	__fadd
 	ld	iy, (ix + 6)
 	ld	(iy + 20), bc
+	ld	bc, -8388608
 	ld	(iy + 23), a
 BB35_2:
 	ld	a, -63
-	ld	hl, (ix + 6)
-	push	hl
-	pop	iy
+	ld	iy, (ix + 6)
 	ld	hl, (iy)
 	ld	d, (iy + 3)
 	ld	(ix - 3), hl
 	ld	e, d
-	ld	iy, -8388608
-	lea	bc, iy
+	push	bc
+	pop	iy
 	call	__fcmp
 	jp	p, BB35_7
-	ld	a, 67
-	ld	iy, (ix + 6)
+	ld	d, 67
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
 	ld	bc, -6291456
 	jr	BB35_8
 BB35_4:
 	cp	a, 3
-	jp	nz, BB35_63
+	jp	nz, BB35_81
 	ld	(ix - 6), bc
 	ld	iy, (ix + 6)
-	ld	bc, (iy + 36)
+	ld	bc, (iy + 44)
 	ld	hl, (ix + 9)
 	or	a, a
 	sbc	hl, bc
@@ -7484,60 +7463,104 @@ BB35_4:
 	or	a, a
 	sbc	hl, de
 	ld	(ix - 3), bc
-	jp	nz, BB35_44
+	jp	nz, BB35_63
 	ld	hl, 4194304
 	ld	de, (ix + 6)
 	push	de
 	pop	iy
 	ld	(iy + 12), hl
 	ld	(iy + 15), 64
-	jp	BB35_46
+	jp	BB35_65
 BB35_7:
 	ld	hl, -6291456
 	ld	e, 67
 	ld	bc, (ix - 3)
-	ld	(ix - 6), d
+	ld	(ix - 19), d
 	ld	a, d
 	call	__fcmp
 	lea	bc, iy
-	ld	iy, (ix + 6)
-	ld	hl, (ix - 3)
-	ld	a, -63
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	ld	d, -63
 	jp	p, BB35_9
 BB35_8:
 	ld	(iy), bc
-	ld	(iy + 3), a
+	ld	(iy + 3), d
+	ld	(ix - 3), bc
+	ld	(ix - 19), d
+BB35_9:
+	ld	de, (iy + 8)
+	ld	a, d
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	b, a
+	ld	(ix - 12), de
+	ld	c, e
 	push	bc
 	pop	hl
-	ld	(ix - 6), a
-BB35_9:
-	ld	(ix - 3), hl
-	ld	a, (iy + 32)
-	ld	(ix - 12), a
-	bit	0, a
-	jp	z, BB35_12
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, (ix - 6)
+	ld	e, (ix - 9)
+	call	__fsub
+	ld	hl, 5046272
+	ld	e, 67
+	ld	(ix - 15), bc
+	ld	(ix - 16), a
+	call	__fcmp
+	jp	p, BB35_12
+	ld.sis	hl, 205
+	ld	iy, (ix + 6)
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+	ld	(iy + 20), hl
+	ld	(iy + 23), h
+BB35_11:
+	ld	(iy + 39), 1
+	jp	BB35_74
+BB35_12:
+	ld	iy, (ix + 6)
+	ld	a, (iy + 43)
+	ld	l, a
+	rlc	l
+	sbc	hl, hl
+	cp	a, -1
+	jp	z, BB35_18
+	bit	0, (iy + 39)
+	jp	z, BB35_18
+	ld	l, a
+	ld	(ix - 22), hl
 	ld	bc, (ix - 3)
-	ld	a, (ix - 6)
+	ld	a, (ix - 19)
 	ld	hl, -8388608
 	ld	e, 65
 	call	__fadd
 	ld	hl, (iy + 16)
 	ld	e, (iy + 19)
-	ld	(ix - 21), hl
-	ld	(ix - 24), e
+	ld	(ix - 34), hl
+	ld	(ix - 37), e
 	call	__fadd
-	ld	(ix - 9), bc
-	ld	(ix - 15), a
+	ld	(ix - 25), bc
+	ld	(ix - 28), a
 	ld	de, (_levelPlatforms+1)
-	or	a, a
-	sbc	hl, hl
-	ld	l, (iy + 31)
 	ld	bc, 22
-	ld	(ix - 27), hl
+	ld	hl, (ix - 22)
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	(ix - 18), de
+	ld	(ix - 31), de
 	ex	de, hl
 	add	hl, bc
 	ld	de, (hl)
@@ -7548,53 +7571,52 @@ BB35_9:
 	push	hl
 	pop	bc
 	ld	b, a
-	ld	(ix - 30), de
+	ld	(ix - 40), de
 	ld	c, e
 	push	bc
 	pop	hl
 	push	bc
 	pop	iy
 	add	iy, iy
-	ld	iy, (ix + 6)
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
 	push	bc
 	pop	hl
 	ld	e, a
-	ld	bc, (ix - 9)
-	ld	a, (ix - 15)
+	ld	bc, (ix - 25)
+	ld	a, (ix - 28)
 	call	__fcmp
-	jp	p, BB35_12
-	ld	de, (ix - 30)
+	jp	p, BB35_18
+	ld	de, (ix - 40)
 	ld	a, d
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
 	ld	h, a
 	ld	l, e
-	ld	(ix - 15), hl
+	ld	(ix - 28), hl
 	ld	bc, (ix - 3)
-	ld	a, (ix - 6)
-	ld	hl, (ix - 21)
-	ld	e, (ix - 24)
+	ld	a, (ix - 19)
+	ld	hl, (ix - 34)
+	ld	e, (ix - 37)
 	call	__fadd
-	ld	(ix - 21), bc
-	ld	(ix - 9), a
+	push	bc
+	pop	de
+	ld	(ix - 25), a
 	ld	bc, 22
-	ld	hl, (ix - 27)
+	ld	hl, (ix - 22)
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix - 18)
+	ld	iy, (ix - 31)
 	add	iy, bc
-	ld	de, (iy + 6)
-	ld	bc, 0
-	push	bc
-	pop	hl
-	ld	l, e
-	ld	h, d
-	ld	bc, (ix - 15)
+	ld	bc, (iy + 6)
+	or	a, a
+	sbc	hl, hl
+	ld	l, c
+	ld	h, b
+	ld	bc, (ix - 28)
 	add	hl, bc
 	push	hl
 	pop	bc
@@ -7605,150 +7627,125 @@ BB35_9:
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
-	ld	hl, (ix - 21)
-	ld	e, (ix - 9)
+	ex	de, hl
+	ld	e, (ix - 25)
 	call	__fcmp
-	jp	m, BB35_14
-BB35_12:
-	ld	de, (iy + 8)
-	ld	a, d
-	ld	l, a
-	rlc	l
-	sbc	hl, hl
-	push	hl
-	pop	bc
-	ld	b, a
-	ld	(ix - 15), de
-	ld	c, e
-	push	bc
-	pop	hl
-	push	bc
-	pop	iy
-	add	iy, iy
-	ld	iy, (ix + 6)
-	sbc	hl, hl
-	ld	a, l
-	call	__ltof
-	ld	hl, (iy + 12)
-	ld	d, (iy + 15)
-	ld	(ix - 21), hl
-	ld	e, d
-	call	__fsub
-	ld	hl, 5046272
-	ld	e, 67
-	ld	(ix - 9), a
-	call	__fcmp
-	jp	p, BB35_15
-	ld.sis	hl, 205
-	ld	(iy + 8), l
-	ld	(iy + 9), h
-BB35_14:
+	ld	de, (ix - 22)
+	jp	p, BB35_18
 	or	a, a
 	sbc	hl, hl
 	ld	(iy + 12), hl
 	ld	(iy + 15), h
 	ld	(iy + 20), hl
 	ld	(iy + 23), h
-	ld	(iy + 32), 1
-	jp	BB35_55
-BB35_15:
-	ld	(ix - 46), d
+	ld	(iy + 39), 1
+	ld	bc, 22
+	ex	de, hl
+	call	__imulu
+	push	hl
+	pop	de
+	lea	hl, iy
+	ld	iy, (ix - 31)
+	add	iy, de
+	ld	a, (iy + 16)
+	push	hl
+	pop	iy
+	and	a, 1
+	bit	0, a
+	jp	z, BB35_74
+	ld	hl, -7381975
+	ld	(iy + 32), hl
+	ld	(iy + 35), 61
+	ld	(iy + 28), hl
+	ld	(iy + 31), 61
+	jp	BB35_74
+BB35_18:
 	ld	a, (_levelPlatforms)
-	ld	(ix - 18), a
-	ld	de, (ix - 15)
-	ld	a, d
+	ld	(ix - 22), a
+	ld	bc, (ix - 12)
+	ld	a, b
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
 	push	hl
 	pop	iy
 	ld	iyh, a
-	ld	iyl, e
-	ld	(ix - 39), bc
-	ld	a, (ix - 9)
+	ld	iyl, c
+	ld	bc, (ix - 15)
+	ld	a, (ix - 16)
 	ld	hl, -6815744
 	ld	e, 65
 	call	__fadd
-	ld	(ix - 24), bc
-	ld	(ix - 27), a
-	ld	hl, (_levelPlatforms+1)
-	ld	(ix - 15), hl
-	ld	(ix - 52), iy
+	ld	(ix - 25), bc
+	ld	(ix - 28), a
+	ld	de, (_levelPlatforms+1)
+	ld	(ix - 40), iy
 	ld	bc, 19
 	add	iy, bc
-	ld	(ix - 49), iy
-	ld	iy, 0
-	push	af
-	ld	a, (ix - 18)
-	ld	iyl, a
-	pop	af
-	ld	bc, (ix - 3)
-	ld	d, (ix - 6)
-	ld	a, d
-	ld	hl, -8388608
-	call	__fadd
-	ld	(ix - 42), bc
-	lea	hl, iy
-	ld	(ix - 43), a
-	ld	iy, (ix - 15)
-	lea	iy, iy + 6
+	ld	(ix - 37), iy
+	ld	bc, 0
+	push	bc
+	pop	hl
+	ld	l, (ix - 22)
+	push	de
+	pop	iy
+	lea	de, iy + 6
+	ld	(ix - 12), de
 	xor	a, a
-BB35_16:
+BB35_19:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jp	z, BB35_26
-	ld	(ix - 30), hl
-	ld	(ix - 15), a
-	ld	a, (iy - 2)
-	or	a, a
-	sbc	hl, hl
-	push	hl
-	pop	bc
-	ld	(ix - 53), a
-	ld	c, a
-	ld	(ix - 36), bc
+	jp	z, BB35_38
+	ld	(ix - 34), hl
+	ld	(ix - 31), a
+	ld	iy, (ix - 12)
+	ld	d, (iy - 2)
+	push	bc
+	pop	iy
+	ld	iyl, d
+	ld	h, 0
+	lea	bc, iy
 	ld	a, h
 	call	__ultof
 	push	bc
 	pop	hl
 	ld	e, a
-	ld	bc, (ix - 24)
-	ld	a, (ix - 27)
+	ld	bc, (ix - 25)
+	ld	a, (ix - 28)
 	call	__fcmp
-	jp	p, BB35_25
-	ld	hl, (ix - 36)
+	jp	p, BB35_33
+	ld	(ix - 46), iy
 	ld	bc, 8
-	add	hl, bc
-	ld	(ix - 56), hl
-	push	hl
-	pop	bc
-	ld	(ix - 33), iy
-	push	bc
-	pop	iy
+	add	iy, bc
+	ld	(ix - 43), iy
+	lea	hl, iy
+	lea	bc, iy
 	add	iy, iy
-	ld	iy, (ix - 33)
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
-	ld	hl, (ix - 39)
-	ld	e, (ix - 9)
+	ld	hl, (ix - 15)
+	ld	e, (ix - 16)
 	call	__fcmp
-	jp	p, BB35_25
+	jp	p, BB35_36
+	ld	(ix - 60), d
+	ld	bc, (ix - 3)
+	ld	a, (ix - 19)
+	ld	hl, -8388608
+	ld	e, 65
+	call	__fadd
 	ld	hl, (ix + 6)
 	push	hl
 	pop	iy
 	ld	hl, (iy + 16)
 	ld	e, (iy + 19)
-	ld	bc, (ix - 42)
-	ld	a, (ix - 43)
-	ld	(ix - 65), hl
-	ld	(ix - 66), e
+	ld	(ix - 55), hl
+	ld	(ix - 56), e
 	call	__fadd
-	ld	(ix - 59), bc
-	ld	(ix - 62), a
-	ld	iy, (ix - 33)
-	ld	(ix - 6), d
+	ld	(ix - 49), bc
+	ld	(ix - 52), a
+	ld	iy, (ix - 12)
 	ld	de, (iy - 6)
 	ld	a, d
 	ld	l, a
@@ -7757,142 +7754,230 @@ BB35_16:
 	push	hl
 	pop	bc
 	ld	b, a
-	ld	(ix - 69), de
+	ld	(ix - 59), de
 	ld	c, e
-	ld	d, (ix - 6)
 	push	bc
 	pop	hl
 	push	bc
 	pop	iy
 	add	iy, iy
-	ld	iy, (ix - 33)
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
 	push	bc
 	pop	hl
 	ld	e, a
-	ld	bc, (ix - 59)
-	ld	a, (ix - 62)
+	ld	bc, (ix - 49)
+	ld	a, (ix - 52)
 	call	__fcmp
-	jp	p, BB35_25
-	ld	de, (ix - 69)
+	jp	p, BB35_36
+	ld	(ix - 64), e
+	ld	(ix - 63), hl
+	ld	de, (ix - 59)
 	ld	a, d
 	ld	l, a
 	rlc	l
 	sbc	hl, hl
-	ld	h, a
-	ld	l, e
-	ld	(ix - 62), hl
-	ld	d, (ix - 6)
+	push	hl
+	pop	iy
+	ld	iyh, a
+	ld	iyl, e
 	ld	bc, (ix - 3)
-	ld	a, d
-	ld	hl, (ix - 65)
-	ld	e, (ix - 66)
+	ld	a, (ix - 19)
+	ld	hl, (ix - 55)
+	ld	e, (ix - 56)
 	call	__fadd
-	ld	(ix - 59), bc
-	ld	e, a
-	ld	iy, (iy)
-	ld	bc, 0
-	push	bc
-	pop	hl
-	ex	de, hl
-	ld	e, iyl
-	ld	d, iyh
-	ex	de, hl
-	ld	bc, (ix - 62)
+	ld	(ix - 52), bc
+	ld	(ix - 49), a
+	ld	hl, (ix - 12)
+	ld	de, (hl)
+	or	a, a
+	sbc	hl, hl
+	ld	l, e
+	ld	h, d
+	ld	(ix - 59), iy
+	lea	bc, iy
 	add	hl, bc
 	push	hl
 	pop	bc
 	push	bc
 	pop	iy
 	add	iy, iy
-	ld	iy, (ix - 33)
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
-	ld	hl, (ix - 59)
+	ld	hl, (ix - 52)
+	ld	e, (ix - 49)
 	call	__fcmp
-	jp	p, BB35_25
-	ld	hl, (ix - 21)
-	ld	e, (ix - 46)
+	jp	p, BB35_36
+	ld	(ix - 52), a
+	ld	(ix - 49), bc
+	ld	hl, (ix - 6)
+	ld	e, (ix - 9)
 	ld	bc, 0
 	xor	a, a
 	call	__fcmp
-	jp	p, BB35_23
-	ld	hl, (ix - 36)
-	ld	bc, (ix - 49)
+	ld	iy, (ix + 6)
+	jp	p, BB35_26
+	ld	hl, (ix - 46)
+	ld	bc, (ix - 37)
 	or	a, a
 	sbc	hl, bc
 	call	pe, __setflag
-	jp	p, BB35_51
-BB35_23:
+	jp	p, BB35_70
+BB35_26:
 	or	a, a
 	sbc	hl, hl
 	ld	e, h
-	ld	bc, (ix - 21)
-	ld	a, (ix - 46)
+	ld	bc, (ix - 6)
+	ld	a, (ix - 9)
 	call	__fcmp
-	jp	p, BB35_25
-	ld	hl, (ix - 52)
-	ld	bc, (ix - 56)
+	jp	p, BB35_28
+	ld	hl, (ix - 40)
+	ld	de, (ix - 43)
 	or	a, a
-	sbc	hl, bc
+	sbc	hl, de
 	call	pe, __setflag
-	jp	p, BB35_52
-BB35_25:
-	ld	a, (ix - 15)
-	inc	a
-	lea	iy, iy + 22
-	ld	hl, (ix - 30)
-	dec	hl
-	jp	BB35_16
-BB35_26:
-	ld	l, (ix - 12)
-	ld	e, (ix - 18)
-	ld	a, e
-	ld	iy, (ix + 6)
-BB35_27:
-	bit	0, l
-	jr	z, BB35_30
-	cp	a, e
-	jr	nz, BB35_30
-	ld	(iy + 32), 0
-	jr	BB35_31
-BB35_30:
-	bit	0, l
-	jp	nz, BB35_55
-BB35_31:
-	ld	a, (_levelPows+3)
-	ld	iy, (_levelPows)
+	jp	p, BB35_71
+BB35_28:
 	or	a, a
 	sbc	hl, hl
-	ld	l, a
-	lea	de, iy + 3
-	ld	(ix - 3), de
+	ld	e, h
+	ld	bc, (ix - 55)
+	ld	d, (ix - 56)
+	ld	a, d
+	call	__fcmp
+	jp	p, BB35_30
+	ld	hl, (ix - 63)
+	ld	e, (ix - 64)
+	ld	bc, (ix - 3)
+	ld	a, (ix - 19)
+	call	__fcmp
+	jp	p, BB35_34
+BB35_30:
+	ld	hl, (ix - 55)
+	ld	e, d
+	ld	bc, 0
 	xor	a, a
+	call	__fcmp
+	jp	p, BB35_36
+	ld	hl, (ix - 49)
+	ld	e, (ix - 52)
+	ld	bc, (ix - 3)
+	ld	a, (ix - 19)
+	call	__fcmp
+	ld	a, (ix - 31)
+	ld	iy, 0
+	lea	bc, iy
+	ld	hl, (ix - 34)
+	jp	m, BB35_37
+	ld	iy, (ix + 6)
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 16), hl
+	ld	(iy + 19), h
+	ld	bc, (ix - 49)
+	ld	a, e
+	jr	BB35_35
+BB35_33:
+	ld	a, (ix - 31)
+	ld	hl, (ix - 34)
+	ld	bc, 0
+	jr	BB35_37
+BB35_34:
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 16), hl
+	ld	(iy + 19), h
+	ld	de, -16
+	ld	hl, (ix - 59)
+	add	hl, de
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix + 6)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+BB35_35:
+	ld	(ix - 3), bc
+	ld	(iy), bc
+	ld	(ix - 19), a
+	ld	(iy + 3), a
+BB35_36:
+	ld	a, (ix - 31)
+	ld	iy, 0
+	lea	bc, iy
+	ld	hl, (ix - 34)
+BB35_37:
+	inc	a
+	ld	iy, (ix - 12)
+	lea	iy, iy + 22
+	ld	(ix - 12), iy
+	dec	hl
+	jp	BB35_19
+BB35_38:
+	ld	c, (ix - 22)
+	ld	iy, (ix + 6)
+BB35_39:
+	ld	e, (iy + 39)
+	ld	a, (_levelPlatforms)
+	ld	l, a
+	bit	0, e
+	jr	z, BB35_42
+	ld	a, c
+	cp	a, l
+	jr	nz, BB35_42
+	ld	(iy + 39), 0
+	ld	hl, 5033165
+	ld	(iy + 32), hl
+	ld	(iy + 35), 62
+	ld	(iy + 28), hl
+	ld	(iy + 31), 62
+	jr	BB35_43
+BB35_42:
+	bit	0, e
+	jp	nz, BB35_74
+BB35_43:
+	ld	a, (_levelPows+3)
+	ld	iy, (_levelPows)
+	ld	bc, 0
 	ld	c, a
-BB35_32:
-	ld	(ix - 6), hl
+	lea	hl, iy + 3
+	ld	(ix - 3), hl
+	xor	a, a
+	ld	iyl, a
+BB35_44:
+	push	bc
+	pop	de
+	push	bc
+	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jp	z, BB35_43
+	jp	z, BB35_62
 	ld	hl, (ix - 3)
 	ld	a, (hl)
 	cp	a, 3
-	jp	z, BB35_42
-	or	a, a
-	sbc	hl, hl
-	ld	l, a
-	ld	(ix - 12), hl
-	ld	iy, (ix + 6)
+	lea	hl, iy
+	push	de
+	pop	bc
+	jp	z, BB35_61
+	ld	de, 0
+	ld	e, a
+	ld	(ix - 12), de
+	ld	(ix - 6), hl
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
 	ld	de, (iy + 8)
 	ld	iyl, d
 	ld	a, iyl
 	rlc	a
 	sbc	hl, hl
-	ld	(ix - 27), hl
+	ld	(ix - 25), hl
 	ld	a, iyl
 	rlc	a
 	sbc	hl, hl
@@ -7901,10 +7986,10 @@ BB35_32:
 	pop	bc
 	push	af
 	ld	a, iyl
-	ld	(ix - 39), a
+	ld	(ix - 37), a
 	pop	af
 	ld	b, iyl
-	ld	(ix - 36), de
+	ld	(ix - 34), de
 	ld	c, e
 	push	bc
 	pop	hl
@@ -7918,16 +8003,16 @@ BB35_32:
 	ld	iy, (ix + 6)
 	ld	hl, (iy + 12)
 	ld	e, (iy + 15)
-	ld	(ix - 30), hl
-	ld	(ix - 33), e
+	ld	(ix - 28), hl
+	ld	(ix - 31), e
 	call	__fsub
-	ld	(ix - 21), bc
-	ld	(ix - 24), a
+	ld	(ix - 19), bc
+	ld	(ix - 22), a
 	ld	hl, -6815744
 	ld	e, 65
 	call	__fadd
 	ld	(ix - 15), bc
-	ld	(ix - 18), a
+	ld	(ix - 16), a
 	ld	iy, (ix - 3)
 	ld	a, (iy - 1)
 	ld	(ix - 43), a
@@ -7946,20 +8031,21 @@ BB35_32:
 	pop	iy
 	add	iy, iy
 	sbc	hl, hl
-	ld	(ix - 42), bc
+	ld	(ix - 40), bc
 	ld	a, l
 	call	__ltof
 	push	bc
 	pop	hl
 	ld	e, a
 	ld	bc, (ix - 15)
-	ld	a, (ix - 18)
+	ld	a, (ix - 16)
 	call	__fcmp
 	ld	bc, (ix - 9)
-	jp	p, BB35_42
-	ld	bc, 16
+	ld	hl, (ix - 6)
+	jp	p, BB35_61
+	ld	de, 16
 	ld	hl, (ix - 12)
-	add	hl, bc
+	add	hl, de
 	ld	(ix - 12), hl
 	push	hl
 	pop	bc
@@ -7969,26 +8055,27 @@ BB35_32:
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
-	ld	hl, (ix - 21)
-	ld	e, (ix - 24)
+	ld	hl, (ix - 19)
+	ld	e, (ix - 22)
 	call	__fcmp
 	ld	bc, (ix - 9)
-	jp	p, BB35_42
+	ld	hl, (ix - 6)
+	jp	p, BB35_61
 	ld	iy, (ix + 6)
 	ld	bc, (iy)
 	ld	a, (iy + 3)
-	ld	(ix - 46), bc
-	ld	(ix - 49), a
+	ld	(ix - 22), bc
+	ld	(ix - 46), a
 	ld	hl, -8388608
 	ld	e, 65
 	call	__fadd
 	ld	hl, (iy + 16)
 	ld	e, (iy + 19)
-	ld	(ix - 21), hl
-	ld	(ix - 24), e
+	ld	(ix - 49), hl
+	ld	(ix - 19), e
 	call	__fadd
 	ld	(ix - 15), bc
-	ld	(ix - 18), a
+	ld	(ix - 16), a
 	ld	iy, (ix - 3)
 	ld	de, (iy - 3)
 	ld	a, d
@@ -8008,14 +8095,17 @@ BB35_32:
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
+	ld	(ix - 55), bc
 	push	bc
 	pop	hl
+	ld	(ix - 56), a
 	ld	e, a
 	ld	bc, (ix - 15)
-	ld	a, (ix - 18)
+	ld	a, (ix - 16)
 	call	__fcmp
 	ld	bc, (ix - 9)
-	jp	p, BB35_42
+	ld	hl, (ix - 6)
+	jp	p, BB35_61
 	ld	de, (ix - 52)
 	ld	a, d
 	ld	l, a
@@ -8025,14 +8115,15 @@ BB35_32:
 	pop	iy
 	ld	iyh, a
 	ld	iyl, e
-	ld	bc, (ix - 46)
-	ld	a, (ix - 49)
-	ld	hl, (ix - 21)
-	ld	e, (ix - 24)
+	ld	bc, (ix - 22)
+	ld	a, (ix - 46)
+	ld	hl, (ix - 49)
+	ld	e, (ix - 19)
 	call	__fadd
 	push	bc
 	pop	de
 	ld	(ix - 15), a
+	ld	(ix - 52), iy
 	ld	bc, 16
 	add	iy, bc
 	lea	hl, iy
@@ -8043,73 +8134,139 @@ BB35_32:
 	call	__ltof
 	ex	de, hl
 	ld	e, (ix - 15)
+	ld	(ix - 15), bc
+	ld	(ix - 16), a
 	call	__fcmp
 	ld	bc, (ix - 9)
-	jp	p, BB35_42
-	ld	iy, (ix - 27)
+	ld	hl, (ix - 6)
+	jp	p, BB35_61
+	ld	iy, (ix - 25)
 	push	af
-	ld	a, (ix - 39)
+	ld	a, (ix - 37)
 	ld	iyh, a
 	pop	af
-	ld	hl, (ix - 36)
+	ld	hl, (ix - 34)
 	ex	de, hl
 	ld	iyl, e
 	ex	de, hl
-	ld	(ix - 27), iy
-	ld	bc, 19
-	add	iy, bc
-	ld	hl, (ix - 30)
-	ld	e, (ix - 33)
+	ld	(ix - 25), iy
+	ld	de, 19
+	add	iy, de
+	ld	hl, (ix - 28)
+	ld	e, (ix - 31)
 	ld	bc, 0
 	xor	a, a
 	call	__fcmp
-	jp	p, BB35_40
+	jp	p, BB35_52
 	lea	de, iy
-	ld	hl, (ix - 42)
+	ld	hl, (ix - 40)
 	or	a, a
 	sbc	hl, de
 	call	pe, __setflag
-	jp	p, BB35_53
-BB35_40:
+	jp	p, BB35_72
+BB35_52:
 	or	a, a
 	sbc	hl, hl
 	ld	e, h
-	ld	bc, (ix - 30)
-	ld	a, (ix - 33)
+	ld	bc, (ix - 28)
+	ld	a, (ix - 31)
 	call	__fcmp
-	ld	bc, (ix - 9)
-	jp	p, BB35_42
-	ld	hl, (ix - 27)
+	jp	p, BB35_54
+	ld	hl, (ix - 25)
 	ld	bc, (ix - 12)
 	or	a, a
 	sbc	hl, bc
-	ld	bc, (ix - 9)
 	call	pe, __setflag
-	jp	p, BB35_54
-BB35_42:
-	inc	c
-	push	bc
-	pop	de
-	ld	bc, 262
-	ld	hl, (ix - 3)
-	add	hl, bc
-	ld	(ix - 3), hl
-	push	de
-	pop	bc
+	jp	p, BB35_73
+BB35_54:
+	or	a, a
+	sbc	hl, hl
+	ld	e, h
+	ld	iy, (ix - 49)
+	lea	bc, iy
+	ld	a, (ix - 19)
+	call	__fcmp
+	jp	p, BB35_56
+	ld	hl, (ix - 55)
+	ld	e, (ix - 56)
+	ld	bc, (ix - 22)
+	ld	a, (ix - 46)
+	call	__fcmp
+	jp	p, BB35_59
+BB35_56:
+	lea	hl, iy
+	ld	e, (ix - 19)
+	ld	bc, 0
+	xor	a, a
+	call	__fcmp
 	ld	hl, (ix - 6)
-	dec	hl
-	jp	BB35_32
-BB35_43:
+	ld	bc, (ix - 9)
+	ld	iy, (ix - 22)
+	ld	a, (ix - 46)
+	jp	p, BB35_61
+	ld	hl, (ix - 15)
+	ld	e, (ix - 16)
+	lea	bc, iy
+	call	__fcmp
+	ld	bc, (ix - 9)
+	ld	hl, (ix - 6)
+	jp	m, BB35_61
+	ld	iy, (ix + 6)
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 16), hl
+	ld	(iy + 19), h
+	ld	hl, (ix - 15)
+	ld	a, (ix - 16)
+	jr	BB35_60
+BB35_59:
+	ld	hl, (ix + 6)
+	push	hl
+	pop	iy
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 16), hl
+	ld	(iy + 19), h
+	ld	de, -16
+	ld	hl, (ix - 52)
+	add	hl, de
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	ld	iy, (ix + 6)
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	hl
+	ld	bc, (ix - 9)
+BB35_60:
+	ld	(iy), hl
+	ld	(iy + 3), a
+	ld	hl, (ix - 6)
+BB35_61:
+	inc	l
+	ld	de, 262
+	push	hl
+	pop	iy
+	ld	hl, (ix - 3)
+	add	hl, de
+	ld	(ix - 3), hl
+	dec	bc
+	jp	BB35_44
+BB35_62:
 	ld	iy, (ix + 6)
 	ld	d, 4
-	jp	BB35_60
-BB35_44:
+	jp	BB35_78
+BB35_63:
 	ld	de, 11
 	push	bc
 	pop	hl
 	or	a, a
 	sbc	hl, de
-	jr	c, BB35_46
+	jr	c, BB35_65
 	ld	iy, (ix + 6)
 	ld	bc, (iy + 12)
 	ld	iy, (ix - 6)
@@ -8121,7 +8278,7 @@ BB35_44:
 	ld	iy, (ix + 6)
 	ld	(iy + 12), bc
 	ld	(iy + 15), a
-BB35_46:
+BB35_65:
 	or	a, a
 	sbc	hl, hl
 	ld	de, (ix + 6)
@@ -8133,22 +8290,24 @@ BB35_46:
 	ld.sis	de, 241
 	sbc.sis	hl, de
 	call	pe, __setflag
-	jp	m, BB35_63
+	ld	bc, -8388608
+	jp	m, BB35_81
 	ld	de, 151
 	ld	hl, (ix - 3)
 	or	a, a
 	sbc	hl, de
-	jp	c, BB35_63
+	jp	c, BB35_81
 	ld	iy, (ix + 6)
-	ld	a, (iy + 30)
+	ld	a, (iy + 38)
 	or	a, a
-	jr	nz, BB35_50
+	jr	nz, BB35_69
 	ld	hl, _.str.165
 	ld	de, 100
 	push	de
 	push	de
 	push	hl
 	call	_gfx_PrintStringXY
+	ld	bc, -8388608
 	pop	hl
 	pop	hl
 	pop	hl
@@ -8156,26 +8315,65 @@ BB35_46:
 	sbc	hl, hl
 	ld	iy, (ix + 6)
 	ld	(iy + 12), hl
-	ld	(iy + 15), h
-	ld	a, (iy + 29)
+	ld	(iy + 15), b
+	ld	a, (iy + 37)
 	cp	a, 2
+	ld	(ix - 6), hl
+	ld	a, b
+	ld	(ix - 9), a
 	jp	z, BB35_2
-	jp	BB35_63
-BB35_50:
-	ld	(iy + 29), 2
+	jp	BB35_81
+BB35_69:
+	ld	(iy + 37), 2
 	ld.sis	hl, 205
 	ld	(iy + 8), l
 	ld	(iy + 9), h
-	ld	hl, -8388608
-	push	hl
-	pop	bc
+	ld	hl, (iy + 12)
+	ld	(ix - 6), hl
+	ld	a, (iy + 15)
+	ld	(ix - 9), a
 	ld	d, 65
-	ld	a, d
 	jp	BB35_8
-BB35_51:
+BB35_70:
 	ld	h, 0
-	ld	l, (ix - 53)
+	ld	l, (ix - 60)
 	ld.sis	de, -19
+	add.sis	hl, de
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+	ld	(iy + 20), hl
+	ld	(iy + 23), h
+	ld	c, (ix - 31)
+	ld	(iy + 43), c
+	ld	(iy + 39), 1
+	jp	BB35_39
+BB35_71:
+	ld	hl, (ix - 43)
+	ld	(iy + 8), l
+	ld	(iy + 9), h
+	or	a, a
+	sbc	hl, hl
+	ld	(iy + 12), hl
+	ld	(iy + 15), h
+	ld	hl, (ix + 9)
+	push	hl
+	ld	l, (ix - 31)
+	push	hl
+	push	iy
+	call	_BumpPlatform
+	ld	c, (ix - 31)
+	ld	iy, (ix + 6)
+	pop	hl
+	pop	hl
+	pop	hl
+	jp	BB35_39
+BB35_72:
+	ld.sis	de, -19
+	ld	hl, (ix - 40)
 	add.sis	hl, de
 	ld	iy, (ix + 6)
 	ld	(iy + 8), l
@@ -8186,55 +8384,9 @@ BB35_51:
 	ld	(iy + 15), h
 	ld	(iy + 20), hl
 	ld	(iy + 23), h
-	ld	a, (ix - 15)
-	ld	(iy + 31), a
-	ld	(iy + 32), 1
-	inc	l
-	ld	e, (ix - 18)
-	jp	BB35_27
-BB35_52:
-	ld	hl, (ix + 6)
-	push	hl
-	pop	iy
-	ld	hl, (ix - 56)
-	ld	(iy + 8), l
-	ld	(iy + 9), h
-	or	a, a
-	sbc	hl, hl
-	ld	(iy + 12), hl
-	ld	(iy + 15), h
-	ld	hl, (ix + 9)
-	push	hl
-	ld	l, (ix - 15)
-	push	hl
-	push	iy
-	call	_BumpPlatform
-	ld	iy, (ix + 6)
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	l, (iy + 32)
-	ld	a, (_levelPlatforms)
-	ld	e, a
-	ld	a, (ix - 15)
-	jp	BB35_27
-BB35_53:
-	ld.sis	de, -19
-	ld	hl, (ix - 42)
-	add.sis	hl, de
-	ld	iy, (ix + 6)
-	ld	(iy + 8), l
-	ld	(iy + 9), h
-	ld	bc, 0
-	ld	(iy + 12), bc
-	ld	(iy + 15), b
-	ld	(iy + 20), bc
-	ld	(iy + 23), b
-	ld	(iy + 32), 1
-	ld	hl, (ix - 21)
-	ld	e, (ix - 24)
-	jr	BB35_56
-BB35_54:
+	ld	(iy + 43), d
+	jp	BB35_11
+BB35_73:
 	ld	h, 0
 	ld	l, (ix - 43)
 	ld.sis	de, 8
@@ -8252,7 +8404,8 @@ BB35_54:
 	ld	(iy + 23), h
 	ld	hl, (ix + 9)
 	push	hl
-	push	bc
+	ld	hl, (ix - 6)
+	push	hl
 	push	iy
 	call	_BumpPow
 	ld	d, 4
@@ -8260,18 +8413,17 @@ BB35_54:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	a, (iy + 32)
+	ld	a, (iy + 39)
 	or	a, a
-	jr	z, BB35_60
-BB35_55:
+	jr	z, BB35_78
+BB35_74:
 	ld	hl, (iy + 16)
 	ld	e, (iy + 19)
 	ld	bc, 0
-BB35_56:
 	xor	a, a
 	call	__fcmp
 	ld	d, a
-	jr	z, BB35_60
+	jr	z, BB35_78
 	ld	bc, 5
 	ld	de, (ix + 9)
 	push	de
@@ -8291,7 +8443,7 @@ BB35_56:
 	pop	hl
 	or	a, a
 	sbc	hl, de
-	jr	nz, BB35_61
+	jr	nz, BB35_79
 	ld	bc, 3
 	lea	hl, iy
 	call	__irems
@@ -8299,14 +8451,14 @@ BB35_56:
 	pop	de
 	or	a, a
 	sbc	hl, bc
-	jr	nc, BB35_61
+	jr	nc, BB35_79
 	ld	a, 2
 	sub	a, e
 	ld	d, a
 	ld	iy, (ix + 6)
-BB35_60:
-	ld	(iy + 28), d
-BB35_61:
+BB35_78:
+	ld	(iy + 36), d
+BB35_79:
 	ld	hl, (ix + 6)
 	push	hl
 	call	_CheckCoinColision
@@ -8317,7 +8469,7 @@ BB35_61:
 	ld	e, (iy + 15)
 	ld	a, (iy + 23)
 	call	__fcmp
-	jp	p, BB35_63
+	jp	p, BB35_81
 	or	a, a
 	sbc	hl, hl
 	ld	de, (ix + 6)
@@ -8325,7 +8477,7 @@ BB35_61:
 	pop	iy
 	ld	(iy + 12), hl
 	ld	(iy + 15), h
-BB35_63:
+BB35_81:
 	ld	hl, (ix + 6)
 	push	hl
 	pop	iy
@@ -8381,17 +8533,17 @@ _KillPlayer:
 	ld	hl, (ix + 9)
 	ld	bc, 0
 	ld.sis	de, -4
-	ld	(iy + 29), 3
+	ld	(iy + 37), 3
 	ld	(iy + 12), bc
 	ld	(iy + 15), b
-	res	1, (iy + 33)
-	ld	(iy + 28), 5
-	ld	(iy + 36), hl
+	res	1, (iy + 40)
+	ld	(iy + 36), 5
+	ld	(iy + 44), hl
 	ld	hl, (iy + 8)
 	add.sis	hl, de
 	ld	(iy + 8), l
 	ld	(iy + 9), h
-	dec	(iy + 30)
+	dec	(iy + 38)
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -8405,9 +8557,9 @@ _PlayerAddScore:
 	ld	de, 0
 	ld	e, l
 	ld	d, h
-	ld	hl, (iy + 39)
+	ld	hl, (iy + 47)
 	add	hl, de
-	ld	(iy + 39), hl
+	ld	(iy + 47), hl
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -8603,10 +8755,10 @@ BB41_12:
 	ld	hl, (ix + 6)
 	push	hl
 	pop	iy
-	ld	hl, (iy + 39)
+	ld	hl, (iy + 47)
 	ld	bc, 10
 	add	hl, bc
-	ld	(iy + 39), hl
+	ld	(iy + 47), hl
 	ld	iy, (ix - 6)
 BB41_13:
 	push	de
@@ -8887,7 +9039,7 @@ _pipe_sprites:
 	section	.data,"aw",@progbits
 	public	_platform_bump_sprite_sheet
 _platform_bump_sprite_sheet:
-	db	0, ""
+	db	0, "", 0
 
 	section	.rodata,"a",@progbits
 	private	_switch.table.DrawBackground
@@ -9331,7 +9483,16 @@ _levelLog:
 	dw	65535
 	dw	65535
 	dw	65535
-	db	20 dup 0
+	dw	0
+	dw	0
+	dw	7
+	dw	0
+	dw	0
+	dw	0
+	dw	0
+	dw	0
+	dw	0
+	dw	0
 	db	20 dup 0
 	dw	200
 	dw	400
@@ -9486,7 +9647,7 @@ _levelLog:
 	section	.bss,"aw",@nobits
 	public	_mario1
 _mario1:
-	rb	412
+	rb	420
 
 	section	.bss,"aw",@nobits
 	public	_levelCoins
@@ -9738,7 +9899,6 @@ _mario_title_card_compressed:
 	extern	__ftol
 	extern	__sshru
 	extern	__setflag
-	extern	__iand
 	extern	_gfx_AllocSprite
 	extern	_zx7_Decompress
 	extern	_gfx_Sprite_NoClip

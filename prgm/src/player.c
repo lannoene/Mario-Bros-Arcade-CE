@@ -23,13 +23,15 @@ void PlayerInit(player_t* player) {
 	player->state = PLAYER_NORMAL;
 	player->verSpriteOffset = 0;
 	player->maxSpeed = 1.5;
+	player->deacceleration = 0.2;
+	player->acceleration = 0.2;
 }
 
 void PlayerMove(player_t* player, uint8_t direction) {
 	switch (direction) {
 		case LEFT:
 			if (player->horAccel > -player->maxSpeed)
-				player->horAccel -= PLAYER_ACCELERATION;
+				player->horAccel -= player->acceleration;
 			else
 				player->horAccel = -player->maxSpeed;
 			player->dir = LEFT;
@@ -37,7 +39,7 @@ void PlayerMove(player_t* player, uint8_t direction) {
 			break;
 		case RIGHT:
 			if (player->horAccel < player->maxSpeed)
-				player->horAccel += PLAYER_ACCELERATION;
+				player->horAccel += player->acceleration;
 			else
 				player->horAccel = player->maxSpeed;
 			player->dir = RIGHT;
@@ -51,16 +53,18 @@ void PlayerMove(player_t* player, uint8_t direction) {
 				player->grounded = false;
 				player->sprite = 4;
 				player->verAccelPassive = 4.5;
+				player->deacceleration = 0.2;
+				player->acceleration = 0.2;
 			}
 			break;
 		case NONE:
-			if (player->horAccel < PLAYER_DECELERATION && player->horAccel > -PLAYER_DECELERATION)
+			if (player->horAccel < player->deacceleration && player->horAccel > -player->deacceleration)
 				player->horAccel = 0;
 			
 			if (player->horAccel > 0 && player->grounded)
-				player->horAccel -= PLAYER_DECELERATION;
+				player->horAccel -= player->deacceleration;
 			else if (player->horAccel < 0 && player->grounded)
-				player->horAccel += PLAYER_DECELERATION;
+				player->horAccel += player->deacceleration;
 			break;
 	}
 }
@@ -100,15 +104,19 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 			player->x = -PLAYER_WIDTH; // if they go offscreen to the right, teleport them to the left side
 		
 		// platform colision
-		if (player->grounded && player->x + PLAYER_WIDTH + player->horAccel > levelPlatforms.platformArray[player->lastGroundedPlatformIndex].x && player->x + player->horAccel < levelPlatforms.platformArray[player->lastGroundedPlatformIndex].x + levelPlatforms.platformArray[player->lastGroundedPlatformIndex].width) {
-			player->verAccel = 0;
-			player->verAccelPassive = 0;
-			player->grounded = true;
-		} else if (player->y - player->verAccel > 224 - PLAYER_HEIGHT) {
+		if (player->y - player->verAccel > 224 - PLAYER_HEIGHT) {
 			player->y = 224 - PLAYER_HEIGHT;
 			player->verAccel = 0;
 			player->verAccelPassive = 0;
 			player->grounded = true;
+		} else if (player->lastGroundedPlatformIndex != -1 && player->grounded && player->x + PLAYER_WIDTH + player->horAccel > levelPlatforms.platformArray[player->lastGroundedPlatformIndex].x && player->x + player->horAccel < levelPlatforms.platformArray[player->lastGroundedPlatformIndex].x + levelPlatforms.platformArray[player->lastGroundedPlatformIndex].width) {
+			player->verAccel = 0;
+			player->verAccelPassive = 0;
+			player->grounded = true;
+			if (levelPlatforms.platformArray[player->lastGroundedPlatformIndex].icy) {
+				player->deacceleration = 0.07;
+				player->acceleration = 0.07;
+			}
 		} else {
 			uint8_t i;
 			for (i = 0; i < levelPlatforms.numPlatforms; i++) {
@@ -125,11 +133,19 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 						player->verAccel = 0;
 						BumpPlatform(player, i, gameFrame);
 						break;
+					} else if (player->horAccel > 0 && player->x <= levelPlatforms.platformArray[i].x) {
+						player->horAccel = 0;
+						player->x = levelPlatforms.platformArray[i].x - PLAYER_WIDTH;
+					} else if (player->horAccel < 0 && player->x <= levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width) {
+						player->horAccel = 0;
+						player->x = levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width;
 					}
 				}
 			}
 			if (player->grounded && i == levelPlatforms.numPlatforms) {
 				player->grounded = false;
+				player->deacceleration = 0.2;
+				player->acceleration = 0.2;
 			}
 		}
 		
@@ -141,6 +157,7 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 						player->y = levelPows.powArray[i].y - PLAYER_HEIGHT + (levelPows.powArray[i].state*2);
 						player->verAccel = 0;
 						player->verAccelPassive = 0;
+						player->lastGroundedPlatformIndex = -1;
 						player->grounded = true;
 						break;
 					} else if (player->verAccel > 0 && player->y >= levelPows.powArray[i].y + POW_SIZE) {
@@ -149,6 +166,12 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 						player->verAccelPassive = 0;
 						BumpPow(player, i, gameFrame);
 						break;
+					} else if (player->horAccel > 0 && player->x <= levelPows.powArray[i].x) {
+						player->horAccel = 0;
+						player->x = levelPows.powArray[i].x - PLAYER_WIDTH;
+					} else if (player->horAccel < 0 && player->x <= levelPows.powArray[i].x + POW_SIZE) {
+						player->horAccel = 0;
+						player->x = levelPows.powArray[i].x + POW_SIZE;
 					}
 				}
 			}

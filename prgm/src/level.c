@@ -31,7 +31,7 @@ int16_t levelLog[][3][MAX_ENEMIES] = {
 		{200, 500, 800, -1, -1, -1, -1, -1, -1, -1} // enemy spawn time in frames
 	},
 	{
-		{false, BG_PIPES, NONE_ICY},
+		{false, BG_PIPES, ALL_ICY},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{200, 400, 600, 800, -1, -1, -1, -1, -1}
 	},
@@ -154,6 +154,7 @@ bool LoadLevel(void) {
 	
 	// spawn in pows
 	CreatePow(152, 176);
+	CreatePow(152, 20);
 	
 	// init enemies
 	InitEnemies();
@@ -240,6 +241,7 @@ void EndLevel(void) {
 		mario1.y = 224 - PLAYER_HEIGHT;
 		mario1.dir = RIGHT;
 		mario1.verAccel = mario1.horAccel = 0;
+		mario1.deacceleration = mario1.acceleration = 0.2;
 		
 		if (levelLog[game_data.level - 1][0][0]) { // if bonus level
 			ResetPows();

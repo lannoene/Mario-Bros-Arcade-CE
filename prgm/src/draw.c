@@ -27,7 +27,7 @@ gfx_rletsprite_t* enemy_sprites[3][2][7] =
 gfx_rletsprite_t* pow_sprites[3] = {pow_full, pow_medium, pow_low};
 gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationary_left}};
 
-uint8_t platform_bump_sprite_sheet[4] = {0, 1, 2, 1};
+uint8_t platform_bump_sprite_sheet[5] = {0, 1, 2, 1, 0};
 
 void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame) {
 	uint8_t i;
@@ -58,7 +58,8 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	// platforms are pre rendered, and a mask is put under the bump when it is needed
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
 		if (levelPlatforms.platformArray[i].needsRefresh || (gameFrame - game_data.levelStartTime) == 1) { // if gameFrame is 1 because we draw the platform once on frame 0, but we need to draw it on the other buffer on frame 1
-			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
+			gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
+			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
 		}
 		if (!levelPlatforms.platformArray[i].beingBumped) {// if the platform isn't being bumped, show every tile
 			continue;
@@ -70,23 +71,23 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 			bgFill[0] = BLOCK_SIZE*3;
 			bgFill[1] = BLOCK_SIZE;
 			gfx_GetSprite((gfx_sprite_t*)bgFill, flooredXpos, levelPlatforms.platformArray[i].y);
-			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
-			gfx_Sprite((gfx_sprite_t*)bgFill, flooredXpos, levelPlatforms.platformArray[i].y);
+			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
+			gfx_Sprite((gfx_sprite_t*)bgFill, flooredXpos, levelPlatforms.platformArray[i].y); // fill in 3 blocks of platform that you bump
 			
 			if (levelPlatforms.platformArray[i].bumpedTileXpos - levelPlatforms.platformArray[i].x >= levelPlatforms.platformArray[i].width - 2*BLOCK_SIZE) { // if we are near the edge, floor the block's x pos to two blocks behind the edge, then cutoff animation at the edge
 				bgFill[0] = BLOCK_SIZE;
 				bgFill[1] = BLOCK_SIZE*3;
 				gfx_GetSprite((gfx_sprite_t*)bgFill, levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
-				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width - (2*BLOCK_SIZE), levelPlatforms.platformArray[i].y - BLOCK_SIZE);
+				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 5]], levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width - (2*BLOCK_SIZE), levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 				gfx_Sprite((gfx_sprite_t*)bgFill, levelPlatforms.platformArray[i].x + levelPlatforms.platformArray[i].width, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 			} else if (flooredXpos - levelPlatforms.platformArray[i].x < 0) {
 				bgFill[0] = BLOCK_SIZE;
 				bgFill[1] = BLOCK_SIZE*3;
 				gfx_GetSprite((gfx_sprite_t*)bgFill, levelPlatforms.platformArray[i].x - BLOCK_SIZE, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
-				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], levelPlatforms.platformArray[i].x - BLOCK_SIZE, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
+				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 5]], levelPlatforms.platformArray[i].x - BLOCK_SIZE, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 				gfx_Sprite((gfx_sprite_t*)bgFill, levelPlatforms.platformArray[i].x - BLOCK_SIZE, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 			} else { // otherwise, play animation as normal
-				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 4]], flooredXpos, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
+				gfx_TransparentSprite(platform_bump_sprites[(levelPlatforms.platformArray[i].icy) ? 4 : backgroundType][platform_bump_sprite_sheet[(gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 % 5]], flooredXpos, levelPlatforms.platformArray[i].y - BLOCK_SIZE);
 			}
 			
 		}
@@ -143,12 +144,12 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 		if (levelPlatforms.platformArray[i].beingBumped) {
 			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - PLATFORM_HEIGHT);
 			SET_OLD_TO_NEW_COORDS(&levelPlatforms.platformArray[i]);
-			if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 > 3) { // it needs to be greater 3 but it also needs 1 more frame for the other buffer
+			if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 > 4) {
 				levelPlatforms.platformArray[i].beingBumped = false;
 				levelPlatforms.platformArray[i].needsRefresh = true;
 			}
 		} else if (levelPlatforms.platformArray[i].needsRefresh) {
-			if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 > 4) {
+			if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 > 5) {
 				levelPlatforms.platformArray[i].needsRefresh = false;
 			}
 		}

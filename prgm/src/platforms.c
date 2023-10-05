@@ -78,11 +78,11 @@ void CreatePlatform(int16_t x, uint8_t y, uint8_t width) {
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage = malloc(width*PLATFORM_HEIGHT*2 + 2);
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[0] = width;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[1] = PLATFORM_HEIGHT*2;
-	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // get bg
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y - PLATFORM_HEIGHT); // get bg
 	for (uint8_t i = 0; i < width/BLOCK_SIZE; i++)
 		gfx_RLETSprite(pipes_block, x + i*BLOCK_SIZE, y); // process image
-	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage, x, y - PLATFORM_HEIGHT);
-	//gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y); // return bg to original place
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage, x, y);
+	//gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y - PLATFORM_HEIGHT); // return bg to original place
 }
 
 void FreePlatforms(void) {
@@ -148,19 +148,17 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 
 void RefreshPlatformBackgroundData(uint8_t type) {
 	for (uint8_t i = 0; i < levelPlatforms.numPlatforms; i++) {
-		gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
+		gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
 		for (uint8_t j = 0; j < levelPlatforms.platformArray[i].width/BLOCK_SIZE; j++)
 			gfx_RLETSprite(platformBlocks[type], levelPlatforms.platformArray[i].x + j*BLOCK_SIZE, levelPlatforms.platformArray[i].y); // process image
-		gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
+		gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
 		levelPlatforms.platformArray[i].icy = false;
 	}
 }
 
 void FreezePlatform(uint8_t index) {
 	levelPlatforms.platformArray[index].icy = true;
-	
-	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[index].backgroundData, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y);
 	for (uint8_t j = 0; j < levelPlatforms.platformArray[index].width/BLOCK_SIZE; j++)
 		gfx_RLETSprite(platformBlocks[4], levelPlatforms.platformArray[index].x + j*BLOCK_SIZE, levelPlatforms.platformArray[index].y); // process image
-	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[index].processedTileImage, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y - PLATFORM_HEIGHT);
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[index].processedTileImage, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y);
 }

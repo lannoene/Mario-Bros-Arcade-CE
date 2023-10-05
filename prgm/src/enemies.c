@@ -210,6 +210,11 @@ static void CalcForSpinies(player_t* player, unsigned int gameFrame, uint8_t i) 
 		levelEnemies.enemyArray[i].grounded = colidedPlatform.hasColided;*/
 		
 	} else {
+		if (levelEnemies.enemyArray[i].x < -ENEMY_SPIKE_SIZE) // enemy on sides off screen? if so, teleport them to other side
+			levelEnemies.enemyArray[i].x = 320;
+		else if (levelEnemies.enemyArray[i].x > 320)
+			levelEnemies.enemyArray[i].x = -ENEMY_SPIKE_SIZE; // 0 - ENEMY_SPIKE_SIZE
+		
 		if (levelEnemies.enemyArray[i].y > 240) // wait for enemy to leave the screen
 			levelEnemies.enemyArray[i].state = ENEMY_DEAD;
 		
@@ -319,6 +324,11 @@ static void CalcForFlies(player_t* player, unsigned int gameFrame, uint8_t i) {
 		// ---- end physics ----
 		
 	} else {
+		if (levelEnemies.enemyArray[i].x < -ENEMY_SPIKE_SIZE) // enemy on sides off screen? if so, teleport them to other side
+			levelEnemies.enemyArray[i].x = 320;
+		else if (levelEnemies.enemyArray[i].x > 320)
+			levelEnemies.enemyArray[i].x = -ENEMY_SPIKE_SIZE; // 0 - ENEMY_SPIKE_SIZE
+		
 		if (levelEnemies.enemyArray[i].y > 240) // wait for enemy to leave the screen
 			levelEnemies.enemyArray[i].state = ENEMY_DEAD;
 		
