@@ -12,6 +12,7 @@
 #include "pow.h"
 #include "bonus.h"
 #include "level.h"
+#include "fireballs.h"
 
 #define SET_OLD_TO_NEW_COORDS(varName) \
 (varName)->x_old = (varName)->x; (varName)->y_old = (varName)->y;
@@ -26,6 +27,8 @@ gfx_rletsprite_t* enemy_sprites[3][2][7] =
 };
 gfx_rletsprite_t* pow_sprites[3] = {pow_full, pow_medium, pow_low};
 gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationary_left}};
+gfx_rletsprite_t* fireball_sprites[2][4] = {{fireball_green_big_rot1, fireball_green_big_rot2, fireball_green_big_rot3, fireball_green_big_rot4}, {fireball_red_big_rot1, fireball_red_big_rot2, fireball_red_big_rot3, fireball_red_big_rot4}};
+gfx_rletsprite_t* coin_sprites[5] = {coin1, coin2, coin3, coin4, coin5};
 
 uint8_t platform_bump_sprite_sheet[5] = {0, 1, 2, 1, 0};
 
@@ -50,7 +53,13 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// coins
 	for (i = 0; i < levelCoins.numCoins; i++) {
-		gfx_GetSprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
+		gfx_GetSprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x_old, levelCoins.coinArray[i].y_old);
+	}
+	
+	// fireballs
+	for (i = 0; i < levelFireballs.numFireballs; i++) {
+		if (levelFireballs.fireballArray[i].alive)
+			gfx_GetSprite((gfx_sprite_t*)levelFireballs.fireballArray[i].backgroundData, levelFireballs.fireballArray[i].x_old, levelFireballs.fireballArray[i].y_old);
 	}
 	
 	// draw sprites over bgs
@@ -99,7 +108,13 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 		gfx_RLETSprite(enemy_sprites[levelEnemies.enemyArray[i].type][levelEnemies.enemyArray[i].dir][levelEnemies.enemyArray[i].sprite], levelEnemies.enemyArray[i].x, levelEnemies.enemyArray[i].y + levelEnemies.enemyArray[i].verSpriteOffset);
 	}
 	
-	// make sure pipes draw over enemies
+	// coins
+	for (i = 0; i < levelCoins.numCoins; i++) {
+		if (levelCoins.coinArray[i].alive)
+			gfx_RLETSprite(coin_sprites[levelCoins.coinArray[i].sprite], levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
+	}
+	
+	// make sure pipes draw over enemies & coins
 	for (i = 0; i < NUM_OF_PIPES; i++) {
 		if (pipes[i].redraw) {
 			gfx_RLETSprite((gfx_rletsprite_t*)pipe_sprites[pipes[i].dir][pipes[i].sprite], pipes[i].x, pipes[i].y);
@@ -114,10 +129,10 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 			gfx_RLETSprite(pow_sprites[levelPows.powArray[i].state], levelPows.powArray[i].x, levelPows.powArray[i].y);
 	}
 	
-	// coins
-	for (i = 0; i < levelCoins.numCoins; i++) {
-		if (levelCoins.coinArray[i].alive)
-			gfx_RLETSprite(coin1, levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
+	// fireballs
+	for (i = 0; i < levelFireballs.numFireballs; i++) {
+		if (levelFireballs.fireballArray[i].alive)
+			gfx_RLETSprite(fireball_sprites[levelFireballs.fireballArray[i].type][levelFireballs.fireballArray[i].sprite], levelFireballs.fireballArray[i].x, levelFireballs.fireballArray[i].y);
 	}
 	
 	// draw player over everything physical
@@ -179,7 +194,15 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// coins
 	for (i = 0; i < levelCoins.numCoins; i++) {
-		gfx_Sprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
+		gfx_Sprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x_old, levelCoins.coinArray[i].y_old);
+		SET_OLD_TO_NEW_COORDS(&levelCoins.coinArray[i]);
+	}
+	
+	for (i = 0; i < levelFireballs.numFireballs; i++) {
+		if (levelFireballs.fireballArray[i].alive) {
+			gfx_Sprite((gfx_sprite_t*)levelFireballs.fireballArray[i].backgroundData, levelFireballs.fireballArray[i].x_old, levelFireballs.fireballArray[i].y_old);
+			SET_OLD_TO_NEW_COORDS(&levelFireballs.fireballArray[i]);
+		}
 	}
 	
 }

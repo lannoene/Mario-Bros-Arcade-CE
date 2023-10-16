@@ -35,7 +35,6 @@ void PlayerMove(player_t* player, uint8_t direction) {
 			else
 				player->horAccel = -player->maxSpeed;
 			player->dir = LEFT;
-			player->moving = true;
 			break;
 		case RIGHT:
 			if (player->horAccel < player->maxSpeed)
@@ -43,7 +42,6 @@ void PlayerMove(player_t* player, uint8_t direction) {
 			else
 				player->horAccel = player->maxSpeed;
 			player->dir = RIGHT;
-			player->moving = true;
 			break;
 		case UP:
 			if (!player->grounded || player->state == PLAYER_DEAD)
@@ -197,8 +195,6 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 		} else if (player->horAccel == 0 && player->grounded) {
 			player->sprite = 0;
 		}
-		
-		CheckCoinColision(player);
 		
 		if (player->verAccelPassive > player->verAccel) // if you hit under the ground but your ver accel passive hasn't reached its peak yet, just wait at the bottom of the platform
 			player->verAccel = 0;

@@ -8,6 +8,7 @@
 
 #include "platforms.h"
 #include "pipes.h"
+#include "bonus.h"
 
 #define GRAVITY_WINGED 0.07
 
@@ -108,7 +109,6 @@ static inline void EnterRespawnPipe(uint8_t enemyIndex, unsigned int gameFrame) 
 		levelEnemies.enemyArray[enemyIndex].x = 30;
 		levelEnemies.enemyArray[enemyIndex].dir = RIGHT;
 	}
-	
 }
 
 static void CalcForSpinies(player_t* player, unsigned int gameFrame, uint8_t i) {
@@ -146,8 +146,10 @@ static void CalcForSpinies(player_t* player, unsigned int gameFrame, uint8_t i) 
 					levelEnemies.enemyArray[i].horAccel = 1.5;
 				else
 					levelEnemies.enemyArray[i].horAccel = -1.5;
+				levelEnemies.enemyArray[i].grounded = false;
 				PlayerAddScore(player, 800);
 				--levelEnemies.enemiesLeft;
+				SpawnBonusCoin(0, 0, false, levelEnemies.enemyArray[i].dir, gameFrame);
 			}
 			break;
 		case ENEMY_EXITING_PIPE:
@@ -198,16 +200,6 @@ static void CalcForSpinies(player_t* player, unsigned int gameFrame, uint8_t i) 
 			}
 		}
 		// ---- end physics ----
-		
-		
-		//colision_t colidedPlatform = CheckColision(&tmpX, &levelEnemies.enemyArray[i].y, ENEMY_SPIKE_SIZE, ENEMY_SPIKE_HITBOX_HEIGHT, &levelEnemies.enemyArray[i].verAccel, &levelEnemies.enemyArray[i].horAccel, false);
-		//levelEnemies.enemyArray[i].x = ((float)tmpX != floor(levelEnemies.enemyArray[i].x)) ? (float)tmpX : levelEnemies.enemyArray[i].x;
-		
-		/*if (colidedPlatform.hasColided) {
-			levelEnemies.enemyArray[i].y = colidedPlatform.y - ENEMY_SPIKE_HITBOX_HEIGHT;
-			levelEnemies.enemyArray[i].verAccel = 0;
-		}
-		levelEnemies.enemyArray[i].grounded = colidedPlatform.hasColided;*/
 		
 	} else {
 		if (levelEnemies.enemyArray[i].x < -ENEMY_SPIKE_SIZE) // enemy on sides off screen? if so, teleport them to other side
@@ -270,6 +262,7 @@ static void CalcForFlies(player_t* player, unsigned int gameFrame, uint8_t i) {
 					levelEnemies.enemyArray[i].horAccel = -1.5;
 				PlayerAddScore(player, 800);
 				--levelEnemies.enemiesLeft;
+				SpawnBonusCoin(0, 0, false, levelEnemies.enemyArray[i].dir, gameFrame);
 			}
 			break;
 		case ENEMY_EXITING_PIPE:

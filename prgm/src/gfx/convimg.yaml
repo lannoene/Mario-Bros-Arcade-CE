@@ -34,7 +34,6 @@ converts:
     compress: zx7
     width-and-height: false
     images:
-      - title/mario_title_card.png
       - background/bg_pipes.png
       - background/bg_lava.png
       - background/bg_snowy.png
@@ -62,6 +61,10 @@ converts:
       - level/pow_medium.png
       - level/pow_low.png
       - level/coin1.png
+      - level/coin2.png
+      - level/coin3.png
+      - level/coin4.png
+      - level/coin5.png
       - level/pipes_block.png
       - level/snowy_normal_block.png
       - level/snowy_iced_block.png
@@ -94,6 +97,14 @@ converts:
       - enemy/fly_wing2.png
       - enemy/fly_dead_left.png
       - enemy/fly_dead_right.png
+      - enemy/hazards/fireball_green_big_rot1.png
+      - enemy/hazards/fireball_green_big_rot2.png
+      - enemy/hazards/fireball_green_big_rot3.png
+      - enemy/hazards/fireball_green_big_rot4.png
+      - enemy/hazards/fireball_red_big_rot1.png
+      - enemy/hazards/fireball_red_big_rot2.png
+      - enemy/hazards/fireball_red_big_rot3.png
+      - enemy/hazards/fireball_red_big_rot4.png
       - font/phase/phase_card.png
       - font/phase/phase_number0.png
       - font/phase/phase_number1.png

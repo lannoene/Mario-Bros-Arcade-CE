@@ -15,8 +15,9 @@ typedef struct {
 	uint8_t livesBackgroundData[TEXT_SIZE*9*TEXT_SIZE + 2];
 	uint8_t scoreBackgroundData[TEXT_SIZE*7*TEXT_SIZE + 2];
 	uint8_t phaseCardBackgroundData[phase_card_width*phase_card_height*2 + 2];
+	uint8_t phaseCardNumDigits;
 	uint8_t bonusTimerBackgroundData[TEXT_SIZE*4*TEXT_SIZE + 2];
-#ifdef DEBUG
+#ifdef DEBUG_TIMER
 	uint8_t gameFrameBGData[TEXT_SIZE*9*TEXT_SIZE + 2];
 #endif
 } hud_t;
@@ -37,7 +38,7 @@ void InitHud(player_t* player) {
 	hudData.bonusTimerBackgroundData[0] = TEXT_SIZE*4;
 	hudData.bonusTimerBackgroundData[1] = TEXT_SIZE;
 	
-#ifdef DEBUG
+#ifdef DEBUG_TIMER
 	hudData.gameFrameBGData[0] = TEXT_SIZE*9;
 	hudData.gameFrameBGData[1] = TEXT_SIZE;
 #endif
@@ -55,7 +56,7 @@ void HudGetBackground(void) {
 	gfx_GetSprite((gfx_sprite_t*)hudData.phaseCardBackgroundData, 120, 100);
 	
 	gfx_GetSprite((gfx_sprite_t*)hudData.bonusTimerBackgroundData, 100, 0);
-#ifdef DEBUG
+#ifdef DEBUG_TIMER
 	gfx_GetSprite((gfx_sprite_t*)hudData.gameFrameBGData, 0, 100);
 #endif
 }
@@ -81,7 +82,7 @@ void HudDraw(player_t* player, unsigned int gameFrame) {
 	if (game_data.isBonusLevel) {
 		gfx_SetTextXY(100, 0);
 		
-		gfx_PrintUInt(levelCoins.bonusTimer/10, 3);
+		gfx_PrintUInt(levelCoins.bonusTimer/60, 3);
 	}
 	
 	// draw level end card
@@ -89,7 +90,7 @@ void HudDraw(player_t* player, unsigned int gameFrame) {
 		gfx_RLETSprite_NoClip(phase_clear, 130, 100);
 	}
 	
-#ifdef DEBUG
+#ifdef DEBUG_TIMER
 	gfx_SetTextXY(0, 100);
 	gfx_PrintUInt(gameFrame, 10);
 #endif
@@ -100,14 +101,17 @@ void HudRefresh(void) {
 	gfx_Sprite_NoClip((gfx_sprite_t*)hudData.scoreBackgroundData, 272, 0);
 	gfx_Sprite((gfx_sprite_t*)hudData.phaseCardBackgroundData, 120, 100);
 	gfx_Sprite((gfx_sprite_t*)hudData.bonusTimerBackgroundData, 100, 0);
-#ifdef DEBUG
+#ifdef DEBUG_TIMER
 	gfx_Sprite((gfx_sprite_t*)hudData.gameFrameBGData, 0, 100);
 #endif
 }
 
 void DrawPhaseText(void) {
-	uint8_t numDigits = floor(log10(game_data.level) + 0.000002); // get number of digits
-	for (uint8_t i = 0; i < numDigits + 1; i++) { // for every digit
+	for (uint8_t i = 0; i < hudData.phaseCardNumDigits + 1; i++) { // for every digit
 		gfx_RLETSprite_NoClip(phase_numbers[((uint8_t)(game_data.level/pow(10, i)))%10], 176 - TEXT_WIDTH*i, 100); // display the digit there at correct x coord
 	}
+}
+
+void TitleCardSetNumDigits(uint8_t numDigits) {
+	hudData.phaseCardNumDigits = numDigits;
 }

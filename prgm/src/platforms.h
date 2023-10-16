@@ -30,15 +30,13 @@ typedef struct {
 } levelPlatformData_t;
 
 enum ICY_PLATFORM_PRESETS {
-	NONE_ICY,
-	TOP_ICY,
-	BOTTOM_ICY,
-	MIDDLE_ICY,
-	TOP_BOTTOM_ICY,
-	MIDDLE_BOTTOM_ICY,
-	TOP_MIDDLE_ICY,
-	ALL_ICY,
+	NONE_ICY = 0,
+	TOP_ICY = 0x1,
+	BOTTOM_ICY = 0x2,
+	MIDDLE_ICY = 0x4,
 };
+
+extern levelPlatformData_t levelPlatforms;
 
 colision_t CheckColision(int16_t* x, int16_t* y, uint8_t width, uint8_t height, float* verAccel, float* horAccel, bool requireBottomColision);
 void InitPlatformData(void);
@@ -47,5 +45,3 @@ void FreePlatforms(void);
 void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFrame);
 void RefreshPlatformBackgroundData(uint8_t type);
 void FreezePlatform(uint8_t index);
-
-extern levelPlatformData_t levelPlatforms;

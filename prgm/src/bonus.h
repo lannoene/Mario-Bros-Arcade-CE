@@ -9,9 +9,11 @@
 #define COIN_HEIGHT	11
 
 typedef struct {
-	int16_t x;
-	uint8_t y;
-	bool alive;
+	float x, x_old;
+	uint8_t y, y_old, sprite, state, lastGroundedPlatformIndex;
+	bool alive, bonus, dir, grounded : 1;
+	float verAccel, horAccel;
+	unsigned int spawnFrame, pipeExitFrame;
 	uint8_t backgroundData[COIN_WIDTH*COIN_HEIGHT + 2];
 } bonusCoin_t;
 
@@ -21,10 +23,15 @@ typedef struct {
 	bonusCoin_t* coinArray;
 } bonusLevel_t;
 
+enum COIN_STATES {
+	COIN_NORMAL = 0,
+	COIN_EXITING_PIPE,
+};
+
 extern bonusLevel_t levelCoins;
 
 void InitBonusData(void);
-void SpawnBonusCoin(int16_t x, uint8_t y);
-void CheckCoinColision(player_t* player);
+void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gameFrame);
 void ResetCoins(void);
 void FreeBonusCoins(void);
+void UpdateBonusCoins(player_t* player, unsigned int gameFrame);

@@ -1,6 +1,7 @@
 #include "title.h"
 #include "screens.h"
 #include "gfx/gfx.h"
+#include "font/font.h"
 #include <graphx.h>
 #include <compression.h>
 #include <keypadc.h>
@@ -8,13 +9,14 @@
 bool LoadTitle(void) {
 	gfx_FillScreen(2);
 	
+	gfx_SetFontData(font);
+	gfx_SetMonospaceFont(8);
 	
 	zx7_Decompress(gfx_vbuffer, bg_title_compressed);
-	gfx_sprite_t* tmp_title_card = gfx_MallocSprite(mario_title_card_width, mario_title_card_height);
-	zx7_Decompress(tmp_title_card->data, mario_title_card_compressed);
 	
-	gfx_Sprite_NoClip(tmp_title_card, 10, 80);
-	free(tmp_title_card);
+	gfx_SetTextFGColor(1);
+	gfx_PrintStringXY("Press Enter", 110, 190);
+	
 	gfx_SwapDraw();
 	gfx_BlitScreen();
 	ChangeScreen(SCR_TITLE);

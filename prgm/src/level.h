@@ -9,6 +9,13 @@ typedef struct {
 	bool levelEnded, isBonusLevel : 1;
 } gameData_t;
 
+enum level_settings {
+	LVL_ISBONUS = 0,
+	LVL_BACKGROUND,
+	LVL_ICYPLATFORMS,
+	LVL_HASFIREBALLS,
+};
+
 extern gameData_t game_data;
 
 bool LevelLoop(void);

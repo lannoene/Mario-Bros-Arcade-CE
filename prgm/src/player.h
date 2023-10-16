@@ -19,8 +19,7 @@ typedef struct {
 	int16_t y, y_old;
 	float verAccel, horAccel, verAccelPassive, maxSpeed, acceleration, deacceleration;
 	uint8_t sprite, state, lives;
-	bool grounded, moving : 1; // moving: whether or not the player has pressed any directional keys this frame. UNUSED CURRENTY AND PROBABLY FOREVER LOL
-	bool dir : 1;
+	bool grounded, dir : 1;
 	int8_t verSpriteOffset, verSpriteOffset_old, lastGroundedPlatformIndex;
 	unsigned int deathTime;
 	unsigned int score;

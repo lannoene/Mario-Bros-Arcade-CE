@@ -29,7 +29,7 @@ void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame) {
 	++levelPows.powArray[powIndex].state;
 	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
 		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].state != ENEMY_DEAD) {
-			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING) {
+			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING && levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING) {
 				if (levelEnemies.enemyArray[i].type == ENEMY_CRAB && !levelEnemies.enemyArray[i].crabIsMad)
 					levelEnemies.enemyArray[i].crabIsMad = true;
 				else {
@@ -43,7 +43,7 @@ void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame) {
 				levelEnemies.enemyArray[i].layStartTime = gameFrame;
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].sprite = 3;
-			} else {
+			} else if (levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING) {
 				if (levelEnemies.enemyArray[i].type == ENEMY_CRAB && levelEnemies.enemyArray[i].crabIsMad)
 					levelEnemies.enemyArray[i].crabIsMad = false;
 				

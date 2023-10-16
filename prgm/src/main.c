@@ -7,8 +7,6 @@
 
 #include "gfx/gfx.h"
 
-// OBJECTIVE: render platforms before hand and paste them to the screen. never refresh them. put a mask over the platform for the bumps like before, but only replace the small part of the platform once it is done.
-
 int main(void) {
 	srand(rtc_Time());
 	
