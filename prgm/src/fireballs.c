@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "platforms.h"
+#include "level.h"
 
 #define INITIAL_FIREBALL_SPAWN_WEIGHT 10000
 #define FIREBALL_SPEED 1
@@ -50,7 +51,7 @@ void CreateFireball(uint8_t y, bool dir, uint8_t type, unsigned int gameFrame) {
 
 void UpdateFireballs(player_t* player, unsigned int gameFrame) {
 	for (uint8_t i = 0; i < levelFireballs.numFireballs; i++) {
-		if (!levelFireballs.fireballArray[i].alive)
+		if (!levelFireballs.fireballArray[i].alive || gameFrame - game_data.levelStartTime < 150)
 			continue;
 		if (levelFireballs.fireballArray[i].type == FIREBALL_GREEN) {
 			if (levelFireballs.fireballArray[i].horDir == LEFT) {
@@ -63,7 +64,7 @@ void UpdateFireballs(player_t* player, unsigned int gameFrame) {
 				++levelFireballs.fireballArray[i].x;
 			}
 			float sinOfY = sin((float)levelFireballs.fireballArray[i].x/10);
-			levelFireballs.fireballArray[i].y = levelFireballs.fireballArray[i].original_y + -15*(sinOfY + sinOfY*sinOfY);
+			levelFireballs.fireballArray[i].y = levelFireballs.fireballArray[i].original_y + -13*(sinOfY + sinOfY*sinOfY);
 		} else {
 			if (levelFireballs.fireballArray[i].x <= 0)
 				levelFireballs.fireballArray[i].horDir = RIGHT;
@@ -91,14 +92,14 @@ void UpdateFireballs(player_t* player, unsigned int gameFrame) {
 			}
 			
 			if (levelFireballs.fireballArray[i].horDir == RIGHT)
-				++levelFireballs.fireballArray[i].x;
+				levelFireballs.fireballArray[i].x += 0.5;
 			else
-				--levelFireballs.fireballArray[i].x;
+				levelFireballs.fireballArray[i].x -= 0.5;
 			
 			if (levelFireballs.fireballArray[i].verDir == UP)
-				--levelFireballs.fireballArray[i].y;
+				levelFireballs.fireballArray[i].y -= 0.5;
 			else
-				++levelFireballs.fireballArray[i].y;
+				levelFireballs.fireballArray[i].y += 0.5;
 		}
 		
 		if (player->y + PLAYER_HEIGHT > levelFireballs.fireballArray[i].y && player->y < levelFireballs.fireballArray[i].y + FIREBALL_SIZE && player->x + PLAYER_WIDTH > levelFireballs.fireballArray[i].x && player->x < levelFireballs.fireballArray[i].x + FIREBALL_SIZE && player->state == PLAYER_NORMAL)
@@ -112,10 +113,12 @@ void FreeFireballs(void) {
 	free(levelFireballs.fireballArray);
 }
 
-void ManageFireballSpawning(player_t* player, unsigned int gameFrame) {
-	if (gameFrame % 2 == 0)
+void ManageFireballSpawning(player_t* player, unsigned int gameFrame, int16_t fireballFlags) {
+	if (game_data.levelEnded || gameFrame - game_data.levelStartTime < 150)
+		return;
+	if (gameFrame % 4 == 0)
 		--levelFireballs.fireballSpawnWeight;
-	if (rand() % levelFireballs.fireballSpawnWeight == 0) {
+	if (fireballFlags & HAS_FIREBALL_GREEN && rand() % levelFireballs.fireballSpawnWeight == 0) {
 		// spawn green fireballs
 		if (player->y < 72)
 			CreateFireball(50, (player->x > 160) ? LEFT : RIGHT, FIREBALL_GREEN, gameFrame);
@@ -129,7 +132,7 @@ void ManageFireballSpawning(player_t* player, unsigned int gameFrame) {
 		levelFireballs.fireballSpawnWeight = INITIAL_FIREBALL_SPAWN_WEIGHT;
 	}
 	
-	if (rand() % 30000 == 0) {
+	if (fireballFlags & HAS_FIREBALL_RED && rand() % 30000 == 0) {
 		CreateFireball(50 - (rand() % 20) + 10, RIGHT, FIREBALL_RED, gameFrame);
 	}
 }

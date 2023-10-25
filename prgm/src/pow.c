@@ -32,7 +32,10 @@ void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame) {
 			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING && levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING) {
 				if (levelEnemies.enemyArray[i].type == ENEMY_CRAB && !levelEnemies.enemyArray[i].crabIsMad)
 					levelEnemies.enemyArray[i].crabIsMad = true;
-				else {
+				else if (levelEnemies.enemyArray[i].type == ENEMY_FREEZIE) {
+					levelEnemies.enemyArray[i].state = ENEMY_DEAD_SPINNING;
+					levelEnemies.enemyArray[i].eventTime = gameFrame;
+				} else {
 					levelEnemies.enemyArray[i].state = ENEMY_LAYING;
 					levelEnemies.enemyArray[i].verSpriteOffset = 0;
 					PlayerAddScore(player, 10);

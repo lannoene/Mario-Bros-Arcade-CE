@@ -67,9 +67,16 @@ converts:
       - level/coin5.png
       - level/pipes_block.png
       - level/snowy_normal_block.png
-      - level/snowy_iced_block.png
+      - level/snowy_iced_block1.png
+      - level/snowy_iced_block2.png
       - level/lava_block.png
       - level/castle_block.png
+      - level/icicle_forming1.png
+      - level/icicle_forming2.png
+      - level/icicle_forming3.png
+      - level/icicle_full1.png
+      - level/icicle_full2.png
+      - level/icicle_full3.png
       - enemy/spike_walk1_right.png
       - enemy/spike_walk2_right.png
       - enemy/spike_walk3_right.png
@@ -97,6 +104,22 @@ converts:
       - enemy/fly_wing2.png
       - enemy/fly_dead_left.png
       - enemy/fly_dead_right.png
+      - enemy/freezie_walk1_left.png
+      - enemy/freezie_walk2_left.png
+      - enemy/freezie_walk3_left.png
+      - enemy/freezie_walk1_right.png
+      - enemy/freezie_walk2_right.png
+      - enemy/freezie_walk3_right.png
+      - enemy/freezie_die1_left.png
+      - enemy/freezie_die2_left.png
+      - enemy/freezie_die3_left.png
+      - enemy/freezie_die4_left.png
+      - enemy/freezie_die5_left.png
+      - enemy/freezie_die1_right.png
+      - enemy/freezie_die2_right.png
+      - enemy/freezie_die3_right.png
+      - enemy/freezie_die4_right.png
+      - enemy/freezie_die5_right.png
       - enemy/hazards/fireball_green_big_rot1.png
       - enemy/hazards/fireball_green_big_rot2.png
       - enemy/hazards/fireball_green_big_rot3.png

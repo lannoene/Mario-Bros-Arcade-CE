@@ -35,22 +35,15 @@ void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gam
 	levelCoins.coinArray[i].bonus = bonus;
 	if (!bonus) {
 		levelCoins.coinArray[i].y = levelCoins.coinArray[i].y_old = 35;
-		if (levelEnemies.lastSpawnedPipe == LEFT) {
+		if (levelEnemies.lastSpawnedPipe == RIGHT) {
 			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = 30;
 			levelCoins.coinArray[i].dir = RIGHT;
-			levelEnemies.lastSpawnedPipe = RIGHT;
-		} else {
-			levelCoins.coinArray[i].dir = LEFT;
-			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = 274;
 			levelEnemies.lastSpawnedPipe = LEFT;
-			
-		}
-		if (dir == LEFT) {
-			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = 30;
-			levelCoins.coinArray[i].dir = RIGHT;
 		} else {
 			levelCoins.coinArray[i].dir = LEFT;
 			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = 274;
+			levelEnemies.lastSpawnedPipe = RIGHT;
+			
 		}
 	} else {
 		levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = x;
@@ -58,6 +51,7 @@ void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gam
 	}
 	levelCoins.coinArray[i].spawnFrame = gameFrame;
 	levelCoins.coinArray[i].state = COIN_EXITING_PIPE;
+	levelCoins.coinArray[i].firstTimeSpawning = true;
 	levelCoins.coinArray[i].backgroundData[0] = COIN_WIDTH;
 	levelCoins.coinArray[i].backgroundData[1] = COIN_HEIGHT;
 }
@@ -100,11 +94,36 @@ void UpdateBonusCoins(player_t* player, unsigned int gameFrame) {
 				
 				break;
 			case COIN_EXITING_PIPE:
-				levelCoins.coinArray[i].verAccel = 0;
-				RedrawPipesWithNewSprite((levelCoins.coinArray[i].dir + 1) % 2, 0, gameFrame); // pipe is opposite dir
-				
-				if (gameFrame - levelCoins.coinArray[i].spawnFrame > 65)
-					levelCoins.coinArray[i].state = COIN_NORMAL;
+				if (levelCoins.coinArray[i].firstTimeSpawning) { // delay coin exit. i didn't like how quickly they came out after the player killed enemies
+					levelCoins.coinArray[i].verAccel = 0;
+					RedrawPipesWithNewSprite((levelCoins.coinArray[i].dir + 1) % 2, 0, gameFrame); // pipe is opposite dir
+					if (gameFrame - levelCoins.coinArray[i].spawnFrame < 70) {
+						levelCoins.coinArray[i].horAccel = 0;
+					} else {
+						if (levelCoins.coinArray[i].dir == LEFT)
+							levelCoins.coinArray[i].horAccel = -0.5;
+						else
+							levelCoins.coinArray[i].horAccel = 0.5;
+					}
+					
+					if (levelCoins.coinArray[i].dir == LEFT && gameFrame - levelCoins.coinArray[i].spawnFrame > 120) {
+						levelCoins.coinArray[i].state = COIN_NORMAL;
+						levelCoins.coinArray[i].firstTimeSpawning = false;
+					} else if (levelCoins.coinArray[i].dir == RIGHT && gameFrame - levelCoins.coinArray[i].spawnFrame > 140) {
+						levelCoins.coinArray[i].state = COIN_NORMAL;
+						levelCoins.coinArray[i].firstTimeSpawning = false;
+					}
+				} else {
+					levelCoins.coinArray[i].verAccel = 0;
+					RedrawPipesWithNewSprite((levelCoins.coinArray[i].dir + 1) % 2, 0, gameFrame); // pipe is opposite dir
+					
+					if (gameFrame - levelCoins.coinArray[i].spawnFrame > 65)
+						levelCoins.coinArray[i].state = COIN_NORMAL;
+					if (levelCoins.coinArray[i].dir == LEFT)
+							levelCoins.coinArray[i].horAccel = -0.5;
+						else
+							levelCoins.coinArray[i].horAccel = 0.5;
+				}
 				break;
 		}
 		
@@ -113,16 +132,18 @@ void UpdateBonusCoins(player_t* player, unsigned int gameFrame) {
 		else if (levelCoins.coinArray[i].x > 320)
 			levelCoins.coinArray[i].x = -COIN_WIDTH;
 		
-		if (levelCoins.coinArray[i].dir == RIGHT) {
-			levelCoins.coinArray[i].horAccel = 0.5;
-		} else {
-			levelCoins.coinArray[i].horAccel = -0.5;
+		if (levelCoins.coinArray[i].state != COIN_EXITING_PIPE) {
+			if (levelCoins.coinArray[i].dir == RIGHT) {
+				levelCoins.coinArray[i].horAccel = 0.5;
+			} else {
+				levelCoins.coinArray[i].horAccel = -0.5;
+			}
 		}
 		
 		// this is taken from the enemy platform colision code
-		if (levelCoins.coinArray[i].grounded && levelCoins.coinArray[i].verAccel <= 0 && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel + COIN_WIDTH > levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].x && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel < levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].x + levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].width) { // is enemy still inside of last intersected platform's x footprint? if so, make sure they stay like so
+		if (levelCoins.coinArray[i].grounded && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel + COIN_WIDTH > levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].x && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel < levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].x + levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].width) {
 			levelCoins.coinArray[i].verAccel = 0;
-		} else if (levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel > 224 - COIN_HEIGHT) { // is enemy on the bottom floor? if so, we can skip colision checking and make sure verAccel is 0
+		} else if (levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel > 224 - COIN_HEIGHT) {
 			levelCoins.coinArray[i].y = 224 - COIN_HEIGHT;
 			levelCoins.coinArray[i].verAccel = 0;
 			if (!levelCoins.coinArray[i].grounded)
@@ -134,13 +155,15 @@ void UpdateBonusCoins(player_t* player, unsigned int gameFrame) {
 				if (levelCoins.coinArray[i].dir == RIGHT) {
 					levelCoins.coinArray[i].x = 274;
 					levelCoins.coinArray[i].dir = LEFT;
+					levelEnemies.lastSpawnedPipe = RIGHT;
 				} else {
 					levelCoins.coinArray[i].x = 30;
 					levelCoins.coinArray[i].dir = RIGHT;
+					levelEnemies.lastSpawnedPipe = LEFT;
 				}
 			}
-		} else { // otherwise, do expensive colision checking
-			if (levelCoins.coinArray[i].verAccel < 0) { // only test for physics if the verAccel is less than 0
+		} else {
+			if (levelCoins.coinArray[i].verAccel < 0) {
 				uint8_t j = 0;
 				for (; j < levelPlatforms.numPlatforms; j++) {
 					if (levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel + COIN_HEIGHT > levelPlatforms.platformArray[j].y && levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel < levelPlatforms.platformArray[j].y + PLATFORM_HEIGHT && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel + COIN_WIDTH > levelPlatforms.platformArray[j].x && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel < levelPlatforms.platformArray[j].x + levelPlatforms.platformArray[j].width) {

@@ -11,10 +11,11 @@
 
 levelPlatformData_t levelPlatforms = {};
 
-gfx_rletsprite_t* platformBlocks[5] = {pipes_block, lava_block, castle_block, snowy_normal_block, snowy_iced_block};
+gfx_rletsprite_t* platformBlocks[4] = {pipes_block, lava_block, castle_block, snowy_normal_block};
 
 void InitPlatformData(void) {
 	levelPlatforms.platformArray = malloc(0);
+	levelPlatforms.numPlatforms = 0;
 }
 
 void CreatePlatform(int16_t x, uint8_t y, uint8_t width) {
@@ -31,6 +32,7 @@ void CreatePlatform(int16_t x, uint8_t y, uint8_t width) {
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].beingBumped = false;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].needsRefresh = false;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].icy = false;
+	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].invisible = false;
 	// preprocess tile image
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage = malloc(width*PLATFORM_HEIGHT*2 + 2);
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[0] = width;
@@ -60,7 +62,14 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 	
 	// detect enemies
 	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
-		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING && levelEnemies.enemyArray[i].x + ENEMY_SPIKE_SIZE > player->x - BLOCK_SIZE && levelEnemies.enemyArray[i].x < player->x + 2*BLOCK_SIZE && levelEnemies.enemyArray[i].y + ENEMY_SPIKE_SIZE > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelEnemies.enemyArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
+		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING && levelEnemies.enemyArray[i].x + ENEMY_SPIKE_SIZE > player->x - 2 && levelEnemies.enemyArray[i].x < player->x + BLOCK_SIZE + 2 && levelEnemies.enemyArray[i].y + ENEMY_SPIKE_SIZE > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelEnemies.enemyArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
+			if (levelEnemies.enemyArray[i].type == ENEMY_FREEZIE) {
+				levelEnemies.enemyArray[i].eventTime = gameFrame;
+				levelEnemies.enemyArray[i].state = ENEMY_DEAD_SPINNING;
+				levelEnemies.enemyArray[i].verAccel = 2.5;
+				levelEnemies.enemyArray[i].horAccel = 0;
+				continue;
+			}
 			float playerVsEnemySlope = 57.2958*atan((levelEnemies.enemyArray[i].y - player->y)/(levelEnemies.enemyArray[i].x - player->x));
 			
 			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING) {
@@ -118,12 +127,24 @@ void RefreshPlatformBackgroundData(uint8_t type) {
 			gfx_RLETSprite(platformBlocks[type], levelPlatforms.platformArray[i].x + j*BLOCK_SIZE, levelPlatforms.platformArray[i].y); // process image
 		gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
 		levelPlatforms.platformArray[i].icy = false;
+		levelPlatforms.platformArray[i].invisible = false;
 	}
 }
 
 void FreezePlatform(uint8_t index) {
 	levelPlatforms.platformArray[index].icy = true;
 	for (uint8_t j = 0; j < levelPlatforms.platformArray[index].width/BLOCK_SIZE; j++)
-		gfx_RLETSprite(platformBlocks[4], levelPlatforms.platformArray[index].x + j*BLOCK_SIZE, levelPlatforms.platformArray[index].y); // process image
+		gfx_RLETSprite((rand() % 2 == 0) ? snowy_iced_block1 : snowy_iced_block2, levelPlatforms.platformArray[index].x + j*BLOCK_SIZE, levelPlatforms.platformArray[index].y); // process image
 	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[index].processedTileImage, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y);
+	gfx_SetDrawScreen();
+	gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[index].processedTileImage, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y);
+	gfx_SetDrawBuffer();
+}
+
+void VanishPlatform(uint8_t index) {
+	levelPlatforms.platformArray[index].invisible = true;
+	gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[index].backgroundData, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y - PLATFORM_HEIGHT);
+	gfx_SetDrawScreen();
+	gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[index].backgroundData, levelPlatforms.platformArray[index].x, levelPlatforms.platformArray[index].y - PLATFORM_HEIGHT);
+	gfx_SetDrawBuffer();
 }

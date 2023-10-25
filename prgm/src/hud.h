@@ -3,7 +3,7 @@
 
 #define TEXT_SIZE 8
 
-void InitHud(player_t* player);
+void InitHud(void);
 void HudGetBackground(void);
 void HudDraw(player_t* player, unsigned int gameFrame);
 void HudRefresh(void);

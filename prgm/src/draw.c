@@ -13,22 +13,25 @@
 #include "bonus.h"
 #include "level.h"
 #include "fireballs.h"
+#include "icicles.h"
 
 #define SET_OLD_TO_NEW_COORDS(varName) \
 (varName)->x_old = (varName)->x; (varName)->y_old = (varName)->y;
 
 gfx_rletsprite_t* mario_sprites[2][6] = {{stand_right, walk1_right, walk2_right, walk3_right, jump_right, dead}, {stand_left, walk1_left, walk2_left, walk3_left, jump_left, dead}};
 gfx_sprite_t* platform_bump_sprites[5][3] = {{level1_block_bump1, level1_block_bump2, level1_block_bump3}, {lava_block_bump1, lava_block_bump2, lava_block_bump3}, {castle_block_bump1, castle_block_bump2, castle_block_bump3}, {snowy_normal_block_bump1, snowy_normal_block_bump2, snowy_normal_block_bump3}, {snowy_iced_block_bump1, snowy_iced_block_bump2, snowy_iced_block_bump3}};
-gfx_rletsprite_t* enemy_sprites[3][2][7] = 
+gfx_rletsprite_t* enemy_sprites[4][2][8] = 
 {
 	{{spike_walk1_right, spike_walk2_right, spike_walk3_right, spike_upsidedown1_right}, {spike_walk1_left, spike_walk2_left, spike_walk3_left, spike_upsidedown1_left}},
 	{{crab_walk1_right, crab_walk2_right, crab_walk3_right, crab_upsidedown1_right, crab_walk1_mad_right, crab_walk2_mad_right, crab_walk3_mad_right}, {crab_walk1_left, crab_walk2_left, crab_walk3_left, crab_upsidedown1_left, crab_walk1_mad_left, crab_walk2_mad_left, crab_walk3_mad_left}},
-	{{fly_ground, fly_wing1, fly_wing2, fly_dead_right}, {fly_ground, fly_wing1, fly_wing2, fly_dead_left}}
+	{{fly_ground, fly_wing1, fly_wing2, fly_dead_right}, {fly_ground, fly_wing1, fly_wing2, fly_dead_left}},
+	{{freezie_walk1_right, freezie_walk2_right, freezie_walk3_right, freezie_die1_right, freezie_die2_right, freezie_die3_right, freezie_die4_right, freezie_die5_right}, {freezie_walk1_left, freezie_walk2_left, freezie_walk3_left, freezie_die1_left, freezie_die2_left, freezie_die3_left, freezie_die4_left, freezie_die5_left}}
 };
 gfx_rletsprite_t* pow_sprites[3] = {pow_full, pow_medium, pow_low};
 gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationary_left}};
 gfx_rletsprite_t* fireball_sprites[2][4] = {{fireball_green_big_rot1, fireball_green_big_rot2, fireball_green_big_rot3, fireball_green_big_rot4}, {fireball_red_big_rot1, fireball_red_big_rot2, fireball_red_big_rot3, fireball_red_big_rot4}};
 gfx_rletsprite_t* coin_sprites[5] = {coin1, coin2, coin3, coin4, coin5};
+gfx_rletsprite_t* icicle_sprites[6] = {icicle_forming1, icicle_forming2, icicle_forming3, icicle_full1, icicle_full2, icicle_full3};
 
 uint8_t platform_bump_sprite_sheet[5] = {0, 1, 2, 1, 0};
 
@@ -40,7 +43,7 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
-		gfx_GetSprite((gfx_sprite_t*)levelEnemies.enemyArray[i].backgroundData, levelEnemies.enemyArray[i].x_old, levelEnemies.enemyArray[i].y_old + levelEnemies.enemyArray[i].verSpriteOffset_old);
+		gfx_GetSprite((gfx_sprite_t*)levelEnemies.enemyArray[i].backgroundData, levelEnemies.enemyArray[i].x_old + levelEnemies.enemyArray[i].horSpriteOffset_old, levelEnemies.enemyArray[i].y_old + levelEnemies.enemyArray[i].verSpriteOffset_old);
 	}
 	
 	// hud
@@ -53,7 +56,8 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// coins
 	for (i = 0; i < levelCoins.numCoins; i++) {
-		gfx_GetSprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x_old, levelCoins.coinArray[i].y_old);
+		if (levelCoins.coinArray[i].alive)
+			gfx_GetSprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x_old, levelCoins.coinArray[i].y_old);
 	}
 	
 	// fireballs
@@ -62,10 +66,18 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 			gfx_GetSprite((gfx_sprite_t*)levelFireballs.fireballArray[i].backgroundData, levelFireballs.fireballArray[i].x_old, levelFireballs.fireballArray[i].y_old);
 	}
 	
+	// icicles
+	for (i = 0; i < levelIcicles.numIcicles; i++) {
+		if (levelIcicles.icicleArray[i].state != ICICLE_DEAD)
+			gfx_GetSprite((gfx_sprite_t*)levelIcicles.icicleArray[i].backgroundData, levelIcicles.icicleArray[i].x_old, levelIcicles.icicleArray[i].y_old);
+	}
+	
 	// draw sprites over bgs
 	// draw platforms
 	// platforms are pre rendered, and a mask is put under the bump when it is needed
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
+		if (levelPlatforms.platformArray[i].invisible)
+			continue;
 		if (levelPlatforms.platformArray[i].needsRefresh || (gameFrame - game_data.levelStartTime) == 1) { // if gameFrame is 1 because we draw the platform once on frame 0, but we need to draw it on the other buffer on frame 1
 			gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
 			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
@@ -105,7 +117,7 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// draw enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
-		gfx_RLETSprite(enemy_sprites[levelEnemies.enemyArray[i].type][levelEnemies.enemyArray[i].dir][levelEnemies.enemyArray[i].sprite], levelEnemies.enemyArray[i].x, levelEnemies.enemyArray[i].y + levelEnemies.enemyArray[i].verSpriteOffset);
+		gfx_RLETSprite(enemy_sprites[levelEnemies.enemyArray[i].type][levelEnemies.enemyArray[i].dir][levelEnemies.enemyArray[i].sprite], levelEnemies.enemyArray[i].x + levelEnemies.enemyArray[i].horSpriteOffset, levelEnemies.enemyArray[i].y + levelEnemies.enemyArray[i].verSpriteOffset);
 	}
 	
 	// coins
@@ -137,6 +149,12 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// draw player over everything physical
 	gfx_RLETSprite(mario_sprites[player->dir][player->sprite], player->x, player->y + player->verSpriteOffset);
+	
+	// icicles
+	for (i = 0; i < levelIcicles.numIcicles; i++) {
+		if (levelIcicles.icicleArray[i].state != ICICLE_DEAD)
+			gfx_RLETSprite(icicle_sprites[levelIcicles.icicleArray[i].sprite], levelIcicles.icicleArray[i].x, levelIcicles.icicleArray[i].y);
+	}
 	
 	// draw hud over everything
 	HudDraw(player, gameFrame);
@@ -172,9 +190,10 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
-		gfx_Sprite((gfx_sprite_t*)levelEnemies.enemyArray[i].backgroundData, levelEnemies.enemyArray[i].x_old, levelEnemies.enemyArray[i].y_old + levelEnemies.enemyArray[i].verSpriteOffset_old);
+		gfx_Sprite((gfx_sprite_t*)levelEnemies.enemyArray[i].backgroundData, levelEnemies.enemyArray[i].x_old + levelEnemies.enemyArray[i].horSpriteOffset_old, levelEnemies.enemyArray[i].y_old + levelEnemies.enemyArray[i].verSpriteOffset_old);
 		SET_OLD_TO_NEW_COORDS(&levelEnemies.enemyArray[i]);
 		levelEnemies.enemyArray[i].verSpriteOffset_old = levelEnemies.enemyArray[i].verSpriteOffset;
+		levelEnemies.enemyArray[i].horSpriteOffset_old = levelEnemies.enemyArray[i].horSpriteOffset;
 	}
 	
 	// pipes
@@ -202,6 +221,14 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 		if (levelFireballs.fireballArray[i].alive) {
 			gfx_Sprite((gfx_sprite_t*)levelFireballs.fireballArray[i].backgroundData, levelFireballs.fireballArray[i].x_old, levelFireballs.fireballArray[i].y_old);
 			SET_OLD_TO_NEW_COORDS(&levelFireballs.fireballArray[i]);
+		}
+	}
+	
+	// icicles
+	for (i = 0; i < levelIcicles.numIcicles; i++) {
+		if (levelIcicles.icicleArray[i].state != ICICLE_DEAD) {
+			gfx_Sprite((gfx_sprite_t*)levelIcicles.icicleArray[i].backgroundData, levelIcicles.icicleArray[i].x_old, levelIcicles.icicleArray[i].y_old);
+			SET_OLD_TO_NEW_COORDS(&levelIcicles.icicleArray[i]);
 		}
 	}
 	

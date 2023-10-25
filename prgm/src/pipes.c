@@ -13,7 +13,6 @@ void InitPipeBackgroundData(void) {
 }
 
 void RedrawPipesWithNewSprite(uint8_t pipeIndex, uint8_t newSprite, unsigned int gameFrame) {
-	
 	pipes[pipeIndex].redraw = true;
 	pipes[pipeIndex].redrawTime = gameFrame;
 	pipes[pipeIndex].sprite = newSprite;

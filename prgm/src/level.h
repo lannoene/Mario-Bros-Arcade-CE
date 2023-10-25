@@ -12,8 +12,9 @@ typedef struct {
 enum level_settings {
 	LVL_ISBONUS = 0,
 	LVL_BACKGROUND,
-	LVL_ICYPLATFORMS,
+	LVL_PLATFORMS,
 	LVL_HASFIREBALLS,
+	LVL_HASFREEZIES
 };
 
 extern gameData_t game_data;

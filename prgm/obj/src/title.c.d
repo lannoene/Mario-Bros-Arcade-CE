@@ -21,7 +21,10 @@ obj/src/title.c.bc: src\title.c src\title.h \
   src\gfx\pow_full.h src\gfx\pow_medium.h src\gfx\pow_low.h \
   src\gfx\coin1.h src\gfx\coin2.h src\gfx\coin3.h src\gfx\coin4.h \
   src\gfx\coin5.h src\gfx\pipes_block.h src\gfx\snowy_normal_block.h \
-  src\gfx\snowy_iced_block.h src\gfx\lava_block.h src\gfx\castle_block.h \
+  src\gfx\snowy_iced_block1.h src\gfx\snowy_iced_block2.h \
+  src\gfx\lava_block.h src\gfx\castle_block.h src\gfx\icicle_forming1.h \
+  src\gfx\icicle_forming2.h src\gfx\icicle_forming3.h \
+  src\gfx\icicle_full1.h src\gfx\icicle_full2.h src\gfx\icicle_full3.h \
   src\gfx\spike_walk1_right.h src\gfx\spike_walk2_right.h \
   src\gfx\spike_walk3_right.h src\gfx\spike_upsidedown1_right.h \
   src\gfx\spike_walk1_left.h src\gfx\spike_walk2_left.h \
@@ -35,6 +38,14 @@ obj/src/title.c.bc: src\title.c src\title.h \
   src\gfx\crab_walk2_mad_left.h src\gfx\crab_walk3_mad_left.h \
   src\gfx\fly_ground.h src\gfx\fly_wing1.h src\gfx\fly_wing2.h \
   src\gfx\fly_dead_left.h src\gfx\fly_dead_right.h \
+  src\gfx\freezie_walk1_left.h src\gfx\freezie_walk2_left.h \
+  src\gfx\freezie_walk3_left.h src\gfx\freezie_walk1_right.h \
+  src\gfx\freezie_walk2_right.h src\gfx\freezie_walk3_right.h \
+  src\gfx\freezie_die1_left.h src\gfx\freezie_die2_left.h \
+  src\gfx\freezie_die3_left.h src\gfx\freezie_die4_left.h \
+  src\gfx\freezie_die5_left.h src\gfx\freezie_die1_right.h \
+  src\gfx\freezie_die2_right.h src\gfx\freezie_die3_right.h \
+  src\gfx\freezie_die4_right.h src\gfx\freezie_die5_right.h \
   src\gfx\fireball_green_big_rot1.h src\gfx\fireball_green_big_rot2.h \
   src\gfx\fireball_green_big_rot3.h src\gfx\fireball_green_big_rot4.h \
   src\gfx\fireball_red_big_rot1.h src\gfx\fireball_red_big_rot2.h \

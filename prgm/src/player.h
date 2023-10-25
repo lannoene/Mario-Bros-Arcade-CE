@@ -17,7 +17,7 @@
 typedef struct {
 	float x, x_old;
 	int16_t y, y_old;
-	float verAccel, horAccel, verAccelPassive, maxSpeed, acceleration, deacceleration;
+	float verAccel, horAccel, verAccelPassive, maxSpeed, acceleration, deceleration;
 	uint8_t sprite, state, lives;
 	bool grounded, dir : 1;
 	int8_t verSpriteOffset, verSpriteOffset_old, lastGroundedPlatformIndex;

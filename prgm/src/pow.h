@@ -17,7 +17,7 @@ typedef struct {
 } powInfo_t;
 
 enum POW_STATES {
-	POW_FULL,
+	POW_FULL = 0,
 	POW_MEDUM,
 	POW_LOW,
 	POW_EMPTY

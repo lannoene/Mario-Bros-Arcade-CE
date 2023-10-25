@@ -9,7 +9,7 @@
 #include "pow.h"
 #include "bonus.h"
 
-#define FRAME_DELAY 5
+#define FRAME_DELAY 3
 #define PLAYER_ACCELERATION	0.2
 #define PLAYER_DECELERATION	0.2
 
@@ -17,13 +17,13 @@ void PlayerInit(player_t* player) {
 	memset(player, 0, sizeof(*player));
 	player->backgroundData[0] = PLAYER_WIDTH;
 	player->backgroundData[1] = PLAYER_SPRITE_HEIGHT;
-	player->y = 224 - PLAYER_HEIGHT;
+	player->y = GROUND_HEIGHT - PLAYER_HEIGHT;
 	player->x = 16;
 	player->lives = 4;
 	player->state = PLAYER_NORMAL;
 	player->verSpriteOffset = 0;
 	player->maxSpeed = 1.5;
-	player->deacceleration = 0.2;
+	player->deceleration = 0.2;
 	player->acceleration = 0.2;
 }
 
@@ -51,18 +51,18 @@ void PlayerMove(player_t* player, uint8_t direction) {
 				player->grounded = false;
 				player->sprite = 4;
 				player->verAccelPassive = 4.5;
-				player->deacceleration = 0.2;
+				player->deceleration = 0.2;
 				player->acceleration = 0.2;
 			}
 			break;
 		case NONE:
-			if (player->horAccel < player->deacceleration && player->horAccel > -player->deacceleration)
+			if (player->horAccel < player->deceleration && player->horAccel > -player->deceleration)
 				player->horAccel = 0;
 			
 			if (player->horAccel > 0 && player->grounded)
-				player->horAccel -= player->deacceleration;
+				player->horAccel -= player->deceleration;
 			else if (player->horAccel < 0 && player->grounded)
-				player->horAccel += player->deacceleration;
+				player->horAccel += player->deceleration;
 			break;
 	}
 }
@@ -83,7 +83,7 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 			if (player->y > 240 && gameFrame - player->deathTime > 150) {
 				if (player->lives > 0) {
 					player->state = PLAYER_NORMAL;
-					player->y = 224 - PLAYER_HEIGHT;
+					player->y = GROUND_HEIGHT - PLAYER_HEIGHT;
 					player->x = 16;
 				} else {
 					gfx_PrintStringXY("Game Over", 100, 100);
@@ -102,8 +102,8 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 			player->x = -PLAYER_WIDTH; // if they go offscreen to the right, teleport them to the left side
 		
 		// platform colision
-		if (player->y - player->verAccel > 224 - PLAYER_HEIGHT) {
-			player->y = 224 - PLAYER_HEIGHT;
+		if (player->y - player->verAccel > GROUND_HEIGHT - PLAYER_HEIGHT) {
+			player->y = GROUND_HEIGHT - PLAYER_HEIGHT;
 			player->verAccel = 0;
 			player->verAccelPassive = 0;
 			player->grounded = true;
@@ -112,7 +112,7 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 			player->verAccelPassive = 0;
 			player->grounded = true;
 			if (levelPlatforms.platformArray[player->lastGroundedPlatformIndex].icy) {
-				player->deacceleration = 0.07;
+				player->deceleration = 0.07;
 				player->acceleration = 0.07;
 			}
 		} else {
@@ -142,7 +142,7 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 			}
 			if (player->grounded && i == levelPlatforms.numPlatforms) {
 				player->grounded = false;
-				player->deacceleration = 0.2;
+				player->deceleration = 0.2;
 				player->acceleration = 0.2;
 			}
 		}
@@ -150,7 +150,7 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 		// pow colision
 		if (!player->grounded) { // check again
 			for (uint8_t i = 0; i < levelPows.numPows; i++) {
-				if (levelPows.powArray[i].state != POW_EMPTY && player->y - player->verAccel + PLAYER_HEIGHT > levelPows.powArray[i].y + (levelPows.powArray[i].state*2) && player->y - player->verAccel < levelPows.powArray[i].y + POW_SIZE && player->x + PLAYER_WIDTH + player->horAccel > levelPows.powArray[i].x && player->x + player->horAccel < levelPows.powArray[i].x + POW_SIZE) {
+				if (levelPows.powArray[i].state != POW_EMPTY && player->y - player->verAccel + PLAYER_HEIGHT > levelPows.powArray[i].y + (levelPows.powArray[i].state*2) && player->y - player->verAccel < levelPows.powArray[i].y + POW_SIZE - (levelPows.powArray[i].state*2) && player->x + PLAYER_WIDTH + player->horAccel > levelPows.powArray[i].x && player->x + player->horAccel < levelPows.powArray[i].x + POW_SIZE) {
 					if (player->verAccel < 0 && player->y + PLAYER_HEIGHT <= levelPows.powArray[i].y + (levelPows.powArray[i].state*2)) {
 						player->y = levelPows.powArray[i].y - PLAYER_HEIGHT + (levelPows.powArray[i].state*2);
 						player->verAccel = 0;
@@ -158,8 +158,8 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 						player->lastGroundedPlatformIndex = -1;
 						player->grounded = true;
 						break;
-					} else if (player->verAccel > 0 && player->y >= levelPows.powArray[i].y + POW_SIZE) {
-						player->y = levelPows.powArray[i].y + PLATFORM_HEIGHT;
+					} else if (player->verAccel > 0 && player->y >= levelPows.powArray[i].y + POW_SIZE - (levelPows.powArray[i].state*2)) {
+						player->y = levelPows.powArray[i].y + POW_SIZE - (levelPows.powArray[i].state*2);
 						player->verAccel = 0;
 						player->verAccelPassive = 0;
 						BumpPow(player, i, gameFrame);
@@ -182,13 +182,13 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 			if (gameFrame % FRAME_DELAY == 0) {
 				switch (gameFrame/FRAME_DELAY % 3) {
 					case 0:
-						player->sprite = 2;
+						player->sprite = 0;
 						break;
 					case 1:
-						player->sprite = 1;
+						player->sprite = 2;
 						break;
 					case 2:
-						player->sprite = 0;
+						player->sprite = 1;
 						break;
 				}
 			}
@@ -212,6 +212,7 @@ void KillPlayer(player_t* player, unsigned int gameFrame) {
 	player->sprite = 5;
 	player->deathTime = gameFrame;
 	player->y -= PLAYER_SPRITE_HEIGHT - PLAYER_HEIGHT;
+	player->acceleration = player->deceleration = PLAYER_ACCELERATION;
 	--player->lives;
 }
 

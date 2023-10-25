@@ -28,7 +28,7 @@ gfx_rletsprite_t* phase_numbers[10] = {phase_number0, phase_number1, phase_numbe
 
 void DrawPhaseText(void);
 
-void InitHud(player_t* player) {
+void InitHud(void) {
 	hudData.livesBackgroundData[0] = TEXT_SIZE*9;
 	hudData.livesBackgroundData[1] = TEXT_SIZE;
 	hudData.scoreBackgroundData[0] = TEXT_SIZE*7;
