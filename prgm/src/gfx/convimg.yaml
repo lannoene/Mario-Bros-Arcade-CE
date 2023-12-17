@@ -1,10 +1,10 @@
 palettes:
   - name: global_palette
     fixed-entries:
-      - color: {index: 0, r: 255, g: 0, b: 128}
-      - color: {index: 1, r: 255, g: 255, b: 255}
-      - color: {index: 2, r: 0, g: 0, b: 0}
-      - color: {index: 3, r: 81.0, g: 43, b: 186}
+      - color: {index: 0, r: 255, g: 0, b: 128} # pink?
+      - color: {index: 1, r: 255, g: 255, b: 255} # white
+      - color: {index: 2, r: 0, g: 0, b: 0} # black
+      - color: {index: 3, r: 81.0, g: 43, b: 186} # transparent purple
     images: automatic
 
 converts:
@@ -28,7 +28,7 @@ converts:
       - level/snowy_normal_block_bump1.png
       - level/snowy_normal_block_bump2.png
       - level/snowy_normal_block_bump3.png
-
+      - level/pipes_ground.png
   - name: compressed
     palette: global_palette
     compress: zx7
@@ -54,6 +54,8 @@ converts:
       - mario/walk2_left.png
       - mario/walk3_left.png
       - mario/jump_left.png
+      - mario/slide_right.png
+      - mario/slide_left.png
       - mario/dead.png
       - level/pipe_stationary_right.png
       - level/pipe_stationary_left.png
@@ -140,6 +142,20 @@ converts:
       - font/phase/phase_number8.png
       - font/phase/phase_number9.png
       - font/phase/phase_clear.png
+      - particles/dust_cloud_big.png
+      - particles/dust_cloud_medium.png
+      - particles/dust_cloud_small.png
+      - particles/star_hit.png
+      - particles/score_single.png
+      - particles/score_double.png
+      - particles/score_triple.png
+      - particles/score_quad.png
+      - particles/score_1up.png
+      - particles/coin_pick_1.png
+      - particles/coin_pick_2.png
+      - particles/coin_pick_3.png
+      - particles/coin_pick_4.png
+      - particles/coin_pick_5.png
 outputs:
   - type: c
     include-file: gfx.h

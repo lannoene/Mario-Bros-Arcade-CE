@@ -8,6 +8,9 @@
 #include "platforms.h"
 #include "pow.h"
 #include "bonus.h"
+#include "save.h"
+#include "level.h"
+#include "particles.h"
 
 #define FRAME_DELAY 3
 #define PLAYER_ACCELERATION	0.2
@@ -25,6 +28,8 @@ void PlayerInit(player_t* player) {
 	player->maxSpeed = 1.5;
 	player->deceleration = 0.2;
 	player->acceleration = 0.2;
+	player->hasJumpedThisFrame = false;
+	player->hasCollectedBonus = false;
 }
 
 void PlayerMove(player_t* player, uint8_t direction) {
@@ -44,7 +49,7 @@ void PlayerMove(player_t* player, uint8_t direction) {
 			player->dir = RIGHT;
 			break;
 		case UP:
-			if (!player->grounded || player->state == PLAYER_DEAD)
+			if (!player->grounded || player->state == PLAYER_DEAD || player->hasJumpedThisFrame)
 				return;
 			if (player->grounded) {
 				player->verAccel = 4.5;
@@ -53,6 +58,7 @@ void PlayerMove(player_t* player, uint8_t direction) {
 				player->verAccelPassive = 4.5;
 				player->deceleration = 0.2;
 				player->acceleration = 0.2;
+				player->hasJumpedThisFrame = true;
 			}
 			break;
 		case NONE:
@@ -63,6 +69,10 @@ void PlayerMove(player_t* player, uint8_t direction) {
 				player->horAccel -= player->deceleration;
 			else if (player->horAccel < 0 && player->grounded)
 				player->horAccel += player->deceleration;
+			break;
+		case NOJUMP:
+			if (player->grounded)
+				player->hasJumpedThisFrame = false;
 			break;
 	}
 }
@@ -86,6 +96,22 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 					player->y = GROUND_HEIGHT - PLAYER_HEIGHT;
 					player->x = 16;
 				} else {
+					if (gameFrame - player->deathTime == 151) {
+						save_t oldData = GetSaveData();
+						unsigned int highScore;
+						uint8_t highLevel;
+						if (player->score > oldData.highScore)
+							highScore = player->score;
+						else
+							highScore = oldData.highScore;
+						
+						if (game_data.level > oldData.highLevel)
+							highLevel = game_data.level;
+						else
+							highLevel = oldData.highLevel;
+						save_t saveData = {false, false, highScore, 0, highLevel, game_data.level, player->lives, "Lann"};
+						SaveCurrentData(saveData);
+					}
 					gfx_PrintStringXY("Game Over", 100, 100);
 					player->verAccel = 0;
 				}
@@ -175,12 +201,15 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 			}
 		}
 		
-		if (!player->grounded) // final check
+		if (!player->grounded)
 			player->sprite = 4;
-		
-		if (player->horAccel != 0 && player->grounded) {
+		else if ((player->horAccel < 0 && player->dir == RIGHT) || (player->horAccel > 0 && player->dir == LEFT)) { // he do be driftin
+			player->sprite = 6;
+			if (gameFrame % 5 == 0)
+				SpawnParticle(player->x, player->y + 11, PARTICLE_DUST, gameFrame);
+		} else if (player->horAccel != 0 && player->grounded) {
 			if (gameFrame % FRAME_DELAY == 0) {
-				switch (gameFrame/FRAME_DELAY % 3) {
+				switch (gameFrame/FRAME_DELAY % 3) { // walk cycle
 					case 0:
 						player->sprite = 0;
 						break;
@@ -218,4 +247,8 @@ void KillPlayer(player_t* player, unsigned int gameFrame) {
 
 void PlayerAddScore(player_t* player, uint16_t addedNum) {
 	player->score += addedNum;
+	if (!player->hasCollectedBonus && player->score > 20000) {
+		++player->lives;
+		player->hasCollectedBonus = true;
+	}
 }

@@ -8,6 +8,7 @@
 #include "level.h"
 #include "pipes.h"
 #include "enemies.h"
+#include "particles.h"
 
 bonusLevel_t levelCoins;
 
@@ -32,6 +33,7 @@ void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gam
 	memset(levelCoins.coinArray + i, 0, sizeof(bonusCoin_t));
 	++levelCoins.coinsLeft;
 	levelCoins.coinArray[i].alive = true;
+	levelCoins.coinArray[i].shouldDie = false;
 	levelCoins.coinArray[i].bonus = bonus;
 	if (!bonus) {
 		levelCoins.coinArray[i].y = levelCoins.coinArray[i].y_old = 35;
@@ -43,7 +45,6 @@ void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gam
 			levelCoins.coinArray[i].dir = LEFT;
 			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = 274;
 			levelEnemies.lastSpawnedPipe = RIGHT;
-			
 		}
 	} else {
 		levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = x;
@@ -77,10 +78,17 @@ void UpdateBonusCoins(player_t* player, unsigned int gameFrame) {
 			continue;
 		
 		if (levelCoins.coinArray[i].alive && player->y - player->verAccel + PLAYER_HEIGHT > levelCoins.coinArray[i].y && player->y - player->verAccel < levelCoins.coinArray[i].y + COIN_HEIGHT && player->x + PLAYER_WIDTH + player->horAccel > levelCoins.coinArray[i].x && player->x + player->horAccel < levelCoins.coinArray[i].x + COIN_WIDTH) {
-			levelCoins.coinArray[i].alive = false;
+			levelCoins.coinArray[i].shouldDie = true;
 			--levelCoins.coinsLeft;
-			if (!game_data.isBonusLevel)
+			if (!game_data.isBonusLevel) {
 				PlayerAddScore(player, 800);
+			}
+			SpawnParticle(levelCoins.coinArray[i].x, levelCoins.coinArray[i].y, PARTICLE_COIN_PICK, gameFrame);
+			levelCoins.coinArray[i].y = 241;
+			continue;
+		}
+		if (levelCoins.coinArray[i].shouldDie) {
+			levelCoins.coinArray[i].alive = false;
 		}
 		
 		levelCoins.coinArray[i].sprite = ((gameFrame - levelCoins.coinArray[i].spawnFrame)/4) % 5;
@@ -143,24 +151,13 @@ void UpdateBonusCoins(player_t* player, unsigned int gameFrame) {
 		// this is taken from the enemy platform colision code
 		if (levelCoins.coinArray[i].grounded && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel + COIN_WIDTH > levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].x && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel < levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].x + levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].width) {
 			levelCoins.coinArray[i].verAccel = 0;
-		} else if (levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel > 224 - COIN_HEIGHT) {
-			levelCoins.coinArray[i].y = 224 - COIN_HEIGHT;
+		} else if (levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel > GROUND_HEIGHT - COIN_HEIGHT) {
+			levelCoins.coinArray[i].y = GROUND_HEIGHT - COIN_HEIGHT;
 			levelCoins.coinArray[i].verAccel = 0;
 			if (!levelCoins.coinArray[i].grounded)
 			levelCoins.coinArray[i].grounded = true;
 			if ((levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel >= 320 || levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel <= -COIN_WIDTH)) {
-				levelCoins.coinArray[i].y = 35;
-				levelCoins.coinArray[i].state = COIN_EXITING_PIPE;
-				levelCoins.coinArray[i].spawnFrame = gameFrame;
-				if (levelCoins.coinArray[i].dir == RIGHT) {
-					levelCoins.coinArray[i].x = 274;
-					levelCoins.coinArray[i].dir = LEFT;
-					levelEnemies.lastSpawnedPipe = RIGHT;
-				} else {
-					levelCoins.coinArray[i].x = 30;
-					levelCoins.coinArray[i].dir = RIGHT;
-					levelEnemies.lastSpawnedPipe = LEFT;
-				}
+				levelCoins.coinArray[i].alive = false;
 			}
 		} else {
 			if (levelCoins.coinArray[i].verAccel < 0) {

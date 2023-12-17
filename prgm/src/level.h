@@ -6,7 +6,7 @@ typedef struct {
 	uint8_t numPlatforms;
 	uint8_t level;
 	unsigned int levelStartTime, levelEndTime;
-	bool levelEnded, isBonusLevel : 1;
+	bool levelEnded, isBonusLevel, paused : 1;
 } gameData_t;
 
 enum level_settings {
@@ -23,3 +23,4 @@ bool LevelLoop(void);
 bool LoadLevel(void);
 void UnloadLevel(void);
 void EndLevel(void);
+void RestartLevels(void);

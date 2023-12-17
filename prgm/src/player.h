@@ -11,6 +11,7 @@
 #define UP		2
 #define DOWN	3
 #define NONE	4
+#define NOJUMP	5
 
 #define GRAVITY 0.2
 
@@ -19,7 +20,7 @@ typedef struct {
 	int16_t y, y_old;
 	float verAccel, horAccel, verAccelPassive, maxSpeed, acceleration, deceleration;
 	uint8_t sprite, state, lives;
-	bool grounded, dir : 1;
+	bool grounded, dir, hasJumpedThisFrame, hasCollectedBonus : 1;
 	int8_t verSpriteOffset, verSpriteOffset_old, lastGroundedPlatformIndex;
 	unsigned int deathTime;
 	unsigned int score;

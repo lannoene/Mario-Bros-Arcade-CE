@@ -10,6 +10,11 @@
 #define TEXT_WIDTH	8
 #define TEXT_HEIGHT	15
 
+#define PAUSE_WIDTH 100
+#define PAUSE_HEIGHT 100
+
+#define NUM_PAUSE_OPTIONS 4
+
 // literally no other file needs access to the hud directly
 typedef struct {
 	uint8_t livesBackgroundData[TEXT_SIZE*9*TEXT_SIZE + 2];
@@ -20,13 +25,22 @@ typedef struct {
 #ifdef DEBUG_TIMER
 	uint8_t gameFrameBGData[TEXT_SIZE*9*TEXT_SIZE + 2];
 #endif
+	uint8_t pauseScrBackgroundData[100*100 + 2];
 } hud_t;
 
 static hud_t hudData;
 
+typedef struct {
+	uint16_t x;
+	uint8_t y, selectedOption;
+} puaseScreen_t;
+
+static puaseScreen_t pauseData;
+
 gfx_rletsprite_t* phase_numbers[10] = {phase_number0, phase_number1, phase_number2, phase_number3, phase_number4, phase_number5, phase_number6, phase_number7, phase_number8, phase_number9};
 
-void DrawPhaseText(void);
+static inline void DrawPhaseText(void);
+static void DrawPauseScreen(void);
 
 void InitHud(void) {
 	hudData.livesBackgroundData[0] = TEXT_SIZE*9;
@@ -37,12 +51,15 @@ void InitHud(void) {
 	hudData.phaseCardBackgroundData[1] = phase_card_height;
 	hudData.bonusTimerBackgroundData[0] = TEXT_SIZE*4;
 	hudData.bonusTimerBackgroundData[1] = TEXT_SIZE;
+	hudData.pauseScrBackgroundData[0] = PAUSE_WIDTH;
+	hudData.pauseScrBackgroundData[1] = PAUSE_HEIGHT;
 	
 #ifdef DEBUG_TIMER
 	hudData.gameFrameBGData[0] = TEXT_SIZE*9;
 	hudData.gameFrameBGData[1] = TEXT_SIZE;
 #endif
 }
+bool pausedLastFrame = false; // stupid hacky solution. i don't really care though. i'm super tired rn
 
 // lives text width TEXT_SIZE*9
 void HudGetBackground(void) {
@@ -59,6 +76,10 @@ void HudGetBackground(void) {
 #ifdef DEBUG_TIMER
 	gfx_GetSprite((gfx_sprite_t*)hudData.gameFrameBGData, 0, 100);
 #endif
+	if (game_data.paused)
+		pausedLastFrame = true;
+	if (game_data.paused || pausedLastFrame)
+		gfx_GetSprite((gfx_sprite_t*)hudData.pauseScrBackgroundData, 160 - (PAUSE_WIDTH/2), 120 - (PAUSE_WIDTH/2));
 }
 
 void HudDraw(player_t* player, unsigned int gameFrame) {
@@ -82,8 +103,11 @@ void HudDraw(player_t* player, unsigned int gameFrame) {
 	if (game_data.isBonusLevel) {
 		gfx_SetTextXY(100, 0);
 		
-		gfx_PrintUInt(levelCoins.bonusTimer/60, 3);
+		gfx_PrintUInt((unsigned int)ceil((float)levelCoins.bonusTimer/60), 3);
 	}
+	
+	if (game_data.paused)
+		DrawPauseScreen();
 	
 	// draw level end card
 	if (gameFrame - game_data.levelEndTime < 150 && !game_data.isBonusLevel) {
@@ -96,17 +120,23 @@ void HudDraw(player_t* player, unsigned int gameFrame) {
 #endif
 }
 
-void HudRefresh(void) {
+void HudRefresh(unsigned int gameFrame) {
 	gfx_Sprite_NoClip((gfx_sprite_t*)hudData.livesBackgroundData, 0, 0);
 	gfx_Sprite_NoClip((gfx_sprite_t*)hudData.scoreBackgroundData, 272, 0);
-	gfx_Sprite((gfx_sprite_t*)hudData.phaseCardBackgroundData, 120, 100);
+	if (gameFrame - game_data.levelStartTime <= 150)
+		gfx_Sprite((gfx_sprite_t*)hudData.phaseCardBackgroundData, 120, 100);
 	gfx_Sprite((gfx_sprite_t*)hudData.bonusTimerBackgroundData, 100, 0);
 #ifdef DEBUG_TIMER
 	gfx_Sprite((gfx_sprite_t*)hudData.gameFrameBGData, 0, 100);
 #endif
+	if (game_data.paused || pausedLastFrame) {
+		gfx_Sprite((gfx_sprite_t*)hudData.pauseScrBackgroundData, 160 - (PAUSE_WIDTH/2), 120 - (PAUSE_WIDTH/2));
+		if (!game_data.paused)
+			pausedLastFrame = false;
+	}
 }
 
-void DrawPhaseText(void) {
+static inline void DrawPhaseText(void) {
 	for (uint8_t i = 0; i < hudData.phaseCardNumDigits + 1; i++) { // for every digit
 		gfx_RLETSprite_NoClip(phase_numbers[((uint8_t)(game_data.level/pow(10, i)))%10], 176 - TEXT_WIDTH*i, 100); // display the digit there at correct x coord
 	}
@@ -114,4 +144,51 @@ void DrawPhaseText(void) {
 
 void TitleCardSetNumDigits(uint8_t numDigits) {
 	hudData.phaseCardNumDigits = numDigits;
+}
+
+static void DrawPauseScreen(void) {
+	gfx_SetColor(2);
+	gfx_FillRectangle_NoClip(160 - (PAUSE_WIDTH/2), 120 - (PAUSE_WIDTH/2), PAUSE_WIDTH, PAUSE_HEIGHT); // center rectangle
+	gfx_PrintStringXY("Paused:", 160 - (PAUSE_WIDTH/2), 120 - (PAUSE_WIDTH/2));
+	gfx_PrintStringXY("Resume", 160 - (PAUSE_WIDTH/2) + TEXT_SIZE, 120 - (PAUSE_WIDTH/2) + TEXT_SIZE);
+	gfx_PrintStringXY("Save & Exit", 160 - (PAUSE_WIDTH/2) + TEXT_SIZE, 120 - (PAUSE_WIDTH/2) + (TEXT_SIZE*2));
+	gfx_PrintStringXY("Exit", 160 - (PAUSE_WIDTH/2) + TEXT_SIZE, 120 - (PAUSE_WIDTH/2) + (TEXT_SIZE*3));
+	gfx_PrintStringXY("Restart", 160 - (PAUSE_WIDTH/2) + TEXT_SIZE, 120 - (PAUSE_WIDTH/2) + (TEXT_SIZE*4));
+	gfx_PrintStringXY("Phase:", 160 - (PAUSE_WIDTH/2), 120 - (PAUSE_WIDTH/2) + (TEXT_SIZE*11));
+	gfx_SetTextXY(160 - (PAUSE_WIDTH/2) + TEXT_SIZE*7, 120 - (PAUSE_WIDTH/2) + (TEXT_SIZE*11));
+	if (hudData.phaseCardNumDigits > 1)
+		gfx_PrintUInt(game_data.level, 2);
+	else
+		gfx_PrintUInt(game_data.level, 1);
+	gfx_PrintStringXY(">", 160 - (PAUSE_WIDTH/2), 120 - (PAUSE_WIDTH/2) + (TEXT_SIZE*pauseData.selectedOption) + TEXT_SIZE);
+}
+
+bool pressedThisFrame = false;
+
+int8_t PauseScreenInputEvent(uint8_t input) {
+	switch (input) {
+		case 2: // up
+			if (!pressedThisFrame)
+				--pauseData.selectedOption;
+			break;
+		case 3: // down
+			if (!pressedThisFrame)
+				++pauseData.selectedOption;
+			break;
+		case 4: // select
+			return pauseData.selectedOption;
+			break;
+		case 5:
+			pressedThisFrame = false;
+			return -1;
+			break;
+	}
+	
+	pauseData.selectedOption %= NUM_PAUSE_OPTIONS;
+	pressedThisFrame = true;
+	return -1;
+}
+
+void PauseScreenResetCursorPos(void) {
+	pauseData.selectedOption = 0;
 }

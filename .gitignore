@@ -5,3 +5,5 @@ meta/
 todo.txt
 prgm/bin/
 prgm/obj/
+prgm/src/gfx/*.c
+prgm/src/gfx/*.h

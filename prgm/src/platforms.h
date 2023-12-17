@@ -6,7 +6,7 @@
 
 #define PLATFORM_HEIGHT	8
 #define BLOCK_SIZE 8
-#define GROUND_HEIGHT 224
+#define GROUND_HEIGHT 232
 
 typedef struct {
 	int16_t x, x_old;

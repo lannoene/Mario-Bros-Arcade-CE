@@ -8,7 +8,7 @@ powInfo_t levelPows;
 
 void InitPows(void) {
 	levelPows.numPows = 0;
-	levelPows.powArray = malloc(0); // my brother said it was weird that i'm doing malloc(0), but I think it makes sense...
+	levelPows.powArray = malloc(0);
 }
 
 void CreatePow(int16_t x, uint8_t y) {
@@ -42,7 +42,7 @@ void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame) {
 				}
 				levelEnemies.enemyArray[i].horAccel = 0;
 				
-				levelEnemies.enemyArray[i].verAccel = 2;
+				levelEnemies.enemyArray[i].verAccel = (levelEnemies.enemyArray[i].type != ENEMY_FLY) ? 2.5 : 1.7;
 				levelEnemies.enemyArray[i].layStartTime = gameFrame;
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].sprite = 3;
@@ -52,7 +52,7 @@ void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame) {
 				
 				levelEnemies.enemyArray[i].grounded = false;
 				levelEnemies.enemyArray[i].state = ENEMY_WALKING;
-				levelEnemies.enemyArray[i].verAccel = 2;
+				levelEnemies.enemyArray[i].verAccel = (levelEnemies.enemyArray[i].type != ENEMY_FLY) ? 2.5 : 1.7;
 				levelEnemies.enemyArray[i].verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
 				levelEnemies.enemyArray[i].horAccel = 0;
 			}

@@ -6,6 +6,7 @@
 
 #include "enemies.h"
 #include "bonus.h"
+#include "particles.h"
 
 #include "gfx/gfx.h"
 
@@ -38,9 +39,9 @@ void CreatePlatform(int16_t x, uint8_t y, uint8_t width) {
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[0] = width;
 	levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage[1] = PLATFORM_HEIGHT*2;
 	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y - PLATFORM_HEIGHT); // get bg
-	for (uint8_t i = 0; i < width/BLOCK_SIZE; i++)
+	/*for (uint8_t i = 0; i < width/BLOCK_SIZE; i++)
 		gfx_RLETSprite(pipes_block, x + i*BLOCK_SIZE, y); // process image
-	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage, x, y);
+	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].processedTileImage, x, y);*/
 	//gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[levelPlatforms.numPlatforms - 1].backgroundData, x, y - PLATFORM_HEIGHT); // return bg to original place
 }
 
@@ -68,6 +69,7 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 				levelEnemies.enemyArray[i].state = ENEMY_DEAD_SPINNING;
 				levelEnemies.enemyArray[i].verAccel = 2.5;
 				levelEnemies.enemyArray[i].horAccel = 0;
+				EnemyShowScore(i, player, gameFrame);
 				continue;
 			}
 			float playerVsEnemySlope = 57.2958*atan((levelEnemies.enemyArray[i].y - player->y)/(levelEnemies.enemyArray[i].x - player->x));
@@ -114,8 +116,10 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 	// detect coins
 	for (uint8_t i = 0; i < levelCoins.numCoins; i++) {
 		if (levelCoins.coinArray[i].alive && levelCoins.coinArray[i].grounded && levelCoins.coinArray[i].state != COIN_EXITING_PIPE && levelCoins.coinArray[i].x + COIN_WIDTH > player->x - BLOCK_SIZE && levelCoins.coinArray[i].x < player->x + 2*BLOCK_SIZE && levelCoins.coinArray[i].y + COIN_HEIGHT > levelPlatforms.platformArray[platformIndex].y - BLOCK_SIZE && levelCoins.coinArray[i].y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
-			levelCoins.coinArray[i].alive = false;
+			levelCoins.coinArray[i].shouldDie = true;
 			PlayerAddScore(player, 800);
+			SpawnParticle(levelCoins.coinArray[i].x, levelCoins.coinArray[i].y, PARTICLE_COIN_PICK, gameFrame);
+			levelCoins.coinArray[i].y = 241;
 		}
 	}
 }

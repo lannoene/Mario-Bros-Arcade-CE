@@ -14,11 +14,12 @@
 #include "level.h"
 #include "fireballs.h"
 #include "icicles.h"
+#include "particles.h"
 
 #define SET_OLD_TO_NEW_COORDS(varName) \
 (varName)->x_old = (varName)->x; (varName)->y_old = (varName)->y;
 
-gfx_rletsprite_t* mario_sprites[2][6] = {{stand_right, walk1_right, walk2_right, walk3_right, jump_right, dead}, {stand_left, walk1_left, walk2_left, walk3_left, jump_left, dead}};
+gfx_rletsprite_t* mario_sprites[2][7] = {{stand_right, walk1_right, walk2_right, walk3_right, jump_right, dead, slide_right}, {stand_left, walk1_left, walk2_left, walk3_left, jump_left, dead, slide_left}};
 gfx_sprite_t* platform_bump_sprites[5][3] = {{level1_block_bump1, level1_block_bump2, level1_block_bump3}, {lava_block_bump1, lava_block_bump2, lava_block_bump3}, {castle_block_bump1, castle_block_bump2, castle_block_bump3}, {snowy_normal_block_bump1, snowy_normal_block_bump2, snowy_normal_block_bump3}, {snowy_iced_block_bump1, snowy_iced_block_bump2, snowy_iced_block_bump3}};
 gfx_rletsprite_t* enemy_sprites[4][2][8] = 
 {
@@ -32,6 +33,7 @@ gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationar
 gfx_rletsprite_t* fireball_sprites[2][4] = {{fireball_green_big_rot1, fireball_green_big_rot2, fireball_green_big_rot3, fireball_green_big_rot4}, {fireball_red_big_rot1, fireball_red_big_rot2, fireball_red_big_rot3, fireball_red_big_rot4}};
 gfx_rletsprite_t* coin_sprites[5] = {coin1, coin2, coin3, coin4, coin5};
 gfx_rletsprite_t* icicle_sprites[6] = {icicle_forming1, icicle_forming2, icicle_forming3, icicle_full1, icicle_full2, icicle_full3};
+gfx_rletsprite_t* particle_sprites[] = {dust_cloud_big, dust_cloud_medium, dust_cloud_small, star_hit, score_single, score_double, score_triple, score_quad, score_1up, coin_pick_1, coin_pick_2, coin_pick_3, coin_pick_4, coin_pick_5};
 
 uint8_t platform_bump_sprite_sheet[5] = {0, 1, 2, 1, 0};
 
@@ -70,6 +72,12 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	for (i = 0; i < levelIcicles.numIcicles; i++) {
 		if (levelIcicles.icicleArray[i].state != ICICLE_DEAD)
 			gfx_GetSprite((gfx_sprite_t*)levelIcicles.icicleArray[i].backgroundData, levelIcicles.icicleArray[i].x_old, levelIcicles.icicleArray[i].y_old);
+	}
+	
+	// particles
+	for (i = 0; i < levelParticles.numParticles; i++) {
+		if (levelParticles.particleArray[i].alive)
+			gfx_GetSprite((gfx_sprite_t*)levelParticles.particleArray[i].backgroundData, levelParticles.particleArray[i].x_old, levelParticles.particleArray[i].y_old);
 	}
 	
 	// draw sprites over bgs
@@ -114,6 +122,11 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 		}
 	}
 	
+	// draw particles
+	for (i = 0; i < levelParticles.numParticles; i++) {
+		if (levelParticles.particleArray[i].alive)
+			gfx_RLETSprite(particle_sprites[levelParticles.particleArray[i].sprite], levelParticles.particleArray[i].x, levelParticles.particleArray[i].y);
+	}
 	
 	// draw enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
@@ -159,8 +172,6 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	// draw hud over everything
 	HudDraw(player, gameFrame);
 	
-	// in the beginning of the level, draw phase card
-	
 	
 	// finish drawing
 	gfx_SwapDraw();
@@ -174,6 +185,10 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// platforms
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
+		if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 == 5 && !levelPlatforms.platformArray[i].invisible) {
+			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
+			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
+		}
 		if (levelPlatforms.platformArray[i].beingBumped) {
 			gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x_old, levelPlatforms.platformArray[i].y_old - PLATFORM_HEIGHT);
 			SET_OLD_TO_NEW_COORDS(&levelPlatforms.platformArray[i]);
@@ -184,6 +199,8 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 		} else if (levelPlatforms.platformArray[i].needsRefresh) {
 			if ((gameFrame - levelPlatforms.platformArray[i].timeOfLastBump)/4 > 5) {
 				levelPlatforms.platformArray[i].needsRefresh = false;
+				//gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[i].backgroundData, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y - PLATFORM_HEIGHT);
+				//gfx_Sprite_NoClip((gfx_sprite_t*)levelPlatforms.platformArray[i].processedTileImage, levelPlatforms.platformArray[i].x, levelPlatforms.platformArray[i].y);
 			}
 		}
 	}
@@ -199,12 +216,12 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	// pipes
 	for (i = 0; i < NUM_OF_PIPES; i++) {
 		if (pipes[i].redraw) {
-			gfx_Sprite_NoClip((gfx_sprite_t*)pipes[i].backgroundData, pipes[i].x, pipes[i].y);
+			//gfx_Sprite_NoClip((gfx_sprite_t*)pipes[i].backgroundData, pipes[i].x, pipes[i].y);
 		}
 	}
 	
 	// hud
-	HudRefresh();
+	HudRefresh(gameFrame);
 	
 	// pows
 	for (i = 0; i < levelPows.numPows; i++) {
@@ -232,6 +249,12 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 		}
 	}
 	
+	for (i = 0; i < levelParticles.numParticles; i++) {
+		if (levelParticles.particleArray[i].alive) {
+			gfx_Sprite((gfx_sprite_t*)levelParticles.particleArray[i].backgroundData, levelParticles.particleArray[i].x_old, levelParticles.particleArray[i].y_old);
+			SET_OLD_TO_NEW_COORDS(&levelParticles.particleArray[i]);
+		}
+	}
 }
 
 void DrawBackground(uint8_t backgroundId) {
@@ -252,7 +275,7 @@ void DrawBackground(uint8_t backgroundId) {
 	}
 	
 	for (uint8_t i = 0; i < 20; i++)
-		gfx_TransparentSprite(level1_ground, i*level1_ground_width, 224);
+		gfx_TransparentSprite(pipes_ground, i*level1_ground_width, GROUND_HEIGHT);
 	
 	// copy it to the screen
 	gfx_SetDrawScreen();

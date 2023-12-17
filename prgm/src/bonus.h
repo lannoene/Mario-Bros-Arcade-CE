@@ -13,7 +13,7 @@ typedef struct {
 	float x, x_old;
 	uint8_t y, y_old, sprite, state, lastGroundedPlatformIndex;
 	int8_t verSpriteOffset, horSpriteOffset;
-	bool alive, bonus, dir, grounded, firstTimeSpawning : 1;
+	bool alive, shouldDie, bonus, dir, grounded, firstTimeSpawning : 1;
 	float verAccel, horAccel;
 	unsigned int spawnFrame, pipeExitFrame, deathFrame;
 	uint8_t backgroundData[COIN_WIDTH*COIN_HEIGHT + 2];

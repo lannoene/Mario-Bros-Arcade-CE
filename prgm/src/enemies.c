@@ -9,6 +9,7 @@
 #include "platforms.h"
 #include "pipes.h"
 #include "bonus.h"
+#include "particles.h"
 
 #define GRAVITY_WINGED 0.07
 
@@ -20,7 +21,7 @@ static inline void EnterRespawnPipe(uint8_t enemyIndex, unsigned int gameFrame);
 
 void InitEnemies(void) {
 	memset(&levelEnemies, 0, sizeof(levelEnemies_t));
-	
+	levelEnemies.currentCombo = 1;
 	levelEnemies.enemyArray = malloc(0);
 }
 
@@ -155,9 +156,10 @@ static void CalcForSpinies(player_t* player, unsigned int gameFrame, uint8_t i) 
 				else
 					levelEnemies.enemyArray[i].horAccel = -1.5;
 				levelEnemies.enemyArray[i].grounded = false;
-				PlayerAddScore(player, 800);
+				
 				--levelEnemies.enemiesLeft;
 				SpawnBonusCoin(0, 0, false, levelEnemies.enemyArray[i].dir, gameFrame);
+				EnemyShowScore(i, player, gameFrame);
 			}
 			break;
 		case ENEMY_EXITING_PIPE:
@@ -268,9 +270,10 @@ static void CalcForFlies(player_t* player, unsigned int gameFrame, uint8_t i) {
 					levelEnemies.enemyArray[i].horAccel = 1.5;
 				else
 					levelEnemies.enemyArray[i].horAccel = -1.5;
-				PlayerAddScore(player, 800);
+				
 				--levelEnemies.enemiesLeft;
 				SpawnBonusCoin(0, 0, false, levelEnemies.enemyArray[i].dir, gameFrame);
+				EnemyShowScore(i, player, gameFrame);
 			}
 			break;
 		case ENEMY_EXITING_PIPE:
@@ -390,9 +393,10 @@ static void CalcForFreezies(player_t* player, unsigned int gameFrame, uint8_t i)
 	if (levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING && levelEnemies.enemyArray[i].state != FREEZIE_FREEZING_PLATFORM && levelEnemies.enemyArray[i].state != ENEMY_DEAD) {
 		for (uint8_t j = 0; j < levelEnemies.numEnemies; j++) {
 			if (levelEnemies.enemyArray[j].type != ENEMY_FREEZIE) {
-				if (j != levelEnemies.enemyArray[i].lastBumpedEnemy && levelEnemies.enemyArray[i].x + levelEnemies.enemyArray[i].horAccel + ENEMY_FREEZIE_WIDTH > levelEnemies.enemyArray[j].x && levelEnemies.enemyArray[i].x + levelEnemies.enemyArray[i].horAccel < levelEnemies.enemyArray[j].x + ENEMY_SPIKE_SIZE && levelEnemies.enemyArray[i].y - levelEnemies.enemyArray[i].verAccel + ENEMY_SPIKE_HITBOX_HEIGHT > levelEnemies.enemyArray[j].y && levelEnemies.enemyArray[i].y - levelEnemies.enemyArray[i].verAccel < levelEnemies.enemyArray[j].y + PLATFORM_HEIGHT) {
+				if (j != levelEnemies.enemyArray[i].lastBumpedEnemy && levelEnemies.enemyArray[j].state != ENEMY_DEAD_SPINNING && levelEnemies.enemyArray[i].x + levelEnemies.enemyArray[i].horAccel + ENEMY_FREEZIE_WIDTH > levelEnemies.enemyArray[j].x && levelEnemies.enemyArray[i].x + levelEnemies.enemyArray[i].horAccel < levelEnemies.enemyArray[j].x + ENEMY_SPIKE_SIZE && levelEnemies.enemyArray[i].y - levelEnemies.enemyArray[i].verAccel + ENEMY_SPIKE_HITBOX_HEIGHT > levelEnemies.enemyArray[j].y && levelEnemies.enemyArray[i].y - levelEnemies.enemyArray[i].verAccel < levelEnemies.enemyArray[j].y + PLATFORM_HEIGHT) {
+					if (levelEnemies.enemyArray[j].state != ENEMY_LAYING)
+						levelEnemies.enemyArray[j].dir = levelEnemies.enemyArray[i].dir; // if both enemies are going in the same direction, this makes sure that nothing weird happens
 					levelEnemies.enemyArray[i].dir = !levelEnemies.enemyArray[i].dir;
-					levelEnemies.enemyArray[j].dir = !levelEnemies.enemyArray[j].dir;
 					levelEnemies.enemyArray[i].lastBumpedEnemy = j;
 				}
 			}
@@ -465,4 +469,36 @@ void ResetEnemies(unsigned int gameFrame) {
 				levelEnemies.enemyArray[i].state = ENEMY_DEAD_SPINNING;
 		}
 	}
+}
+
+void EnemyShowScore(uint8_t enemyIndex, player_t* player, unsigned int gameFrame) {
+	if (gameFrame - levelEnemies.lastKilledTime > 40) {
+		levelEnemies.currentCombo = 1;
+	} else {
+		++levelEnemies.currentCombo;
+	}
+	switch (levelEnemies.currentCombo) {
+		case 1:
+			SpawnParticle(levelEnemies.enemyArray[enemyIndex].x, levelEnemies.enemyArray[enemyIndex].y, PARTICLE_SCORE_REG, gameFrame);
+			PlayerAddScore(player, 800);
+			break;
+		case 2:
+			SpawnParticle(levelEnemies.enemyArray[enemyIndex].x, levelEnemies.enemyArray[enemyIndex].y, PARTICLE_SCORE_DUB, gameFrame);
+			PlayerAddScore(player, 1600);
+			break;
+		case 3:
+			SpawnParticle(levelEnemies.enemyArray[enemyIndex].x, levelEnemies.enemyArray[enemyIndex].y, PARTICLE_SCORE_TRP, gameFrame);
+			PlayerAddScore(player, 2400);
+			break;
+		case 4:
+			SpawnParticle(levelEnemies.enemyArray[enemyIndex].x, levelEnemies.enemyArray[enemyIndex].y, PARTICLE_SCORE_QDP, gameFrame);
+			PlayerAddScore(player, 3200);
+			break;
+		default: // 1 up
+			SpawnParticle(levelEnemies.enemyArray[enemyIndex].x, levelEnemies.enemyArray[enemyIndex].y, PARTICLE_SCORE_1UP, gameFrame);
+			PlayerAddScore(player, 3200);
+			break;
+	}
+	
+	levelEnemies.lastKilledTime = gameFrame;
 }

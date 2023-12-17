@@ -20,8 +20,8 @@ typedef struct {
 } enemy_t;
 
 typedef struct {
-	uint8_t numEnemies, enemiesLeft, lastSpawnedPipe;
-	unsigned int lastSpawnedTime;
+	uint8_t numEnemies, enemiesLeft, lastSpawnedPipe, currentCombo;
+	unsigned int lastSpawnedTime, lastKilledTime;
 	enemy_t* enemyArray;
 } levelEnemies_t;
 
@@ -50,3 +50,4 @@ void SpawnEnemy(uint8_t enemyType, bool direction, unsigned int gameFrame);
 void FreeEnemies(void);
 void UpdateEnemies(player_t* player, unsigned int gameFrame);
 void ResetEnemies(unsigned int gameFrame);
+void EnemyShowScore(uint8_t enemyIndex, player_t* player, unsigned int gameFrame);
