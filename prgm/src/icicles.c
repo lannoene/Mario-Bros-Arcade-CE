@@ -103,3 +103,7 @@ void UpdateIcicles(player_t* player, unsigned int gameFrame) {
 void FreeIcicles(void) {
 	free(levelIcicles.icicleArray);
 }
+
+void ResetIcicles(void) {
+	levelIcicles.numIcicles = 0;
+}

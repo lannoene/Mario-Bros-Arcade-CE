@@ -39,7 +39,8 @@ int16_t levelLog[][3][MAX_ENEMIES] = {
 	{
 		{false, BG_PIPES, NONE_ICY, false, false}, // level settings
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // enemy spawn type
-		{200, 500, 800, -1, -1, -1, -1, -1, -1, -1} // enemy spawn time in frames
+		//{200, 500, 800, -1, -1, -1, -1, -1, -1, -1} // enemy spawn time in frames
+		{200, 500, 800, -1, -1, -1, -1, -1, -1, -1}
 	},
 	{
 		{false, BG_PIPES, NONE_ICY, false, false},
@@ -383,14 +384,20 @@ void UnloadLevel(void) {
 void EndLevel(void) {
 	// perform this action once
 	if (!game_data.levelEnded) {
-		if (levelCoins.coinsLeft == 0 && game_data.isBonusLevel)
-			++mario1.lives;
+		if (game_data.isBonusLevel) {
+			if (levelCoins.coinsLeft == 0) { // special bonus for collecting all coins
+				++mario1.lives;
+				PlayerAddScore(&mario1, 5000);
+			}
+			PlayerAddScore(&mario1, (10 - levelCoins.coinsLeft)*800); // add all the score for the coins
+		}
 		
 		game_data.levelEndTime = gameFrame;
 		game_data.levelEnded = true;
 		ResetCoins();
 		ResetFireballs();
 		ResetEnemies(gameFrame);
+		ResetIcicles();
 		
 		scoreWhenRoundStarts = mario1.score;
 	}
@@ -512,6 +519,7 @@ void RestartLevels(void) {
 	ResetEnemies(gameFrame);
 	ResetFireballs();
 	ResetPows();
+	ResetIcicles();
 	
 	// draw new bg
 	DrawBackground(levelLog[game_data.level - 1][0][1]); // levelLog[game_data.level - 1][0][1] is level background id

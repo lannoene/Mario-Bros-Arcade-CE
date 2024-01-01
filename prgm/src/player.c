@@ -206,7 +206,7 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 		else if ((player->horAccel < 0 && player->dir == RIGHT) || (player->horAccel > 0 && player->dir == LEFT)) { // he do be driftin
 			player->sprite = 6;
 			if (gameFrame % 5 == 0)
-				SpawnParticle(player->x, player->y + 11, PARTICLE_DUST, gameFrame);
+				SpawnParticle((player->dir) ? player->x + PLAYER_WIDTH : player->x - 7, player->y + 11, PARTICLE_DUST, gameFrame);
 		} else if (player->horAccel != 0 && player->grounded) {
 			if (gameFrame % FRAME_DELAY == 0) {
 				switch (gameFrame/FRAME_DELAY % 3) { // walk cycle

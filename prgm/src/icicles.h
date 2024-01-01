@@ -33,3 +33,4 @@ void InitIcicles(void);
 void SpawnIcicle(unsigned int gameFrame);
 void UpdateIcicles(player_t* player, unsigned int gameFrame);
 void FreeIcicles(void);
+void ResetIcicles(void);

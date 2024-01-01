@@ -4,3 +4,4 @@ Mario350, Pie-jacker875, TheHappyFaceKing - Backgrounds
 Techokami - Enemy and Pipe sprites
 TheHappyFaceKing - Fonts
 Mario350 - Platform Tilesets
+TheHappyFaceKing - 1600, 2400, 3200, 1up particle effects
