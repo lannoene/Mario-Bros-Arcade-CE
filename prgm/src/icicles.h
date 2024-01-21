@@ -11,7 +11,7 @@
 typedef struct {
 	uint8_t y, y_old, state, sprite;
 	int16_t x, x_old;
-	float verAccel;
+	int8_t verAccel;
 	unsigned int spawnTime;
 	uint8_t backgroundData[ICICLE_WIDTH*ICICLE_HEIGHT + 2];
 } icicle_t;

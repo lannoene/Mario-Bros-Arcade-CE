@@ -81,22 +81,23 @@ void SpawnParticle(int16_t x, uint8_t y, uint8_t type, unsigned int gameFrame) {
 
 void UpdateParticles(unsigned int gameFrame) {
 	for (int i = 0; i < levelParticles.numParticles; i++) {
-		if (!levelParticles.particleArray[i].alive)
+		particle_t* particle = &levelParticles.particleArray[i];
+		if (!particle->alive)
 			continue;
-		if (levelParticles.particleArray[i].shouldDie) {
+		if (particle->shouldDie) {
 			KillParticle(i);
 			continue;
 		}
-		switch (levelParticles.particleArray[i].type) {
+		switch (particle->type) {
 			case PARTICLE_DUST:
-				if (gameFrame - levelParticles.particleArray[i].spawnTime == 18) {
+				if (gameFrame - particle->spawnTime == 18) {
 					KillParticle(i);
-				} else if (gameFrame - levelParticles.particleArray[i].spawnTime == 14) {
-					levelParticles.particleArray[i].sprite = 2;
-					levelParticles.particleArray[i].y += 2;
-				} else if (gameFrame - levelParticles.particleArray[i].spawnTime == 9) {
-					levelParticles.particleArray[i].sprite = 1;
-					levelParticles.particleArray[i].y += 1;
+				} else if (gameFrame - particle->spawnTime == 14) {
+					particle->sprite = 2;
+					particle->y += 2;
+				} else if (gameFrame - particle->spawnTime == 9) {
+					particle->sprite = 1;
+					particle->y += 1;
 				}
 				break;
 			case PARTICLE_SCORE_REG:
@@ -105,27 +106,27 @@ void UpdateParticles(unsigned int gameFrame) {
 			case PARTICLE_SCORE_QDP:
 			case PARTICLE_SCORE_1UP:
 				if (gameFrame % 3 == 0)
-					--levelParticles.particleArray[i].y;
-				if (gameFrame - levelParticles.particleArray[i].spawnTime > 40)
+					--particle->y;
+				if (gameFrame - particle->spawnTime > 40)
 					KillParticle(i);
 				break;
 			case PARTICLE_COIN_PICK:
-				if (gameFrame - levelParticles.particleArray[i].spawnTime == 42) {
+				if (gameFrame - particle->spawnTime == 42) {
 					if (!game_data.isBonusLevel)
-						SpawnParticle(levelParticles.particleArray[i].x, levelParticles.particleArray[i].y, PARTICLE_SCORE_REG, gameFrame);
+						SpawnParticle(particle->x, particle->y, PARTICLE_SCORE_REG, gameFrame);
 					KillParticle(i);
 					continue;
-				} else if (gameFrame - levelParticles.particleArray[i].spawnTime == 32) {
-					levelParticles.particleArray[i].sprite = 13;
-				} else if (gameFrame - levelParticles.particleArray[i].spawnTime == 24) {
-					levelParticles.particleArray[i].sprite = 12;
-				} else if (gameFrame - levelParticles.particleArray[i].spawnTime == 16) {
-					levelParticles.particleArray[i].sprite = 11;
-				} else if (gameFrame - levelParticles.particleArray[i].spawnTime == 8) {
-					levelParticles.particleArray[i].sprite = 10;
+				} else if (gameFrame - particle->spawnTime == 32) {
+					particle->sprite = 13;
+				} else if (gameFrame - particle->spawnTime == 24) {
+					particle->sprite = 12;
+				} else if (gameFrame - particle->spawnTime == 16) {
+					particle->sprite = 11;
+				} else if (gameFrame - particle->spawnTime == 8) {
+					particle->sprite = 10;
 				}
 				if (gameFrame % 3 == 0)
-					--levelParticles.particleArray[i].y;
+					--particle->y;
 				break;
 		}
 	}

@@ -11,17 +11,18 @@
 typedef struct {
 	bool dir, grounded, crabIsMad, freezieFreezeNextPlatform : 1; // crabIsMad is only for crab type enemies, freezieFreezeNextPlatform is whether or not to freeze the platform
 	uint8_t type, state, sprite, lastGroundedPlatformIndex;
-	float x, x_old, y, y_old;
-	unsigned int spawnTime, layStartTime, groundedStartTime, eventTime;
-	float horAccel, verAccel;
-	int8_t verSpriteOffset, verSpriteOffset_old, horSpriteOffset, horSpriteOffset_old, lastBumpedEnemy;
-	float maxSpeed;
+	int x, x_old, y, y_old, width;
+	unsigned int spawnTime, layStartTime, groundedStartTime, eventTime, lastBumpedEnemyTime;
+	int horVel, verVel;
+	int8_t verSpriteOffset, verSpriteOffset_old, horSpriteOffset, horSpriteOffset_old;
+	void* lastBumpedEnemy; // stores the pointer of the last bumped enemy
+	int maxSpeed;
 	uint8_t backgroundData[ENEMY_SPIKE_SIZE*ENEMY_SPIKE_SIZE + 2];
 } enemy_t;
 
 typedef struct {
-	uint8_t numEnemies, enemiesLeft, lastSpawnedPipe, currentCombo;
-	unsigned int lastSpawnedTime, lastKilledTime;
+	uint8_t numEnemies, enemiesLeft, lastSpawnedPipe;
+	unsigned int lastSpawnedTime;
 	enemy_t* enemyArray;
 } levelEnemies_t;
 
@@ -50,4 +51,5 @@ void SpawnEnemy(uint8_t enemyType, bool direction, unsigned int gameFrame);
 void FreeEnemies(void);
 void UpdateEnemies(player_t* player, unsigned int gameFrame);
 void ResetEnemies(unsigned int gameFrame);
-void EnemyShowScore(uint8_t enemyIndex, player_t* player, unsigned int gameFrame);
+void EnemyShowScore(enemy_t* enemy, player_t* player, unsigned int gameFrame);
+void KillEnemy(enemy_t* enemy, player_t* player, unsigned int gameFrame);

@@ -6,12 +6,10 @@
 
 #define PLATFORM_HEIGHT	8
 #define BLOCK_SIZE 8
-#define GROUND_HEIGHT 232
 
 typedef struct {
-	int16_t x, x_old;
-	uint8_t y, y_old;
-	uint16_t width;
+	int x, x_old, y, y_old;
+	int width;
 	uint8_t* backgroundData;
 	uint8_t* processedTileImage;
 	bool beingBumped, needsRefresh, icy, invisible : 1;

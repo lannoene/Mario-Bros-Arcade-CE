@@ -15,3 +15,5 @@ enum BACKGROUND_IDS {
 void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame);
 void DrawBackground(uint8_t backgroundId);
 void DecompressSprites(void);
+void SetUpPalettes(void);
+void SetDarkness(uint8_t darkness);

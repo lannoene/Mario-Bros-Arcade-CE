@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "enemies.h"
+#include "defines.h"
 
 powInfo_t levelPows;
 
@@ -14,8 +15,8 @@ void InitPows(void) {
 void CreatePow(int16_t x, uint8_t y) {
 	++levelPows.numPows;
 	levelPows.powArray = realloc(levelPows.powArray, levelPows.numPows*sizeof(pow_t));
-	levelPows.powArray[levelPows.numPows - 1].x = x;
-	levelPows.powArray[levelPows.numPows - 1].y = y;
+	levelPows.powArray[levelPows.numPows - 1].x = TO_FIXED_POINT(x);
+	levelPows.powArray[levelPows.numPows - 1].y = TO_FIXED_POINT(y);
 	levelPows.powArray[levelPows.numPows - 1].state = 0;
 	levelPows.powArray[levelPows.numPows - 1].backgroundData[0] = POW_SIZE;
 	levelPows.powArray[levelPows.numPows - 1].backgroundData[1] = POW_SIZE;
@@ -28,33 +29,34 @@ void FreePows(void) {
 void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame) {
 	++levelPows.powArray[powIndex].state;
 	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
-		if (levelEnemies.enemyArray[i].grounded && levelEnemies.enemyArray[i].state != ENEMY_DEAD) {
-			if (levelEnemies.enemyArray[i].state != ENEMY_LAYING && levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING) {
-				if (levelEnemies.enemyArray[i].type == ENEMY_CRAB && !levelEnemies.enemyArray[i].crabIsMad)
-					levelEnemies.enemyArray[i].crabIsMad = true;
-				else if (levelEnemies.enemyArray[i].type == ENEMY_FREEZIE) {
-					levelEnemies.enemyArray[i].state = ENEMY_DEAD_SPINNING;
-					levelEnemies.enemyArray[i].eventTime = gameFrame;
+		enemy_t* enemy = &levelEnemies.enemyArray[i];
+		if (enemy->grounded && enemy->state != ENEMY_DEAD) {
+			if (enemy->state != ENEMY_LAYING && enemy->state != ENEMY_DEAD_SPINNING) {
+				if (enemy->type == ENEMY_CRAB && !enemy->crabIsMad)
+					enemy->crabIsMad = true;
+				else if (enemy->type == ENEMY_FREEZIE) {
+					enemy->state = ENEMY_DEAD_SPINNING;
+					enemy->eventTime = gameFrame;
 				} else {
-					levelEnemies.enemyArray[i].state = ENEMY_LAYING;
-					levelEnemies.enemyArray[i].verSpriteOffset = 0;
+					enemy->state = ENEMY_LAYING;
+					enemy->verSpriteOffset = 0;
 					PlayerAddScore(player, 10);
 				}
-				levelEnemies.enemyArray[i].horAccel = 0;
+				enemy->horVel = 0;
 				
-				levelEnemies.enemyArray[i].verAccel = (levelEnemies.enemyArray[i].type != ENEMY_FLY) ? 2.5 : 1.7;
-				levelEnemies.enemyArray[i].layStartTime = gameFrame;
-				levelEnemies.enemyArray[i].grounded = false;
-				levelEnemies.enemyArray[i].sprite = 3;
-			} else if (levelEnemies.enemyArray[i].state != ENEMY_DEAD_SPINNING) {
-				if (levelEnemies.enemyArray[i].type == ENEMY_CRAB && levelEnemies.enemyArray[i].crabIsMad)
-					levelEnemies.enemyArray[i].crabIsMad = false;
+				enemy->verVel = (enemy->type != ENEMY_FLY) ? TO_FIXED_POINT(2.5) : TO_FIXED_POINT(1.7);
+				enemy->layStartTime = gameFrame;
+				enemy->grounded = false;
+				enemy->sprite = 3;
+			} else if (enemy->state != ENEMY_DEAD_SPINNING) {
+				if (enemy->type == ENEMY_CRAB && enemy->crabIsMad)
+					enemy->crabIsMad = false;
 				
-				levelEnemies.enemyArray[i].grounded = false;
-				levelEnemies.enemyArray[i].state = ENEMY_WALKING;
-				levelEnemies.enemyArray[i].verAccel = (levelEnemies.enemyArray[i].type != ENEMY_FLY) ? 2.5 : 1.7;
-				levelEnemies.enemyArray[i].verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
-				levelEnemies.enemyArray[i].horAccel = 0;
+				enemy->grounded = false;
+				enemy->state = ENEMY_WALKING;
+				enemy->verVel = (enemy->type != ENEMY_FLY) ? TO_FIXED_POINT(2.5) : TO_FIXED_POINT(1.7);
+				enemy->verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
+				enemy->horVel = 0;
 			}
 		}
 	}

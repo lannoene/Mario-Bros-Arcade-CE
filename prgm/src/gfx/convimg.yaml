@@ -57,6 +57,7 @@ converts:
       - mario/slide_right.png
       - mario/slide_left.png
       - mario/dead.png
+      - mario/blank_stare.png
       - level/pipe_stationary_right.png
       - level/pipe_stationary_left.png
       - level/pow_full.png
@@ -79,6 +80,9 @@ converts:
       - level/icicle_full1.png
       - level/icicle_full2.png
       - level/icicle_full3.png
+      - level/respawn_platform_full.png
+      - level/respawn_platform_med.png
+      - level/respawn_platform_empty.png
       - enemy/spike_walk1_right.png
       - enemy/spike_walk2_right.png
       - enemy/spike_walk3_right.png
@@ -126,10 +130,18 @@ converts:
       - enemy/hazards/fireball_green_big_rot2.png
       - enemy/hazards/fireball_green_big_rot3.png
       - enemy/hazards/fireball_green_big_rot4.png
+      - enemy/hazards/fireball_green_small_rot1.png
+      - enemy/hazards/fireball_green_small_rot2.png
+      - enemy/hazards/fireball_green_small_rot3.png
+      - enemy/hazards/fireball_green_small_rot4.png
       - enemy/hazards/fireball_red_big_rot1.png
       - enemy/hazards/fireball_red_big_rot2.png
       - enemy/hazards/fireball_red_big_rot3.png
       - enemy/hazards/fireball_red_big_rot4.png
+      - enemy/hazards/fireball_red_small_rot1.png
+      - enemy/hazards/fireball_red_small_rot2.png
+      - enemy/hazards/fireball_red_small_rot3.png
+      - enemy/hazards/fireball_red_small_rot4.png
       - font/phase/phase_card.png
       - font/phase/phase_number0.png
       - font/phase/phase_number1.png

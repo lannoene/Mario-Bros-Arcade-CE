@@ -4,6 +4,7 @@
 #include <graphx.h>
 #include <string.h>
 
+#include "defines.h"
 #include "platforms.h"
 #include "level.h"
 #include "pipes.h"
@@ -36,33 +37,36 @@ void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gam
 	levelCoins.coinArray[i].shouldDie = false;
 	levelCoins.coinArray[i].bonus = bonus;
 	if (!bonus) {
-		levelCoins.coinArray[i].y = levelCoins.coinArray[i].y_old = 35;
+		levelCoins.coinArray[i].y = levelCoins.coinArray[i].y_old = TO_FIXED_POINT(35);
 		if (levelEnemies.lastSpawnedPipe == RIGHT) {
-			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = 30;
+			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = TO_FIXED_POINT(30);
 			levelCoins.coinArray[i].dir = RIGHT;
 			levelEnemies.lastSpawnedPipe = LEFT;
 		} else {
 			levelCoins.coinArray[i].dir = LEFT;
-			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = 274;
+			levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = TO_FIXED_POINT(274);
 			levelEnemies.lastSpawnedPipe = RIGHT;
 		}
 	} else {
-		levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = x;
-		levelCoins.coinArray[i].y = levelCoins.coinArray[i].y_old = y;
+		levelCoins.coinArray[i].x = levelCoins.coinArray[i].x_old = TO_FIXED_POINT(x);
+		levelCoins.coinArray[i].y = levelCoins.coinArray[i].y_old = TO_FIXED_POINT(y);
 	}
 	levelCoins.coinArray[i].spawnFrame = gameFrame;
 	levelCoins.coinArray[i].state = COIN_EXITING_PIPE;
 	levelCoins.coinArray[i].firstTimeSpawning = true;
+	levelCoins.coinArray[i].grounded = false;
 	levelCoins.coinArray[i].backgroundData[0] = COIN_WIDTH;
 	levelCoins.coinArray[i].backgroundData[1] = COIN_HEIGHT;
 }
 
 void ResetCoins(void) {
 	for (uint8_t i = 0; i < levelCoins.numCoins; i++) {
-		gfx_Sprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
-		gfx_SetDrawScreen();
-		gfx_Sprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, levelCoins.coinArray[i].x, levelCoins.coinArray[i].y);
-		gfx_SetDrawBuffer();
+		if (levelCoins.coinArray[i].alive) {
+			gfx_Sprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, FIXED_POINT_TO_INT(levelCoins.coinArray[i].x), FIXED_POINT_TO_INT(levelCoins.coinArray[i].y));
+			gfx_SetDrawScreen();
+			gfx_Sprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, FIXED_POINT_TO_INT(levelCoins.coinArray[i].x), FIXED_POINT_TO_INT(levelCoins.coinArray[i].y));
+			gfx_SetDrawBuffer();
+		}
 	}
 	levelCoins.numCoins = 0;
 	levelCoins.coinsLeft = 0;
@@ -74,109 +78,120 @@ void FreeBonusCoins(void) {
 
 void UpdateBonusCoins(player_t* player, unsigned int gameFrame) {
 	for (uint8_t i = 0; i < levelCoins.numCoins; i++) {
-		if (!levelCoins.coinArray[i].alive)
+		bonusCoin_t* coin = &levelCoins.coinArray[i];
+		
+		if (!coin->alive)
 			continue;
 		
-		if (levelCoins.coinArray[i].alive && player->y - player->verAccel + PLAYER_HEIGHT > levelCoins.coinArray[i].y && player->y - player->verAccel < levelCoins.coinArray[i].y + COIN_HEIGHT && player->x + PLAYER_WIDTH + player->horAccel > levelCoins.coinArray[i].x && player->x + player->horAccel < levelCoins.coinArray[i].x + COIN_WIDTH) {
-			levelCoins.coinArray[i].shouldDie = true;
+		if (player->y - player->verAccel + TO_FIXED_POINT(PLAYER_HEIGHT) > coin->y 
+		&& player->y - player->verAccel < coin->y + TO_FIXED_POINT(COIN_HEIGHT) 
+		&& player->x + TO_FIXED_POINT(PLAYER_WIDTH) + player->horAccel > coin->x 
+		&& player->x + player->horAccel < coin->x + COIN_WIDTH_FP) {
+			coin->shouldDie = true;
 			--levelCoins.coinsLeft;
 			if (!game_data.isBonusLevel) {
 				PlayerAddScore(player, 800);
 			}
-			SpawnParticle(levelCoins.coinArray[i].x, levelCoins.coinArray[i].y, PARTICLE_COIN_PICK, gameFrame);
-			levelCoins.coinArray[i].y = 241;
+			SpawnParticle(FIXED_POINT_TO_INT(coin->x), FIXED_POINT_TO_INT(coin->y), PARTICLE_COIN_PICK, gameFrame);
+			coin->y = TO_FIXED_POINT(241);
+			coin->verAccel = 0;
 			continue;
 		}
-		if (levelCoins.coinArray[i].shouldDie) {
-			levelCoins.coinArray[i].alive = false;
+		if (coin->shouldDie) {
+			coin->alive = false;
 		}
 		
-		levelCoins.coinArray[i].sprite = ((gameFrame - levelCoins.coinArray[i].spawnFrame)/4) % 5;
-		if (levelCoins.coinArray[i].bonus)
+		coin->sprite = ((gameFrame - coin->spawnFrame)/4) % 5;
+		if (coin->bonus)
 			continue;
 		
-		levelCoins.coinArray[i].verAccel -= GRAVITY;
+		coin->verAccel -= TO_FIXED_POINT(GRAVITY);
 		
-		switch (levelCoins.coinArray[i].state) {
+		switch (coin->state) {
 			case COIN_NORMAL:
 				
 				break;
 			case COIN_EXITING_PIPE:
-				if (levelCoins.coinArray[i].firstTimeSpawning) { // delay coin exit. i didn't like how quickly they came out after the player killed enemies
-					levelCoins.coinArray[i].verAccel = 0;
-					RedrawPipesWithNewSprite((levelCoins.coinArray[i].dir + 1) % 2, 0, gameFrame); // pipe is opposite dir
-					if (gameFrame - levelCoins.coinArray[i].spawnFrame < 70) {
-						levelCoins.coinArray[i].horAccel = 0;
+				if (coin->firstTimeSpawning) { // delay coin exit. i didn't like how quickly they came out after the player killed enemies
+					coin->verAccel = 0;
+					RedrawPipesWithNewSprite((coin->dir + 1) % 2, 0, gameFrame); // pipe is opposite dir
+					if (gameFrame - coin->spawnFrame < 70) {
+						coin->horAccel = 0;
 					} else {
-						if (levelCoins.coinArray[i].dir == LEFT)
-							levelCoins.coinArray[i].horAccel = -0.5;
+						if (coin->dir == LEFT)
+							coin->horAccel = TO_FIXED_POINT(-0.5);
 						else
-							levelCoins.coinArray[i].horAccel = 0.5;
+							coin->horAccel = TO_FIXED_POINT(0.5);
 					}
 					
-					if (levelCoins.coinArray[i].dir == LEFT && gameFrame - levelCoins.coinArray[i].spawnFrame > 120) {
-						levelCoins.coinArray[i].state = COIN_NORMAL;
-						levelCoins.coinArray[i].firstTimeSpawning = false;
-					} else if (levelCoins.coinArray[i].dir == RIGHT && gameFrame - levelCoins.coinArray[i].spawnFrame > 140) {
-						levelCoins.coinArray[i].state = COIN_NORMAL;
-						levelCoins.coinArray[i].firstTimeSpawning = false;
+					if (coin->dir == LEFT && gameFrame - coin->spawnFrame > 120) {
+						coin->state = COIN_NORMAL;
+						coin->firstTimeSpawning = false;
+					} else if (coin->dir == RIGHT && gameFrame - coin->spawnFrame > 140) {
+						coin->state = COIN_NORMAL;
+						coin->firstTimeSpawning = false;
 					}
 				} else {
-					levelCoins.coinArray[i].verAccel = 0;
-					RedrawPipesWithNewSprite((levelCoins.coinArray[i].dir + 1) % 2, 0, gameFrame); // pipe is opposite dir
+					coin->verAccel = 0;
+					RedrawPipesWithNewSprite((coin->dir + 1) % 2, 0, gameFrame); // pipe is opposite dir
 					
-					if (gameFrame - levelCoins.coinArray[i].spawnFrame > 65)
-						levelCoins.coinArray[i].state = COIN_NORMAL;
-					if (levelCoins.coinArray[i].dir == LEFT)
-							levelCoins.coinArray[i].horAccel = -0.5;
+					if (gameFrame - coin->spawnFrame > 65)
+						coin->state = COIN_NORMAL;
+					if (coin->dir == LEFT)
+							coin->horAccel = TO_FIXED_POINT(-0.5);
 						else
-							levelCoins.coinArray[i].horAccel = 0.5;
+							coin->horAccel = TO_FIXED_POINT(0.5);
 				}
 				break;
 		}
 		
-		if (levelCoins.coinArray[i].x < -COIN_WIDTH)
-			levelCoins.coinArray[i].x = 320;
-		else if (levelCoins.coinArray[i].x > 320)
-			levelCoins.coinArray[i].x = -COIN_WIDTH;
+		if (coin->x < -COIN_WIDTH_FP)
+			coin->x = TO_FIXED_POINT(320);
+		else if (coin->x > TO_FIXED_POINT(320))
+			coin->x = -COIN_WIDTH_FP;
 		
-		if (levelCoins.coinArray[i].state != COIN_EXITING_PIPE) {
-			if (levelCoins.coinArray[i].dir == RIGHT) {
-				levelCoins.coinArray[i].horAccel = 0.5;
+		if (coin->state != COIN_EXITING_PIPE) {
+			if (coin->dir == RIGHT) {
+				coin->horAccel = TO_FIXED_POINT(0.5);
 			} else {
-				levelCoins.coinArray[i].horAccel = -0.5;
+				coin->horAccel = TO_FIXED_POINT(-0.5);
 			}
 		}
 		
 		// this is taken from the enemy platform colision code
-		if (levelCoins.coinArray[i].grounded && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel + COIN_WIDTH > levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].x && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel < levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].x + levelPlatforms.platformArray[levelCoins.coinArray[i].lastGroundedPlatformIndex].width) {
-			levelCoins.coinArray[i].verAccel = 0;
-		} else if (levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel > GROUND_HEIGHT - COIN_HEIGHT) {
-			levelCoins.coinArray[i].y = GROUND_HEIGHT - COIN_HEIGHT;
-			levelCoins.coinArray[i].verAccel = 0;
-			if (!levelCoins.coinArray[i].grounded)
-			levelCoins.coinArray[i].grounded = true;
-			if ((levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel >= 320 || levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel <= -COIN_WIDTH)) {
-				levelCoins.coinArray[i].alive = false;
+		if (coin->grounded 
+		&& coin->x + coin->horAccel + COIN_WIDTH_FP > levelPlatforms.platformArray[coin->lastGroundedPlatformIndex].x 
+		&& coin->x + coin->horAccel < levelPlatforms.platformArray[coin->lastGroundedPlatformIndex].x + levelPlatforms.platformArray[coin->lastGroundedPlatformIndex].width) {
+			coin->verAccel = 0;
+		} else if (coin->y - coin->verAccel > TO_FIXED_POINT(GROUND_HEIGHT - COIN_HEIGHT)) {
+			coin->y = TO_FIXED_POINT(GROUND_HEIGHT - COIN_HEIGHT);
+			coin->verAccel = 0;
+			if (!coin->grounded)
+			coin->grounded = true;
+			if (coin->x + coin->horAccel >= TO_FIXED_POINT(320) || coin->x + coin->horAccel <= -COIN_WIDTH_FP) {
+				coin->alive = false;
 			}
 		} else {
-			if (levelCoins.coinArray[i].verAccel < 0) {
+			if (coin->verAccel < 0) {
 				uint8_t j = 0;
 				for (; j < levelPlatforms.numPlatforms; j++) {
-					if (levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel + COIN_HEIGHT > levelPlatforms.platformArray[j].y && levelCoins.coinArray[i].y - levelCoins.coinArray[i].verAccel < levelPlatforms.platformArray[j].y + PLATFORM_HEIGHT && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel + COIN_WIDTH > levelPlatforms.platformArray[j].x && levelCoins.coinArray[i].x + levelCoins.coinArray[i].horAccel < levelPlatforms.platformArray[j].x + levelPlatforms.platformArray[j].width) {
-						levelCoins.coinArray[i].y = levelPlatforms.platformArray[j].y - COIN_HEIGHT;
-						levelCoins.coinArray[i].verAccel = 0;
-						levelCoins.coinArray[i].grounded = true;
-						levelCoins.coinArray[i].lastGroundedPlatformIndex = j;
+					if (coin->y - coin->verAccel + TO_FIXED_POINT(COIN_HEIGHT) > levelPlatforms.platformArray[j].y &&
+					coin->y - coin->verAccel < levelPlatforms.platformArray[j].y + TO_FIXED_POINT(PLATFORM_HEIGHT) && 
+					coin->x + coin->horAccel + COIN_WIDTH_FP > levelPlatforms.platformArray[j].x && 
+					coin->x + coin->horAccel < levelPlatforms.platformArray[j].x + levelPlatforms.platformArray[j].width) {
+						coin->y = levelPlatforms.platformArray[j].y - TO_FIXED_POINT(COIN_HEIGHT);
+						coin->verAccel = 0;
+						coin->grounded = true;
+						coin->lastGroundedPlatformIndex = j;
 						break;
 					}
 				}
-				if (j == levelPlatforms.numPlatforms && levelCoins.coinArray[i].grounded == true)
-					levelCoins.coinArray[i].grounded = false;
+				if (j == levelPlatforms.numPlatforms && coin->grounded == true)
+					coin->grounded = false;
 			}
 		}
 		
-		levelCoins.coinArray[i].y -= levelCoins.coinArray[i].verAccel;
-		levelCoins.coinArray[i].x += levelCoins.coinArray[i].horAccel;
+		coin->y -= coin->verAccel;
+		coin->x += coin->horAccel;
 	}
 }

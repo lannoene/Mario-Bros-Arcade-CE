@@ -18,6 +18,7 @@
 #include "icicles.h"
 #include "save.h"
 #include "particles.h"
+#include "defines.h"
 
 #define MAX_ENEMIES 10
 
@@ -29,6 +30,7 @@
 #define LEVEL_ENEMYSPAWNTIME 2
 
 #define FPS	60
+#define LEVEL_FADE_DURATION 8
 
 unsigned int gameFrame = 0;
 player_t mario1;
@@ -163,26 +165,22 @@ bool LevelLoop(void) {
 				case 0: // resume
 					game_data.paused = false;
 					return true;
-					break;
 				case 1: // quit game
 					// make sure everything is freed before we exit
 					SaveCurrentLevel();
 					UnloadLevel();
 					return false;
-					break;
 				case 2: // save & quit game
 					UnloadLevel();
 					return false;
-					break;
 				case 3: // restart game
 					game_data.paused = false;
 					RestartLevels();
 					return true;
-					break;
 			}
 		}
 		// draw
-		DrawScene(&mario1, levelLog[game_data.level - 1][LEVEL_SETTINGS][1], gameFrame);
+		DrawScene(&mario1, levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_BACKGROUND], gameFrame);
 	} else {
 		if (gameFrame - game_data.levelStartTime > 150 && !game_data.levelEnded) {
 			// check for button presses
@@ -192,19 +190,25 @@ bool LevelLoop(void) {
 				return true;
 			}
 			if (kb_Data[7] & kb_Right) {
-				PlayerMove(&mario1, RIGHT);
+				PlayerMove(&mario1, RIGHT, gameFrame);
 			} else if (kb_Data[7] & kb_Left) {
-				PlayerMove(&mario1, LEFT);
+				PlayerMove(&mario1, LEFT, gameFrame);
 			} else {
-				PlayerMove(&mario1, NONE); // deaccelerate
+				PlayerMove(&mario1, NONE, 0); // deaccelerate
 			}
 			if (kb_Data[1] & kb_2nd) {
-				PlayerMove(&mario1, UP); // jump
+				PlayerMove(&mario1, UP, 0); // jump
 			} else {
-				PlayerMove(&mario1, NOJUMP);
+				PlayerMove(&mario1, NOJUMP, 0);
 			}
 		} else
-			PlayerMove(&mario1, NONE);
+			PlayerMove(&mario1, NONE, 0);
+		
+		if (gameFrame - game_data.levelStartTime < LEVEL_FADE_DURATION + 1) { // fade in effect at the beginning of the level
+			SetDarkness(7 - ((7*(gameFrame - game_data.levelStartTime))/LEVEL_FADE_DURATION));
+		} else if (gameFrame - game_data.levelStartTime == LEVEL_FADE_DURATION + 1) {
+			SetDarkness(0);
+		}
 		
 		// run level stuff
 		if (!levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_ISBONUS]) { // normal level
@@ -323,6 +327,7 @@ bool LoadLevel(void) {
 	}
 	
 	levelEnemies.enemiesLeft = i;
+	levelEnemies.lastSpawnedPipe = rand() % 2;
 	
 	game_data.levelStartTime = gameFrame; // which should be 0
 	game_data.isBonusLevel = levelLog[game_data.level - 1][0][0];
@@ -401,8 +406,11 @@ void EndLevel(void) {
 		
 		scoreWhenRoundStarts = mario1.score;
 	}
-	// wait a bit, then load the next level
-	if (gameFrame - game_data.levelEndTime == 150) { // load next level
+	
+	if (gameFrame - game_data.levelEndTime > 150 - LEVEL_FADE_DURATION && gameFrame - game_data.levelEndTime != 150) { // fade out
+		SetDarkness((gameFrame - game_data.levelEndTime - (150 - LEVEL_FADE_DURATION))/(float)(LEVEL_FADE_DURATION/7));
+	} else if (gameFrame - game_data.levelEndTime == 150) { // wait a bit, then load the next level while the screen is black
+		SetDarkness(8);
 		// inc level
 		++game_data.level;
 		
@@ -449,13 +457,14 @@ void EndLevel(void) {
 		}
 		levelEnemies.enemiesLeft = i;
 		levelEnemies.numEnemies = 0;
+		levelEnemies.lastSpawnedPipe = rand() % 2;
 		
 		// reset player
-		mario1.x = 16;
-		mario1.y = GROUND_HEIGHT - PLAYER_HEIGHT;
+		mario1.x = TO_FIXED_POINT(16);
+		mario1.y = TO_FIXED_POINT(GROUND_HEIGHT - PLAYER_HEIGHT);
 		mario1.dir = RIGHT;
 		mario1.verAccel = mario1.horAccel = 0;
-		mario1.deceleration = mario1.acceleration = 0.2;
+		mario1.deceleration = mario1.acceleration = TO_FIXED_POINT(0.2);
 		mario1.lastGroundedPlatformIndex = -1;
 		
 		if (levelLog[game_data.level - 1][0][0]) { // if bonus level
@@ -513,6 +522,7 @@ void RestartLevels(void) {
 	game_data.level = 1;
 	mario1.score = 0;
 	mario1.lives = 4;
+	mario1.state = PLAYER_NORMAL;
 	
 	ResetParticleArray();
 	ResetCoins();
@@ -563,11 +573,11 @@ void RestartLevels(void) {
 	levelEnemies.numEnemies = 0;
 	
 	// reset player
-	mario1.x = 16;
-	mario1.y = GROUND_HEIGHT - PLAYER_HEIGHT;
+	mario1.x = TO_FIXED_POINT(16);
+	mario1.y = TO_FIXED_POINT(GROUND_HEIGHT - PLAYER_HEIGHT);
 	mario1.dir = RIGHT;
 	mario1.verAccel = mario1.horAccel = 0;
-	mario1.deceleration = mario1.acceleration = 0.2;
+	mario1.deceleration = mario1.acceleration = TO_FIXED_POINT(0.2);
 	mario1.lastGroundedPlatformIndex = -1;
 	
 	if (levelLog[game_data.level - 1][0][0]) { // if bonus level

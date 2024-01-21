@@ -6,15 +6,18 @@
 #include "player.h"
 
 #define COIN_WIDTH	8
+#define COIN_WIDTH_FP	8*256 // fixed point version
 #define COIN_IMAGE_WIDTH 11
 #define COIN_HEIGHT	11
+#define COIN_HEIGHT_FP	11*256
 
 typedef struct {
-	float x, x_old;
-	uint8_t y, y_old, sprite, state, lastGroundedPlatformIndex;
-	int8_t verSpriteOffset, horSpriteOffset;
+	int x, x_old;
+	int y, y_old;
+	uint8_t sprite, state, lastGroundedPlatformIndex;
+	int verSpriteOffset, horSpriteOffset;
 	bool alive, shouldDie, bonus, dir, grounded, firstTimeSpawning : 1;
-	float verAccel, horAccel;
+	int verAccel, horAccel;
 	unsigned int spawnFrame, pipeExitFrame, deathFrame;
 	uint8_t backgroundData[COIN_WIDTH*COIN_HEIGHT + 2];
 } bonusCoin_t;

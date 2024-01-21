@@ -4,7 +4,7 @@
 
 NAME = MBros
 ICON = icon.png
-DESCRIPTION = "CE C Toolchain Demo"
+DESCRIPTION = "Mario Bros Arcade game"
 COMPRESSED = NO
 
 CFLAGS = -Wall -Wextra -Oz

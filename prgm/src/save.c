@@ -15,15 +15,18 @@ save_t GetSaveData(void) {
 	uint8_t file = ti_Open("MBROSDAT", "r");
 	
 	if (file) {
-		
 		save_t returnStruct;
 		
 		ti_Read(&returnStruct, sizeof(save_t), 1, file);
 		
-		return returnStruct;
 		ti_Close(file);
+		
+		return returnStruct;
 	} else {
 		save_t returnStruct = {0};
+		
+		ti_Close(file);
+		
 		return returnStruct;
 	}
 }

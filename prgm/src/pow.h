@@ -6,8 +6,8 @@
 #define POW_SIZE 16
 
 typedef struct {
-	int16_t x;
-	uint8_t y, state;
+	int x, y;
+	uint8_t state;
 	uint8_t backgroundData[POW_SIZE*POW_SIZE + 2];
 } pow_t;
 

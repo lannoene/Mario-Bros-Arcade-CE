@@ -12,8 +12,8 @@
 #define FIREBALL_RED	1
 
 typedef struct {
-	float x, x_old;
-	float y, y_old, original_y;
+	int x, x_old;
+	uint8_t y, y_old, original_y;
 	uint8_t type, verDir, horDir, sprite, state : 4;
 	bool alive;
 	unsigned int spawnTime;

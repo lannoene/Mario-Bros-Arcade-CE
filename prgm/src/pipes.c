@@ -1,8 +1,9 @@
 #include "pipes.h"
 
-#include "graphx.h"
+#include <graphx.h>
 
 #include "player.h"
+#include "defines.h"
 
 pipe_t pipes[NUM_OF_PIPES] = {{RIGHT, true, 256, 25, 0, 1, 0, {64, 38}}, {LEFT, true, 0, 25, 0, 1, 0, {64, 38}}};
 
