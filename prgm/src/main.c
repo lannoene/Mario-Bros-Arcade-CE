@@ -7,15 +7,7 @@
 
 #include "gfx/gfx.h"
 
-/* 
- * i am sorry you are reading this
- * i tried to make the code a bit more readable,
- * but with the new optimizations i added
- * i took 1 step forward and 1 step back in raedablility
- */
-
-// imagine if this was multiplayer? that would be awesome
-// the only problem is that i just have one calc
+// have fun reading this
 
 int main(void) {
 	srand(rtc_Time());
