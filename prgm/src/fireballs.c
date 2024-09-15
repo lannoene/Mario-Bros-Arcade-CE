@@ -182,15 +182,18 @@ void ManageFireballSpawning(player_t* player, unsigned int gameFrame, int16_t fi
 	if (gameFrame % 4 == 0)
 		--levelFireballs.fireballSpawnWeight;
 	if (fireballFlags & HAS_FIREBALL_GREEN && rand() % levelFireballs.fireballSpawnWeight == 0) {
+		uint8_t fy;
 		// spawn green fireballs
 		if (player->y < TO_FIXED_POINT(72))
-			CreateFireball(50, (player->x > TO_FIXED_POINT(160)) ? LEFT : RIGHT, FIREBALL_GREEN, gameFrame);
+			fy = 50;
 		else if (player->y < TO_FIXED_POINT(120))
-			CreateFireball(107, (player->x > TO_FIXED_POINT(160)) ? LEFT : RIGHT, FIREBALL_GREEN, gameFrame);
+			fy = 107;
 		else if (player->y < TO_FIXED_POINT(176))
-			CreateFireball(166, (player->x > TO_FIXED_POINT(160)) ? LEFT : RIGHT, FIREBALL_GREEN, gameFrame);
+			fy = 166;
 		else
-			CreateFireball(200, (player->x > TO_FIXED_POINT(160)) ? LEFT : RIGHT, FIREBALL_GREEN, gameFrame);
+			fy = 200;
+		
+		CreateFireball(fy, (player->x > TO_FIXED_POINT(160)) ? LEFT : RIGHT, FIREBALL_GREEN, gameFrame);
 		
 		levelFireballs.fireballSpawnWeight = INITIAL_FIREBALL_SPAWN_WEIGHT;
 	}

@@ -23,7 +23,7 @@ typedef struct {
 } bonusCoin_t;
 
 typedef struct {
-	uint8_t numCoins, coinsLeft;
+	uint8_t coinsLeft;
 	uint16_t bonusTimer;
 	bonusCoin_t* coinArray;
 } bonusLevel_t;
@@ -38,7 +38,8 @@ enum COIN_STATES {
 extern bonusLevel_t levelCoins;
 
 void InitBonusData(void);
-void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gameFrame);
-void ResetCoins(void);
-void FreeBonusCoins(void);
-void UpdateBonusCoins(player_t* player, unsigned int gameFrame);
+//void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gameFrame);
+//void ResetCoins(void);
+//void FreeBonusCoins(void);
+//void UpdateBonusCoins(player_t* player, unsigned int gameFrame);
+void HudAddStaticObjects(void);

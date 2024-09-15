@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <graphx.h>
 #include <math.h>
+#include <sys/util.h>
 
 #include "enemies.h"
 #include "bonus.h"
@@ -56,84 +57,15 @@ void FreePlatforms(void) {
 }
 
 void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFrame) {
+	int usX = FIXED_POINT_TO_INT(player->x) + (PLAYER_WIDTH/2);
 	levelPlatforms.platformArray[platformIndex].beingBumped = true;
 	levelPlatforms.platformArray[platformIndex].timeOfLastBump = gameFrame;
-	if (FIXED_POINT_TO_INT(levelPlatforms.platformArray[platformIndex].x + levelPlatforms.platformArray[platformIndex].width - player->x) < BLOCK_SIZE)
+	if (FIXED_POINT_TO_INT(levelPlatforms.platformArray[platformIndex].x + levelPlatforms.platformArray[platformIndex].width - usX) < BLOCK_SIZE)
 		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = FIXED_POINT_TO_INT(levelPlatforms.platformArray[platformIndex].x + levelPlatforms.platformArray[platformIndex].width) - BLOCK_SIZE;
 	else
-		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = FIXED_POINT_TO_INT(player->x) - (PLAYER_WIDTH/2);
-	
-	// detect enemies
-	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
-		enemy_t* enemy = &levelEnemies.enemyArray[i];
-		if (enemy->grounded && enemy->state != ENEMY_DEAD_SPINNING 
-		&& enemy->x + TO_FIXED_POINT(ENEMY_SPIKE_SIZE) > player->x - TO_FIXED_POINT(2) 
-		&& enemy->x < player->x + TO_FIXED_POINT(BLOCK_SIZE + 2) 
-		&& enemy->y + TO_FIXED_POINT(ENEMY_SPIKE_SIZE) > levelPlatforms.platformArray[platformIndex].y - TO_FIXED_POINT(BLOCK_SIZE) 
-		&& enemy->y < levelPlatforms.platformArray[platformIndex].y + PLATFORM_HEIGHT) {
-			if (enemy->type == ENEMY_FREEZIE) {
-				enemy->eventTime = gameFrame;
-				enemy->state = ENEMY_DEAD_SPINNING;
-				enemy->verVel = TO_FIXED_POINT(2.5);
-				enemy->horVel = 0;
-				EnemyShowScore(enemy, player, gameFrame);
-				continue;
-			}
-			float playerVsEnemySlope = 57.2958*atan((enemy->y - player->y)/(enemy->x - player->x)); // arctan???? why did i do this again?
-			
-			if (enemy->state != ENEMY_LAYING) {
-				if (enemy->type == ENEMY_CRAB && !enemy->crabIsMad)
-					enemy->crabIsMad = true;
-				else {
-					enemy->state = ENEMY_LAYING;
-					enemy->verSpriteOffset = 0;
-					PlayerAddScore(player, 10);
-				}
-				if (playerVsEnemySlope < -70 || playerVsEnemySlope > 70)
-					enemy->horVel = 0;
-				else if (playerVsEnemySlope > 0) {
-					enemy->horVel = -abs(enemy->maxSpeed);
-				} else {
-					enemy->horVel = abs(enemy->maxSpeed);
-				}
-				enemy->layStartTime = gameFrame;
-				enemy->grounded = false;
-				enemy->sprite = 3;
-			} else {
-				if (enemy->type == ENEMY_CRAB && enemy->crabIsMad)
-					enemy->crabIsMad = false;
-				enemy->grounded = false;
-				enemy->state = ENEMY_WALKING;
-				enemy->verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
-				if (playerVsEnemySlope < -75 || playerVsEnemySlope > 75)
-					enemy->horVel = 0;
-				else if (playerVsEnemySlope > 0) {
-					enemy->horVel = -enemy->maxSpeed;
-					enemy->dir = LEFT;
-				} else {
-					enemy->horVel = enemy->maxSpeed;
-					enemy->dir = RIGHT;
-				}
-			}
-			enemy->verVel = (enemy->type != ENEMY_FLY) ? TO_FIXED_POINT(2.5) : TO_FIXED_POINT(1.7);
-		}
-	}
-	
-	// detect coins
-	for (bonusCoin_t* coin = &levelCoins.coinArray[0]; coin != &levelCoins.coinArray[levelCoins.numCoins]; coin++) {
-		if (coin->alive && 
-		coin->grounded && 
-		coin->state != COIN_EXITING_PIPE && 
-		coin->x + TO_FIXED_POINT(COIN_WIDTH) > player->x - TO_FIXED_POINT(BLOCK_SIZE) && 
-		coin->x < player->x + TO_FIXED_POINT(2*BLOCK_SIZE) && 
-		coin->y + TO_FIXED_POINT(COIN_HEIGHT) > levelPlatforms.platformArray[platformIndex].y - TO_FIXED_POINT(BLOCK_SIZE) && 
-		coin->y < levelPlatforms.platformArray[platformIndex].y + TO_FIXED_POINT(PLATFORM_HEIGHT)) {
-			coin->shouldDie = true;
-			PlayerAddScore(player, 800);
-			SpawnParticle(FIXED_POINT_TO_INT(coin->x), FIXED_POINT_TO_INT(coin->y), PARTICLE_COIN_PICK, gameFrame);
-			coin->y = TO_FIXED_POINT(241);
-		}
-	}
+		levelPlatforms.platformArray[platformIndex].bumpedTileXpos = usX;
+	levelPlatforms.platformArray[platformIndex].bumpedTileYpos = FP2I(player->y);
+	levelPlatforms.platformArray[platformIndex].lastBumpPlayer = player;
 }
 
 void RefreshPlatformBackgroundData(uint8_t type) {
@@ -150,7 +82,7 @@ void RefreshPlatformBackgroundData(uint8_t type) {
 void FreezePlatform(uint8_t index) {
 	levelPlatforms.platformArray[index].icy = true;
 	for (uint8_t j = 0; j < FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].width)/BLOCK_SIZE; j++)
-		gfx_RLETSprite((rand() % 2 == 0) ? snowy_iced_block1 : snowy_iced_block2, FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].x) + j*BLOCK_SIZE, FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].y)); // process image
+		gfx_RLETSprite((randInt(0, 1) == 0) ? snowy_iced_block1 : snowy_iced_block2, FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].x) + j*BLOCK_SIZE, FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].y)); // process image
 	gfx_GetSprite((gfx_sprite_t*)levelPlatforms.platformArray[index].processedTileImage, FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].x), FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].y));
 	gfx_SetDrawScreen();
 	gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[index].processedTileImage, FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].x), FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].y));
@@ -163,4 +95,75 @@ void VanishPlatform(uint8_t index) {
 	gfx_SetDrawScreen();
 	gfx_Sprite((gfx_sprite_t*)levelPlatforms.platformArray[index].backgroundData, FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].x), FIXED_POINT_TO_INT(levelPlatforms.platformArray[index].y) - PLATFORM_HEIGHT);
 	gfx_SetDrawBuffer();
+}
+
+static void RunPlatformBump(platform_t* platform, unsigned int gameFrame) {
+	const int leeway = I2FP(BLOCK_SIZE);
+	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
+		enemy_t* enemy = &levelEnemies.enemyArray[i];
+		if (enemy->grounded && enemy->state != ENEMY_DEAD_SPINNING 
+		&& enemy->x + enemy->width > I2FP(platform->bumpedTileXpos) - leeway
+		&& enemy->x < I2FP(platform->bumpedTileXpos) + leeway
+		&& enemy->y + enemy->height > platform->y - TO_FIXED_POINT(BLOCK_SIZE) 
+		&& enemy->y < platform->y + PLATFORM_HEIGHT) {
+			if (enemy->type == ENEMY_FREEZIE) {
+				enemy->eventTime = gameFrame;
+				enemy->state = ENEMY_DEAD_SPINNING;
+				enemy->verVel = I2FP(2.5);
+				enemy->horVel = 0;
+				EnemyShowScore(enemy, platform->lastBumpPlayer, gameFrame);
+				continue;
+			} else if (enemy->type == ENEMY_COIN) {
+				if (!enemy->bonus) {
+					PlayerAddScore(platform->lastBumpPlayer, 800);
+				}
+				enemy->state = ENEMY_DEAD_SPINNING;
+				continue;
+			}
+			// slope ranges [40, -70), -90 is vertical
+			float playerVsEnemySlope = atan((float)FP2I(enemy->y - I2FP(platform->bumpedTileYpos))/FP2I(enemy->x - I2FP(platform->bumpedTileXpos)))*180.0 / M_PI;
+			//dbg_printf("hit: %f x dist %d y dist: %d\n", playerVsEnemySlope, (enemy->x - I2FP(platform->bumpedTileXpos)), (enemy->y - I2FP(platform->bumpedTileYpos)));
+			#define SLOPE_RANGE 60 // make this larger for less up-hitting area
+			
+			if (playerVsEnemySlope < SLOPE_RANGE && playerVsEnemySlope > 0) {
+				enemy->horVel = -abs(enemy->maxSpeed);
+				if (enemy->state == ENEMY_LAYING)
+					enemy->dir = LEFT;
+			} else if (playerVsEnemySlope < 0 && playerVsEnemySlope < -SLOPE_RANGE) {
+				enemy->horVel = abs(enemy->maxSpeed);
+				if (enemy->state == ENEMY_LAYING)
+					enemy->dir = RIGHT;
+			} else
+				enemy->horVel = 0;
+			if (enemy->state != ENEMY_LAYING) {
+				if (enemy->type == ENEMY_CRAB && !enemy->crabIsMad)
+					enemy->crabIsMad = true;
+				else {
+					enemy->state = ENEMY_LAYING;
+					enemy->verSpriteOffset = 0;
+					PlayerAddScore(platform->lastBumpPlayer, 10);
+				}
+				enemy->layStartTime = gameFrame;
+				enemy->grounded = false;
+				enemy->sprite = 3;
+			} else {
+				if (enemy->type == ENEMY_CRAB && enemy->crabIsMad)
+					enemy->crabIsMad = false;
+				enemy->grounded = false;
+				enemy->state = ENEMY_WALKING;
+				enemy->verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
+			}
+			enemy->verVel = (enemy->type != ENEMY_FLY) ? TO_FIXED_POINT(2.5) : TO_FIXED_POINT(1.7);
+		}
+	}
+}
+
+void UpdatePlatforms(unsigned int gameFrame) {
+	for (int i = 0; i < levelPlatforms.numPlatforms; i++) {
+		platform_t *platform = &levelPlatforms.platformArray[i];
+		if (platform->beingBumped) {
+			// detect enemies
+			RunPlatformBump(platform, gameFrame);
+		}
+	}
 }

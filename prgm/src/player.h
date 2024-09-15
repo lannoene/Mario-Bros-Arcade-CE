@@ -1,6 +1,9 @@
 #pragma once
+
 #include <stdint.h>
 #include <stdbool.h>
+
+#include "collision.h"
 
 #define PLAYER_HEIGHT	19
 #define PLAYER_WIDTH	16
@@ -11,14 +14,17 @@
 #define GRAVITY 0.2
 
 typedef struct {
+	position_t pos;
 	int x, x_old, y, y_old;
-	int verAccel, horAccel, verAccelPassive, maxSpeed, acceleration, deceleration, lastKilledEnemyTime, lastKilledTime, spawnTime;
+	int verAccel, horAccel;
+	int verAccelPassive, maxSpeed, acceleration, deceleration, lastKilledEnemyTime, lastKilledTime, spawnTime;
 	uint8_t sprite, state, lives, currentCombo;
 	bool grounded, dir, hasJumpedThisFrame, hasCollectedBonus : 1;
 	int8_t verSpriteOffset, verSpriteOffset_old, lastGroundedPlatformIndex;
 	unsigned int deathTime;
 	unsigned int score;
 	uint8_t backgroundData[PLAYER_SPRITE_HEIGHT*PLAYER_WIDTH + 2];
+	uint8_t respawnPlatformBgData[15*7 + 2];
 } player_t;
 
 enum PLAYER_STATES {

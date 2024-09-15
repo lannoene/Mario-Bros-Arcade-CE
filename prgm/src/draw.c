@@ -20,29 +20,224 @@
 #define SET_OLD_TO_NEW_COORDS(varName) \
 (varName)->x_old = (varName)->x; (varName)->y_old = (varName)->y;
 
-gfx_rletsprite_t* mario_sprites[2][8] = {{stand_right, walk1_right, walk2_right, walk3_right, jump_right, dead, slide_right, blank_stare}, {stand_left, walk1_left, walk2_left, walk3_left, jump_left, dead, slide_left, blank_stare}};
-gfx_sprite_t* platform_bump_sprites[5][3] = {{level1_block_bump1, level1_block_bump2, level1_block_bump3}, {lava_block_bump1, lava_block_bump2, lava_block_bump3}, {castle_block_bump1, castle_block_bump2, castle_block_bump3}, {snowy_normal_block_bump1, snowy_normal_block_bump2, snowy_normal_block_bump3}, {snowy_iced_block_bump1, snowy_iced_block_bump2, snowy_iced_block_bump3}};
-gfx_rletsprite_t* enemy_sprites[4][2][8] = 
-{
-	{{spike_walk1_right, spike_walk2_right, spike_walk3_right, spike_upsidedown1_right}, {spike_walk1_left, spike_walk2_left, spike_walk3_left, spike_upsidedown1_left}},
-	{{crab_walk1_right, crab_walk2_right, crab_walk3_right, crab_upsidedown1_right, crab_walk1_mad_right, crab_walk2_mad_right, crab_walk3_mad_right}, {crab_walk1_left, crab_walk2_left, crab_walk3_left, crab_upsidedown1_left, crab_walk1_mad_left, crab_walk2_mad_left, crab_walk3_mad_left}},
-	{{fly_ground, fly_wing1, fly_wing2, fly_dead_right}, {fly_ground, fly_wing1, fly_wing2, fly_dead_left}},
-	{{freezie_walk1_right, freezie_walk2_right, freezie_walk3_right, freezie_die1_right, freezie_die2_right, freezie_die3_right, freezie_die4_right, freezie_die5_right}, {freezie_walk1_left, freezie_walk2_left, freezie_walk3_left, freezie_die1_left, freezie_die2_left, freezie_die3_left, freezie_die4_left, freezie_die5_left}}
+gfx_rletsprite_t* mario_sprites[2][8] = {
+	{
+		stand_right,
+		walk1_right,
+		walk2_right,
+		walk3_right,
+		jump_right,
+		dead,
+		slide_right,
+		blank_stare
+	},
+	{
+		stand_left,
+		walk1_left,
+		walk2_left,
+		walk3_left,
+		jump_left,
+		dead,
+		slide_left,
+		blank_stare
+	}
 };
-gfx_rletsprite_t* pow_sprites[3] = {pow_full, pow_medium, pow_low};
-gfx_rletsprite_t* pipe_sprites[2][1] = {{pipe_stationary_right}, {pipe_stationary_left}};
-gfx_rletsprite_t* fireball_sprites[2][8] = {{fireball_green_big_rot1, fireball_green_big_rot2, fireball_green_big_rot3, fireball_green_big_rot4, fireball_green_small_rot1, fireball_green_small_rot2, fireball_green_small_rot3, fireball_green_small_rot4}, {fireball_red_big_rot1, fireball_red_big_rot2, fireball_red_big_rot3, fireball_red_big_rot4, fireball_red_small_rot1, fireball_red_small_rot2, fireball_red_small_rot3, fireball_red_small_rot4}};
-gfx_rletsprite_t* coin_sprites[5] = {coin1, coin2, coin3, coin4, coin5};
-gfx_rletsprite_t* icicle_sprites[6] = {icicle_forming1, icicle_forming2, icicle_forming3, icicle_full1, icicle_full2, icicle_full3};
-gfx_rletsprite_t* particle_sprites[] = {dust_cloud_big, dust_cloud_medium, dust_cloud_small, star_hit, score_single, score_double, score_triple, score_quad, score_1up, coin_pick_1, coin_pick_2, coin_pick_3, coin_pick_4, coin_pick_5};
+
+gfx_sprite_t* platform_bump_sprites[][3] = {
+	{
+		level1_block_bump1,
+		level1_block_bump2,
+		level1_block_bump3
+	},
+	{
+		lava_block_bump1,
+		lava_block_bump2,
+		lava_block_bump3
+	},
+	{
+		castle_block_bump1,
+		castle_block_bump2,
+		castle_block_bump3
+	},
+	{
+		snowy_normal_block_bump1,
+		snowy_normal_block_bump2,
+		snowy_normal_block_bump3
+	},
+	{
+		snowy_iced_block_bump1,
+		snowy_iced_block_bump2,
+		snowy_iced_block_bump3
+	}
+};
+
+gfx_rletsprite_t* enemy_sprites[][2][8] = {
+	{
+		{
+			spike_walk1_right, 
+			spike_walk2_right, 
+			spike_walk3_right,
+			spike_upsidedown1_right
+		},
+		{
+			spike_walk1_left,
+			spike_walk2_left,
+			spike_walk3_left,
+			spike_upsidedown1_left
+		}
+	},
+	{
+		{
+			crab_walk1_right,
+			crab_walk2_right,
+			crab_walk3_right,
+			crab_upsidedown1_right,
+			crab_walk1_mad_right,
+			crab_walk2_mad_right,
+			crab_walk3_mad_right
+		},
+		{
+			crab_walk1_left,
+			crab_walk2_left,
+			crab_walk3_left,
+			crab_upsidedown1_left,
+			crab_walk1_mad_left,
+			crab_walk2_mad_left,
+			crab_walk3_mad_left
+		},
+	},
+	{
+		{
+			fly_ground,
+			fly_wing1,
+			fly_wing2,
+			fly_dead_right
+		},
+		{
+			fly_ground,
+			fly_wing1,
+			fly_wing2,
+			fly_dead_left
+		}
+	},
+	{
+		{
+			freezie_walk1_right,
+			freezie_walk2_right,
+			freezie_walk3_right,
+			freezie_die1_right,
+			freezie_die2_right, 
+			freezie_die3_right,
+			freezie_die4_right,
+			freezie_die5_right
+		},
+		{
+			freezie_walk1_left,
+			freezie_walk2_left,
+			freezie_walk3_left,
+			freezie_die1_left,
+			freezie_die2_left,
+			freezie_die3_left,
+			freezie_die4_left, 
+			freezie_die5_left
+		}
+	},
+	{
+		{
+			coin1,
+			coin2,
+			coin3,
+			coin4,
+			coin5
+		},
+		{
+			coin1,
+			coin2,
+			coin3,
+			coin4,
+			coin5
+		}
+	}
+};
+
+gfx_rletsprite_t* pow_sprites[3] = {
+	pow_full,
+	pow_medium,
+	pow_low
+};
+
+gfx_rletsprite_t* pipe_sprites[2][1] = {
+	{pipe_stationary_right},
+	{pipe_stationary_left}
+};
+
+gfx_rletsprite_t* fireball_sprites[2][8] = {
+	{
+		fireball_green_big_rot1,
+		fireball_green_big_rot2,
+		fireball_green_big_rot3,
+		fireball_green_big_rot4,
+		fireball_green_small_rot1,
+		fireball_green_small_rot2,
+		fireball_green_small_rot3,
+		fireball_green_small_rot4
+	},
+	{
+		fireball_red_big_rot1,
+		fireball_red_big_rot2,
+		fireball_red_big_rot3,
+		fireball_red_big_rot4,
+		fireball_red_small_rot1,
+		fireball_red_small_rot2,
+		fireball_red_small_rot3,
+		fireball_red_small_rot4
+	}
+};
+
+gfx_rletsprite_t* icicle_sprites[6] = {
+	icicle_forming1,
+	icicle_forming2,
+	icicle_forming3,
+	icicle_full1,
+	icicle_full2,
+	icicle_full3
+};
+
+gfx_rletsprite_t* particle_sprites[] = {
+	dust_cloud_big,
+	dust_cloud_medium, 
+	dust_cloud_small, 
+	star_hit, 
+	score_single, 
+	score_double,
+	score_triple, 
+	score_quad, 
+	score_1up,
+	coin_pick_1,
+	coin_pick_2,
+	coin_pick_3,
+	coin_pick_4,
+	coin_pick_5
+};
+
+gfx_rletsprite_t* respawn_platforms[3] = {
+	respawn_platform_full,
+	respawn_platform_med,
+	respawn_platform_empty,
+};
 
 uint8_t platform_bump_sprite_sheet[5] = {0, 1, 2, 1, 0};
 
-void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame) {
+void DrawScene(player_t *player, uint8_t backgroundType, unsigned int gameFrame) {
 	uint8_t i;
 	// get bgs under sprites before 
 	// player
-	gfx_GetSprite((gfx_sprite_t*)player->backgroundData, FIXED_POINT_TO_INT(player->x_old), FIXED_POINT_TO_INT(player->y_old) + player->verSpriteOffset_old);
+	for (i = 0; i < game_data.numPlayers; i++) {
+		gfx_GetSprite((gfx_sprite_t*)player[i].backgroundData, FIXED_POINT_TO_INT(player[i].x_old), FIXED_POINT_TO_INT(player[i].y_old) + player[i].verSpriteOffset_old);
+		if (player[i].state == PLAYER_RESPAWNING) {
+			gfx_GetSprite((gfx_sprite_t*)player[i].respawnPlatformBgData, FIXED_POINT_TO_INT(player[i].x), FIXED_POINT_TO_INT(player[i].y) + PLAYER_HEIGHT);
+		}
+	}
 	
 	// enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
@@ -50,17 +245,11 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	}
 	
 	// hud
-	HudGetBackground(player);
+	HudGetBackground(&player[0]);
 	
 	// pows
 	for (i = 0; i < levelPows.numPows; i++) {
 		gfx_GetSprite((gfx_sprite_t*)levelPows.powArray[i].backgroundData, FIXED_POINT_TO_INT(levelPows.powArray[i].x), FIXED_POINT_TO_INT(levelPows.powArray[i].y));
-	}
-	
-	// coins
-	for (i = 0; i < levelCoins.numCoins; i++) {
-		if (levelCoins.coinArray[i].alive)
-			gfx_GetSprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, FIXED_POINT_TO_INT(levelCoins.coinArray[i].x_old), FIXED_POINT_TO_INT(levelCoins.coinArray[i].y_old));
 	}
 	
 	// fireballs
@@ -99,7 +288,7 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 			continue;
 		} else if (platform->beingBumped) {
 			
-			int16_t flooredXpos = (platform->bumpedTileXpos/BLOCK_SIZE)*BLOCK_SIZE; // integers get floored automatically
+			int16_t flooredXpos = ((platform->bumpedTileXpos - PLAYER_WIDTH/4)/BLOCK_SIZE)*BLOCK_SIZE; // integers get floored automatically
 			// get bg around bump
 			uint8_t bgFill[BLOCK_SIZE*3*BLOCK_SIZE + 2]; // only fill bottom row with bg because top row always starts cleared
 			bgFill[0] = BLOCK_SIZE*3;
@@ -108,7 +297,7 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 			gfx_Sprite_NoClip((gfx_sprite_t*)platform->processedTileImage, platFxToIntX, platFxToIntY);
 			gfx_Sprite((gfx_sprite_t*)bgFill, flooredXpos, platFxToIntY); // fill in 3 blocks of platform that you bump
 			
-			if (platform->bumpedTileXpos - platFxToIntX >= platFxToIntWidth - 2*BLOCK_SIZE) { // if we are near the edge, floor the block's x pos to two blocks behind the edge, then cutoff animation at the edge
+			if (flooredXpos - platFxToIntX >= platFxToIntWidth - 2*BLOCK_SIZE) { // if we are near the edge, floor the block's x pos to two blocks behind the edge, then cutoff animation at the edge
 				bgFill[0] = BLOCK_SIZE;
 				bgFill[1] = BLOCK_SIZE*3;
 				gfx_GetSprite((gfx_sprite_t*)bgFill, platFxToIntX + platFxToIntWidth, platFxToIntY - BLOCK_SIZE);
@@ -135,13 +324,7 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// draw enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
-		gfx_RLETSprite(enemy_sprites[levelEnemies.enemyArray[i].type][levelEnemies.enemyArray[i].dir][levelEnemies.enemyArray[i].sprite], FIXED_POINT_TO_INT(levelEnemies.enemyArray[i].x) + levelEnemies.enemyArray[i].horSpriteOffset, FIXED_POINT_TO_INT(levelEnemies.enemyArray[i].y) + levelEnemies.enemyArray[i].verSpriteOffset);
-	}
-	
-	// coins
-	for (i = 0; i < levelCoins.numCoins; i++) {
-		if (levelCoins.coinArray[i].alive)
-			gfx_RLETSprite(coin_sprites[levelCoins.coinArray[i].sprite], FIXED_POINT_TO_INT(levelCoins.coinArray[i].x), FIXED_POINT_TO_INT(levelCoins.coinArray[i].y));
+		gfx_RLETSprite(enemy_sprites[levelEnemies.enemyArray[i].type][levelEnemies.enemyArray[i].dir][levelEnemies.enemyArray[i].sprite], FP2I(levelEnemies.enemyArray[i].x) + levelEnemies.enemyArray[i].horSpriteOffset, FP2I(levelEnemies.enemyArray[i].y) + levelEnemies.enemyArray[i].verSpriteOffset);
 	}
 	
 	// make sure pipes draw over enemies & coins
@@ -166,7 +349,12 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	}
 	
 	// draw player over everything physical
-	gfx_RLETSprite(mario_sprites[player->dir][player->sprite], FIXED_POINT_TO_INT(player->x), FIXED_POINT_TO_INT(player->y) + player->verSpriteOffset);
+	for (i = 0; i < game_data.numPlayers; i++) {
+		gfx_RLETSprite(mario_sprites[player[i].dir][player[i].sprite], FIXED_POINT_TO_INT(player[i].x), FIXED_POINT_TO_INT(player[i].y) + player[i].verSpriteOffset);
+		if (player[i].state == PLAYER_RESPAWNING) {
+			gfx_RLETSprite(respawn_platforms[(((gameFrame - player[i].spawnTime < PLAYER_RESP_FALL_DURATION) ? 0 : gameFrame - player[i].spawnTime - PLAYER_RESP_FALL_DURATION)*3)/(PLAYER_RESP_WAIT_MAX)], FIXED_POINT_TO_INT(player[i].x), FIXED_POINT_TO_INT(player[i].y) + PLAYER_HEIGHT);
+		}
+	}
 	
 	// icicles
 	for (i = 0; i < levelIcicles.numIcicles; i++) {
@@ -175,7 +363,7 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	}
 	
 	// draw hud over everything
-	HudDraw(player, gameFrame);
+	HudDraw(&player[0], gameFrame);
 	
 	
 	// finish drawing
@@ -184,9 +372,14 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	// replace sprites with bgs in second layer
 	
 	// player
-	gfx_Sprite((gfx_sprite_t*)player->backgroundData, FIXED_POINT_TO_INT(player->x_old), FIXED_POINT_TO_INT(player->y_old) + player->verSpriteOffset_old);
-	SET_OLD_TO_NEW_COORDS(player);
-	player->verSpriteOffset_old = player->verSpriteOffset; 
+	for (i = 0; i < game_data.numPlayers; i++) {
+		gfx_Sprite((gfx_sprite_t*)player[i].backgroundData, FIXED_POINT_TO_INT(player[i].x_old), FIXED_POINT_TO_INT(player[i].y_old) + player[i].verSpriteOffset_old);
+		if (player[i].state == PLAYER_RESPAWNING) {
+			gfx_Sprite((gfx_sprite_t*)player[i].respawnPlatformBgData, FIXED_POINT_TO_INT(player[i].x), FIXED_POINT_TO_INT(player[i].y) + PLAYER_HEIGHT);
+		}
+		SET_OLD_TO_NEW_COORDS(&player[i]);
+		player[i].verSpriteOffset_old = player[i].verSpriteOffset; 
+	}
 	
 	// platforms
 	for (i = 0; i < levelPlatforms.numPlatforms; i++) {
@@ -212,7 +405,7 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	
 	// enemies
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
-		gfx_Sprite((gfx_sprite_t*)levelEnemies.enemyArray[i].backgroundData, FIXED_POINT_TO_INT(levelEnemies.enemyArray[i].x_old) + levelEnemies.enemyArray[i].horSpriteOffset_old, FIXED_POINT_TO_INT(levelEnemies.enemyArray[i].y_old) + levelEnemies.enemyArray[i].verSpriteOffset_old);
+		gfx_Sprite((gfx_sprite_t*)levelEnemies.enemyArray[i].backgroundData, FP2I(levelEnemies.enemyArray[i].x_old) + levelEnemies.enemyArray[i].horSpriteOffset_old, FP2I(levelEnemies.enemyArray[i].y_old) + levelEnemies.enemyArray[i].verSpriteOffset_old);
 		SET_OLD_TO_NEW_COORDS(&levelEnemies.enemyArray[i]);
 		levelEnemies.enemyArray[i].verSpriteOffset_old = levelEnemies.enemyArray[i].verSpriteOffset;
 		levelEnemies.enemyArray[i].horSpriteOffset_old = levelEnemies.enemyArray[i].horSpriteOffset;
@@ -226,17 +419,11 @@ void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame)
 	}
 	
 	// hud
-	HudRefresh(player, gameFrame);
+	HudRefresh(&player[0], gameFrame);
 	
 	// pows
 	for (i = 0; i < levelPows.numPows; i++) {
-		gfx_Sprite_NoClip((gfx_sprite_t*)levelPows.powArray[i].backgroundData, FIXED_POINT_TO_INT(levelPows.powArray[i].x), FIXED_POINT_TO_INT(levelPows.powArray[i].y));
-	}
-	
-	// coins
-	for (i = 0; i < levelCoins.numCoins; i++) {
-		gfx_Sprite((gfx_sprite_t*)levelCoins.coinArray[i].backgroundData, FIXED_POINT_TO_INT(levelCoins.coinArray[i].x_old), FIXED_POINT_TO_INT(levelCoins.coinArray[i].y_old));
-		SET_OLD_TO_NEW_COORDS(&levelCoins.coinArray[i]);
+		gfx_Sprite_NoClip((gfx_sprite_t*)levelPows.powArray[i].backgroundData, FP2I(levelPows.powArray[i].x), FP2I(levelPows.powArray[i].y));
 	}
 	
 	for (i = 0; i < levelFireballs.numFireballs; i++) {
@@ -298,7 +485,6 @@ void GetPhaseCardBackground(int16_t x, uint8_t y) {
 }
 
 void DecompressSprites(void) {
-	
 	
 }
 

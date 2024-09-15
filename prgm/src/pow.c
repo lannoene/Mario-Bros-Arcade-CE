@@ -37,6 +37,8 @@ void BumpPow(player_t* player, uint8_t powIndex, unsigned int gameFrame) {
 				else if (enemy->type == ENEMY_FREEZIE) {
 					enemy->state = ENEMY_DEAD_SPINNING;
 					enemy->eventTime = gameFrame;
+				} else if (enemy->type == ENEMY_COIN) {
+					continue;
 				} else {
 					enemy->state = ENEMY_LAYING;
 					enemy->verSpriteOffset = 0;

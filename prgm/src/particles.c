@@ -144,10 +144,11 @@ static inline void KillParticle(uint8_t particleIndex) {
 
 void FreeParticles(void) {
 	for (int i = 0; i < levelParticles.numParticles; i++) {
-		if (levelParticles.particleArray[i].alive)
-			KillParticle(i); // don't want to free already free'd particles
+		if (levelParticles.particleArray[i].alive) // don't want to free already free'd particles
+			free(levelParticles.particleArray[i].backgroundData);
 	}
 	free(levelParticles.particleArray);
+	levelParticles.numParticles = 0;
 }
 
 void CleanUpParticleArray(void) {

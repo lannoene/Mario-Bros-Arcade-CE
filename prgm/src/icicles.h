@@ -14,11 +14,13 @@ typedef struct {
 	int8_t verAccel;
 	unsigned int spawnTime;
 	uint8_t backgroundData[ICICLE_WIDTH*ICICLE_HEIGHT + 2];
+	uint8_t isOnTop;
 } icicle_t;
 
 typedef struct {
 	icicle_t* icicleArray;
 	uint8_t numIcicles;
+	bool hasIciclesTop[2];
 } levelIcicleData_t;
 
 enum icicle_states {

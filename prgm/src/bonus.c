@@ -1,3 +1,5 @@
+// PRETTY MUCH UNUSED NOW
+
 #include "bonus.h"
 
 #include <stdlib.h>
@@ -13,14 +15,11 @@
 
 bonusLevel_t levelCoins;
 
-// honestly, the only reason this is in bonus is cuz i originally made coins for bonus levels. now that i'm having to add coins to classic, they really should go in their own file. whatever, i don't feel like breaking anything.
-
 void InitBonusData(void) {
 	levelCoins.coinArray = malloc(0);
 	levelCoins.bonusTimer = 1200;
-	levelCoins.numCoins = levelCoins.coinsLeft = 0;
 }
-
+/*
 void SpawnBonusCoin(int16_t x, uint8_t y, bool bonus, bool dir, unsigned int gameFrame) {
 	uint8_t i;
 	for (i = 0; i < levelCoins.numCoins; i++) {
@@ -77,28 +76,29 @@ void FreeBonusCoins(void) {
 }
 
 void UpdateBonusCoins(player_t* player, unsigned int gameFrame) {
-	for (uint8_t i = 0; i < levelCoins.numCoins; i++) {
-		bonusCoin_t* coin = &levelCoins.coinArray[i];
-		
+	C_START_FOR(levelCoins.coinArray, levelCoins.numCoins, coin)
 		if (!coin->alive)
 			continue;
 		
-		if (player->y - player->verAccel + TO_FIXED_POINT(PLAYER_HEIGHT) > coin->y 
-		&& player->y - player->verAccel < coin->y + TO_FIXED_POINT(COIN_HEIGHT) 
-		&& player->x + TO_FIXED_POINT(PLAYER_WIDTH) + player->horAccel > coin->x 
-		&& player->x + player->horAccel < coin->x + COIN_WIDTH_FP) {
-			coin->shouldDie = true;
-			--levelCoins.coinsLeft;
-			if (!game_data.isBonusLevel) {
-				PlayerAddScore(player, 800);
+		for (int j = 0; j < game_data.numPlayers; j++) {
+			if (player->y - player->verAccel + TO_FIXED_POINT(PLAYER_HEIGHT) > coin->y 
+			&& player->y - player->verAccel < coin->y + TO_FIXED_POINT(COIN_HEIGHT) 
+			&& player->x + TO_FIXED_POINT(PLAYER_WIDTH) + player->horAccel > coin->x 
+			&& player->x + player->horAccel < coin->x + COIN_WIDTH_FP) {
+				coin->shouldDie = true;
+				--levelCoins.coinsLeft;
+				if (!game_data.isBonusLevel) {
+					PlayerAddScore(player, 800);
+				}
+				SpawnParticle(FIXED_POINT_TO_INT(coin->x), FIXED_POINT_TO_INT(coin->y), PARTICLE_COIN_PICK, gameFrame);
+				coin->y = TO_FIXED_POINT(241);
+				coin->verAccel = 0;
+				CONTINUE(1); // jump to end of for (1 is the unique jump label id)
 			}
-			SpawnParticle(FIXED_POINT_TO_INT(coin->x), FIXED_POINT_TO_INT(coin->y), PARTICLE_COIN_PICK, gameFrame);
-			coin->y = TO_FIXED_POINT(241);
-			coin->verAccel = 0;
-			continue;
 		}
 		if (coin->shouldDie) {
 			coin->alive = false;
+			continue;
 		}
 		
 		coin->sprite = ((gameFrame - coin->spawnFrame)/4) % 5;
@@ -193,5 +193,5 @@ void UpdateBonusCoins(player_t* player, unsigned int gameFrame) {
 		
 		coin->y -= coin->verAccel;
 		coin->x += coin->horAccel;
-	}
-}
+	C_END_FOR(1)
+}*/

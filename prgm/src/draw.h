@@ -12,7 +12,7 @@ enum BACKGROUND_IDS {
 	BG_SNOWY
 };
 
-void DrawScene(player_t* player, uint8_t backgroundType, unsigned int gameFrame);
+void DrawScene(player_t *player, uint8_t backgroundType, unsigned int gameFrame);
 void DrawBackground(uint8_t backgroundId);
 void DecompressSprites(void);
 void SetUpPalettes(void);

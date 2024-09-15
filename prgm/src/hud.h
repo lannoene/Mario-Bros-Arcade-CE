@@ -13,3 +13,4 @@ void TitleCardSetNumDigits(uint8_t numDigits);
 int8_t PauseScreenInputEvent(uint8_t input);
 void PauseScreenResetCursorPos(void);
 void GetRidOfRespawnPlatformRemnants(player_t* player);
+void HudAddStaticObjects(void);

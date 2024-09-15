@@ -4,6 +4,8 @@
 #include <graphx.h>
 #include <math.h>
 #include <string.h>
+#include <debug.h>
+#include <sys/util.h>
 
 #include "screens.h"
 #include "draw.h"
@@ -33,25 +35,24 @@
 #define LEVEL_FADE_DURATION 8
 
 unsigned int gameFrame = 0;
-player_t mario1;
-gameData_t game_data = {0, 1, 0, 999999, false, false, false};
+player_t mario[MAX_PLAYERS];
+gameData_t game_data = {0, 1, 0, 999999, 1, false, false, false};
 unsigned int scoreWhenRoundStarts = 0; // prevent infinite score
 // arr part 1 is level index, pt 2 is switch between enemy id/enemy spawn time, pt 3 is spawn track
 int16_t levelLog[][3][MAX_ENEMIES] = {
 	{
 		{false, BG_PIPES, NONE_ICY, false, false}, // level settings
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // enemy spawn type
-		//{200, 500, 800, -1, -1, -1, -1, -1, -1, -1} // enemy spawn time in frames
-		{200, 500, 800, -1, -1, -1, -1, -1, -1, -1}
+		{ENEMY_SPIKE, ENEMY_SPIKE, ENEMY_SPIKE, 0, 0, 0, 0, 0, 0, 0}, // enemy spawn type
+		{200, 500, 800, -1, -1, -1, -1, -1, -1, -1} // enemy spawn time in frames
 	},
 	{
 		{false, BG_PIPES, NONE_ICY, false, false},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{ENEMY_SPIKE, ENEMY_SPIKE, ENEMY_SPIKE, ENEMY_SPIKE, 0, 0, 0, 0, 0, 0},
 		{200, 400, 600, 800, -1, -1, -1, -1, -1}
 	},
 	{
 		{false, BG_PIPES, NONE_ICY, false, false},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{ENEMY_SPIKE, ENEMY_SPIKE, ENEMY_SPIKE, ENEMY_SPIKE, ENEMY_SPIKE, 0, 0, 0, 0, 0},
 		{250, 350, 450, 600, 750, -1, -1, -1, -1}
 	},
 	{
@@ -61,7 +62,7 @@ int16_t levelLog[][3][MAX_ENEMIES] = {
 	},
 	{
 		{false, BG_LAVA, NONE_ICY, false, false},
-		{1, 1, 1, 1, 0, 0, 0, 0, 0, 0},
+		{ENEMY_CRAB, ENEMY_CRAB, ENEMY_CRAB, ENEMY_CRAB, 0, 0, 0, 0, 0, 0},
 		{150, 310, 670, 790, -1, -1, -1, -1, -1}
 	},
 	{
@@ -120,22 +121,22 @@ int16_t levelLog[][3][MAX_ENEMIES] = {
 		{-1, -1, -1, -1, -1, -1, -1, -1, -1}
 	},
 	{
-		{false, BG_SNOWY, TOP_ICY | ICICLES_FORM_LOW, HAS_FIREBALL_GREEN, true},
+		{false, BG_SNOWY, TOP_ICY, HAS_FIREBALL_GREEN, true, 1},
 		{ENEMY_SPIKE, ENEMY_SPIKE, ENEMY_CRAB, ENEMY_SPIKE, ENEMY_SPIKE, 0, 0, 0, 0, 0},
 		{3*FPS, 6*FPS, 14*FPS, 15*FPS, 16*FPS, -1, -1, -1, -1}
 	},
 	{
-		{false, BG_SNOWY, TOP_ICY | ICICLES_FORM_LOW, HAS_FIREBALL_GREEN, true},
+		{false, BG_SNOWY, TOP_ICY, HAS_FIREBALL_GREEN, true, 1},
 		{ENEMY_CRAB, ENEMY_CRAB, ENEMY_FLY, ENEMY_CRAB, ENEMY_CRAB, 0, 0, 0, 0, 0},
 		{3*FPS, 5*FPS, 12*FPS, 13*FPS, 19*FPS, -1, -1, -1, -1}
 	},
 	{
-		{false, BG_SNOWY, TOP_ICY | ICICLES_FORM_LOW, HAS_FIREBALL_GREEN, true},
+		{false, BG_SNOWY, TOP_ICY, HAS_FIREBALL_GREEN, true, 2},
 		{ENEMY_FLY, ENEMY_CRAB, ENEMY_CRAB, ENEMY_CRAB, ENEMY_FLY, ENEMY_CRAB, 0, 0, 0, 0},
 		{3*FPS, 4*FPS, 15*FPS, 16*FPS, 22*FPS, 25*FPS, -1, -1, -1}
 	},
 	{
-		{false, BG_SNOWY, TOP_ICY | ICICLES_FORM_LOW, HAS_FIREBALL_GREEN, true},
+		{false, BG_SNOWY, TOP_ICY, HAS_FIREBALL_GREEN, true, 3},
 		{ENEMY_SPIKE, ENEMY_SPIKE, ENEMY_FLY, ENEMY_SPIKE, ENEMY_SPIKE, 0, 0, 0, 0, 0},
 		{4*FPS, 5*FPS, 13*FPS, 14*FPS, 18*FPS, -1, -1, -1, -1}
 	},
@@ -160,17 +161,17 @@ bool LevelLoop(void) {
 			PauseScreenInputEvent(5);
 		}
 		if (kb_Data[1] & kb_2nd) {
-			mario1.hasJumpedThisFrame = true; // prevent mario from jumping if the menu closes
+			mario[0].hasJumpedThisFrame = true; // prevent mario from jumping if the menu closes
 			switch (PauseScreenInputEvent(4)) {
 				case 0: // resume
 					game_data.paused = false;
 					return true;
-				case 1: // quit game
+				case 1: // save & quit game
 					// make sure everything is freed before we exit
 					SaveCurrentLevel();
 					UnloadLevel();
 					return false;
-				case 2: // save & quit game
+				case 2: // quit game
 					UnloadLevel();
 					return false;
 				case 3: // restart game
@@ -180,7 +181,7 @@ bool LevelLoop(void) {
 			}
 		}
 		// draw
-		DrawScene(&mario1, levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_BACKGROUND], gameFrame);
+		DrawScene(mario, levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_BACKGROUND], gameFrame);
 	} else {
 		if (gameFrame - game_data.levelStartTime > 150 && !game_data.levelEnded) {
 			// check for button presses
@@ -189,20 +190,37 @@ bool LevelLoop(void) {
 				PauseScreenResetCursorPos(); // make sure the cursor always starts at the top
 				return true;
 			}
+			// check player1 controls
 			if (kb_Data[7] & kb_Right) {
-				PlayerMove(&mario1, RIGHT, gameFrame);
+				PlayerMove(&mario[0], RIGHT, gameFrame);
 			} else if (kb_Data[7] & kb_Left) {
-				PlayerMove(&mario1, LEFT, gameFrame);
+				PlayerMove(&mario[0], LEFT, gameFrame);
 			} else {
-				PlayerMove(&mario1, NONE, 0); // deaccelerate
+				PlayerMove(&mario[0], NONE, 0); // deaccelerate
 			}
 			if (kb_Data[1] & kb_2nd) {
-				PlayerMove(&mario1, UP, 0); // jump
+				PlayerMove(&mario[0], UP, 0); // jump
 			} else {
-				PlayerMove(&mario1, NOJUMP, 0);
+				PlayerMove(&mario[0], NOJUMP, 0);
 			}
-		} else
-			PlayerMove(&mario1, NONE, 0);
+			// check player 2 controls
+			
+			if (kb_Data[3] & kb_7) {
+				PlayerMove(&mario[1], RIGHT, gameFrame);
+			} else if (kb_Data[2] & kb_Log) {
+				PlayerMove(&mario[1], LEFT, gameFrame);
+			} else {
+				PlayerMove(&mario[1], NONE, 0); // deaccelerate
+			}
+			if (kb_Data[6] & kb_Mul) {
+				PlayerMove(&mario[1], UP, 0); // jump
+			} else {
+				PlayerMove(&mario[1], NOJUMP, 0);
+			}
+		} else {
+			for (int i = 0; i < game_data.numPlayers; i++)
+				PlayerMove(&mario[i], NONE, 0);
+		}
 		
 		if (gameFrame - game_data.levelStartTime < LEVEL_FADE_DURATION + 1) { // fade in effect at the beginning of the level
 			SetDarkness(7 - ((7*(gameFrame - game_data.levelStartTime))/LEVEL_FADE_DURATION));
@@ -219,7 +237,7 @@ bool LevelLoop(void) {
 					break;
 				}
 			}
-			if (levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_HASFREEZIES] && rand() % 1000 == 0 && !game_data.levelEnded && gameFrame - game_data.levelStartTime > 150) {
+			if (levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_HASFREEZIES] && randInt(0, 999) == 0 && !game_data.levelEnded && gameFrame - game_data.levelStartTime > 150) {
 				for (i = 0; i < levelEnemies.numEnemies; i++) {
 					if (levelEnemies.enemyArray[i].state != ENEMY_DEAD && levelEnemies.enemyArray[i].type == ENEMY_FREEZIE) {
 						break;
@@ -228,13 +246,15 @@ bool LevelLoop(void) {
 				if (i == levelEnemies.numEnemies) // make sure only one freezie max can go on field at a time
 					SpawnEnemy(ENEMY_FREEZIE, (rand() % 2), gameFrame);
 			}
-			if (levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_PLATFORMS] & ICICLES_FORM_LOW && rand() % 100 == 0 && !game_data.levelEnded && gameFrame - game_data.levelStartTime > 150) {
+			int m = levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_MAXICICLES];
+			if (m && randInt(0, 99/m) == 0 && !game_data.levelEnded && gameFrame - game_data.levelStartTime > 150) {
+				int iciclesFound = 0;
 				for (i = 0; i < levelIcicles.numIcicles; i++) {
 					if (levelIcicles.icicleArray[i].state != ICICLE_DEAD) {
-						break;
+						++iciclesFound;
 					}
 				}
-				if (i == levelIcicles.numIcicles)
+				if (iciclesFound < levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_MAXICICLES])
 					SpawnIcicle(gameFrame);
 			}
 			
@@ -249,7 +269,7 @@ bool LevelLoop(void) {
 			}
 		}
 		
-		ManageFireballSpawning(&mario1, gameFrame, levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_HASFIREBALLS]);
+		ManageFireballSpawning(&mario[0], gameFrame, levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_HASFIREBALLS]);
 		
 		if (gameFrame - game_data.levelStartTime == 150) {
 			if (levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_PLATFORMS] & PLATFORMS_ARE_INVISIBLE) {
@@ -258,282 +278,35 @@ bool LevelLoop(void) {
 				}
 			}
 		}
-		
 		// update movables
-		if (!game_data.levelEnded)
-			UpdatePlayer(&mario1, gameFrame);
-		UpdateEnemies(&mario1, gameFrame);
-		UpdateFireballs(&mario1, gameFrame);
-		UpdateBonusCoins(&mario1, gameFrame);
-		UpdateIcicles(&mario1, gameFrame);
+		if (!game_data.levelEnded) {
+			for (int i = 0; i < game_data.numPlayers; i++) {
+				UpdatePlayer(&mario[i], gameFrame);
+			}
+		}
+		UpdateEnemies(gameFrame);
+		UpdateFireballs(&mario[0], gameFrame);
+		UpdateIcicles(mario, gameFrame);
 		UpdateParticles(gameFrame);
 		// draw
-		DrawScene(&mario1, levelLog[game_data.level - 1][LEVEL_SETTINGS][1], gameFrame);
+		DrawScene(mario, levelLog[game_data.level - 1][LEVEL_SETTINGS][1], gameFrame);
+		UpdatePlatforms(gameFrame);
 		++gameFrame;
 	}
 	
 	return true;
 }
 
-bool LoadLevel(void) {
-	PlayerInit(&mario1);
-	LoadLevelFromSave();
-	// we only need to draw the background once because we perform non-destructive sprite placement during the game loop in order to save on resources
-	DrawBackground(levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_BACKGROUND]);
-	// init the bg for pipes. they're stationary, so we don't need to refresh the bg slice in order to save resources
-	InitPipeBackgroundData();
-	
-	// init level platform struct
-	InitPlatformData();
-	
-	// spawn in platforms. width must be a multiple of 8 (the tile size)
-	// bottom platforms
-	CreatePlatform(0, 176, 112);
-	CreatePlatform(208, 176, 112);
-	// small side platforms
-	CreatePlatform(0, 128, 48);
-	CreatePlatform(272, 128, 48);
-	// middle sized middle platform
-	CreatePlatform(88, 120, BLOCK_SIZE*18);
-	// top platforms
-	CreatePlatform(0, 72, BLOCK_SIZE*18);
-	CreatePlatform(176, 72, BLOCK_SIZE*18);
-	
-	// draw platform images
-	RefreshPlatformBackgroundData(levelLog[game_data.level - 1][0][1]);
-	
-	// init level pow struct
-	InitPows();
-	
-	// spawn in pows
-	CreatePow(152, 176);
-	CreatePow(152, 20);
-	
-	// init stuff
-	InitEnemies();
-	InitBonusData(); // coins & bonus data
-	InitFireballs();
-	InitIcicles();
-	InitHud();
-	InitParticles();
-	
-	// configure level
-	// set num of level enemies
-	uint8_t i;
-	for (i = 0; i < MAX_ENEMIES; i++) {
-		if (levelLog[game_data.level - 1][2][i] == -1) {
-			break;
-		}
-	}
-	
-	levelEnemies.enemiesLeft = i;
-	levelEnemies.lastSpawnedPipe = rand() % 2;
-	
-	game_data.levelStartTime = gameFrame; // which should be 0
-	game_data.isBonusLevel = levelLog[game_data.level - 1][0][0];
-	game_data.levelEnded = false;
-	
-	TitleCardSetNumDigits(floor(log10(game_data.level) + 0.000002));
-	
-	if (levelLog[game_data.level - 1][0][2] & TOP_ICY) {
-		FreezePlatform(5);
-		FreezePlatform(6);
-	}
-	
-	if (levelLog[game_data.level - 1][0][2] & MIDDLE_ICY) {
-		FreezePlatform(3);
-		FreezePlatform(4);
-		FreezePlatform(2);
-	}
-	
-	if (levelLog[game_data.level - 1][0][2] & BOTTOM_ICY) {
-		FreezePlatform(1);
-		FreezePlatform(0);
-	}
-	
-	if (levelLog[game_data.level - 1][0][0]) { // if bonus level
-		ResetPows();
-		levelCoins.bonusTimer = 1200;
-		SpawnBonusCoin(16, 80, true, 0, gameFrame);
-		SpawnBonusCoin(300, 80, true, 0, gameFrame);
-		SpawnBonusCoin(32, 80, true, 0, gameFrame);
-		SpawnBonusCoin(274, 80, true, 0, gameFrame);
-		
-		SpawnBonusCoin(96, 190, true, 0, gameFrame);
-		SpawnBonusCoin(224, 190, true, 0, gameFrame);
-		
-		SpawnBonusCoin(136, 138, true, 0, gameFrame);
-		SpawnBonusCoin(195, 138, true, 0, gameFrame);
-		
-		SpawnBonusCoin(100, 16, true, 0, gameFrame);
-		SpawnBonusCoin(220, 16, true, 0, gameFrame);
-	}
-	
-	// change windows
-	ChangeScreen(SCR_LEVEL);
-	
-	// return
-	return true;
-}
-
-void UnloadLevel(void) {
-	FreeEnemies();
-	FreePlatforms();
-	FreePows();
-	FreeBonusCoins();
-	FreeFireballs();
-	FreeIcicles();
-	FreeParticles();
-}
-
-void EndLevel(void) {
-	// perform this action once
-	if (!game_data.levelEnded) {
-		if (game_data.isBonusLevel) {
-			if (levelCoins.coinsLeft == 0) { // special bonus for collecting all coins
-				++mario1.lives;
-				PlayerAddScore(&mario1, 5000);
-			}
-			PlayerAddScore(&mario1, (10 - levelCoins.coinsLeft)*800); // add all the score for the coins
-		}
-		
-		game_data.levelEndTime = gameFrame;
-		game_data.levelEnded = true;
-		ResetCoins();
-		ResetFireballs();
-		ResetEnemies(gameFrame);
-		ResetIcicles();
-		
-		scoreWhenRoundStarts = mario1.score;
-	}
-	
-	if (gameFrame - game_data.levelEndTime > 150 - LEVEL_FADE_DURATION && gameFrame - game_data.levelEndTime != 150) { // fade out
-		SetDarkness((gameFrame - game_data.levelEndTime - (150 - LEVEL_FADE_DURATION))/(float)(LEVEL_FADE_DURATION/7));
-	} else if (gameFrame - game_data.levelEndTime == 150) { // wait a bit, then load the next level while the screen is black
-		SetDarkness(8);
-		// inc level
-		++game_data.level;
-		
-		// try to reset particle array for optimization
-		CleanUpParticleArray();
-		
-		// draw new bg
-		DrawBackground(levelLog[game_data.level - 1][0][1]); // levelLog[game_data.level - 1][0][1] is level background id
-		RefreshPlatformBackgroundData(levelLog[game_data.level - 1][0][1]);
-		
-		InitPipeBackgroundData();
-		for (uint8_t i = 0; i < NUM_OF_PIPES; i++)
-			RedrawPipesWithNewSprite(i, 0, 0);
-		
-		game_data.levelStartTime = gameFrame;
-		game_data.levelEnded = false;
-		game_data.isBonusLevel = levelLog[game_data.level - 1][0][0];
-		
-		// make sure that the hud knows the amount of digits in the level number
-		TitleCardSetNumDigits(floor(log10(game_data.level) + 0.000002));
-		
-		if (levelLog[game_data.level - 1][0][2] & TOP_ICY) {
-			FreezePlatform(5);
-			FreezePlatform(6);
-		}
-		
-		if (levelLog[game_data.level - 1][0][2] & MIDDLE_ICY) {
-			FreezePlatform(3);
-			FreezePlatform(4);
-			FreezePlatform(2);
-		}
-		
-		if (levelLog[game_data.level - 1][0][2] & BOTTOM_ICY) {
-			FreezePlatform(1);
-			FreezePlatform(0);
-		}
-		
-		// reaccount for enemies
-		uint8_t i;
-		for (i = 0; i < MAX_ENEMIES; i++) {
-			if (levelLog[game_data.level - 1][2][i] == -1) {
-				break;
-			}
-		}
-		levelEnemies.enemiesLeft = i;
-		levelEnemies.numEnemies = 0;
-		levelEnemies.lastSpawnedPipe = rand() % 2;
-		
-		// reset player
-		mario1.x = TO_FIXED_POINT(16);
-		mario1.y = TO_FIXED_POINT(GROUND_HEIGHT - PLAYER_HEIGHT);
-		mario1.dir = RIGHT;
-		mario1.verAccel = mario1.horAccel = 0;
-		mario1.deceleration = mario1.acceleration = TO_FIXED_POINT(0.2);
-		mario1.lastGroundedPlatformIndex = -1;
-		
-		if (levelLog[game_data.level - 1][0][0]) { // if bonus level
-			ResetPows();
-			levelCoins.bonusTimer = 1200;
-			SpawnBonusCoin(16, 80, true, 0, gameFrame);
-			SpawnBonusCoin(300, 80, true, 0, gameFrame);
-			SpawnBonusCoin(32, 80, true, 0, gameFrame);
-			SpawnBonusCoin(274, 80, true, 0, gameFrame);
-			
-			SpawnBonusCoin(96, 190, true, 0, gameFrame);
-			SpawnBonusCoin(224, 190, true, 0, gameFrame);
-			
-			SpawnBonusCoin(136, 138, true, 0, gameFrame);
-			SpawnBonusCoin(195, 138, true, 0, gameFrame);
-			
-			SpawnBonusCoin(100, 16, true, 0, gameFrame);
-			SpawnBonusCoin(220, 16, true, 0, gameFrame);
-		}
-	}
-}
-
-void SaveCurrentLevel(void) {
-	save_t newSave = GetSaveData();
-	if (mario1.lives > 0) {
-		newSave.livesLeft = mario1.lives;
-		newSave.curLevel = game_data.level;
-		newSave.curScore = scoreWhenRoundStarts;
-		newSave.inLevel = true;
-		newSave.collectedBonus = mario1.hasCollectedBonus;
-	} else {
-		newSave.inLevel = false;
-		newSave.collectedBonus = false;
-		newSave.livesLeft = 4;
-		newSave.curLevel = 1;
-		newSave.curScore = 0;
-	}
-	
-	SaveCurrentData(newSave);
-}
-
-void LoadLevelFromSave(void) {
-	save_t save = GetSaveData();
-	if (save.inLevel) {
-		game_data.level = save.curLevel;
-		mario1.lives = save.livesLeft;
-		mario1.score = save.curScore;
-		mario1.hasCollectedBonus = save.collectedBonus;
-		scoreWhenRoundStarts = save.curScore;
-	}
-}
-
-void RestartLevels(void) {
-	// pretty much a copy paste of EndLevel func with a few tweaks
-	game_data.level = 1;
-	mario1.score = 0;
-	mario1.lives = 4;
-	mario1.state = PLAYER_NORMAL;
-	
-	ResetParticleArray();
-	ResetCoins();
-	ResetEnemies(gameFrame);
-	ResetFireballs();
-	ResetPows();
-	ResetIcicles();
+void ReadyLevel(void) {
+	// try to reset particle array for optimization
+	CleanUpParticleArray();
 	
 	// draw new bg
-	DrawBackground(levelLog[game_data.level - 1][0][1]); // levelLog[game_data.level - 1][0][1] is level background id
+	DrawBackground(levelLog[game_data.level - 1][LEVEL_SETTINGS][LVL_BACKGROUND]); // levelLog[game_data.level - 1][0][1] is level background id
 	RefreshPlatformBackgroundData(levelLog[game_data.level - 1][0][1]);
+	
+	// add static hud objects (to save on draw time)
+	HudAddStaticObjects();
 	
 	InitPipeBackgroundData();
 	for (uint8_t i = 0; i < NUM_OF_PIPES; i++)
@@ -544,7 +317,7 @@ void RestartLevels(void) {
 	game_data.isBonusLevel = levelLog[game_data.level - 1][0][0];
 	
 	// make sure that the hud knows the amount of digits in the level number
-	TitleCardSetNumDigits(floor(log10(game_data.level) + 0.000002));
+	TitleCardSetNumDigits(iLog10(game_data.level));
 	
 	if (levelLog[game_data.level - 1][0][2] & TOP_ICY) {
 		FreezePlatform(5);
@@ -571,30 +344,167 @@ void RestartLevels(void) {
 	}
 	levelEnemies.enemiesLeft = i;
 	levelEnemies.numEnemies = 0;
+	levelEnemies.lastSpawnedPipe = randInt(0, 1);
 	
 	// reset player
-	mario1.x = TO_FIXED_POINT(16);
-	mario1.y = TO_FIXED_POINT(GROUND_HEIGHT - PLAYER_HEIGHT);
-	mario1.dir = RIGHT;
-	mario1.verAccel = mario1.horAccel = 0;
-	mario1.deceleration = mario1.acceleration = TO_FIXED_POINT(0.2);
-	mario1.lastGroundedPlatformIndex = -1;
+	for (i = 0; i < game_data.numPlayers; i++) {
+		mario[i].x = I2FP(16) + i*I2FP(240); // if i is 1 (player 2), then he will be on the other side
+		mario[i].y = I2FP(GROUND_HEIGHT - PLAYER_HEIGHT);
+		mario[i].dir = RIGHT;
+		mario[i].verAccel = mario[i].horAccel = 0;
+		mario[i].deceleration = mario[i].acceleration = I2FP(0.2);
+		mario[i].lastGroundedPlatformIndex = -1;
+	}
 	
 	if (levelLog[game_data.level - 1][0][0]) { // if bonus level
 		ResetPows();
 		levelCoins.bonusTimer = 1200;
-		SpawnBonusCoin(16, 80, true, 0, gameFrame);
-		SpawnBonusCoin(300, 80, true, 0, gameFrame);
-		SpawnBonusCoin(32, 80, true, 0, gameFrame);
-		SpawnBonusCoin(274, 80, true, 0, gameFrame);
+		SpawnBonusCoin(16, 80, true, gameFrame);
+		SpawnBonusCoin(300, 80, true, gameFrame);
+		SpawnBonusCoin(32, 80, true, gameFrame);
+		SpawnBonusCoin(274, 80, true, gameFrame);
 		
-		SpawnBonusCoin(96, 190, true, 0, gameFrame);
-		SpawnBonusCoin(224, 190, true, 0, gameFrame);
+		SpawnBonusCoin(96, 190, true, gameFrame);
+		SpawnBonusCoin(224, 190, true, gameFrame);
 		
-		SpawnBonusCoin(136, 138, true, 0, gameFrame);
-		SpawnBonusCoin(195, 138, true, 0, gameFrame);
+		SpawnBonusCoin(136, 138, true, gameFrame);
+		SpawnBonusCoin(195, 138, true, gameFrame);
 		
-		SpawnBonusCoin(100, 16, true, 0, gameFrame);
-		SpawnBonusCoin(220, 16, true, 0, gameFrame);
+		SpawnBonusCoin(100, 16, true, gameFrame);
+		SpawnBonusCoin(220, 16, true, gameFrame);
 	}
+}
+
+bool LoadLevel(void) {
+	for (int i = 0; i < game_data.numPlayers; i++)
+		PlayerInit(&mario[i]);
+	
+	LoadLevelFromSave();
+	// init the bg for pipes. they're stationary, so we don't need to refresh the bg slice in order to save resources
+	InitPipeBackgroundData();
+	
+	// init level platform struct
+	InitPlatformData();
+	
+	// spawn in platforms. width must be a multiple of 8 (the tile size)
+	// bottom platforms
+	CreatePlatform(0, 176, 112);
+	CreatePlatform(208, 176, 112);
+	// small side platforms
+	CreatePlatform(0, 128, 48);
+	CreatePlatform(272, 128, 48);
+	// middle sized middle platform
+	CreatePlatform(88, 120, BLOCK_SIZE*18);
+	// top platforms
+	CreatePlatform(0, 72, BLOCK_SIZE*18);
+	CreatePlatform(176, 72, BLOCK_SIZE*18);
+	
+	// init level pow struct
+	InitPows();
+	
+	// spawn in pows
+	CreatePow(152, 176);
+	CreatePow(152, 20);
+	
+	// init stuff
+	InitEnemies();
+	InitBonusData(); // coins & bonus data
+	InitFireballs();
+	InitIcicles();
+	InitHud();
+	InitParticles();
+	
+	ReadyLevel();
+	
+	// change windows
+	ChangeScreen(SCR_LEVEL);
+	
+	// return
+	return true;
+}
+
+void UnloadLevel(void) {
+	FreeEnemies();
+	FreePlatforms();
+	FreePows();
+	FreeFireballs();
+	FreeIcicles();
+	FreeParticles();
+}
+
+void EndLevel(void) {
+	// perform this action once
+	if (!game_data.levelEnded) {
+		if (game_data.isBonusLevel) {
+			if (levelCoins.coinsLeft == 0) { // special bonus for collecting all coins
+				++mario[0].lives;
+				PlayerAddScore(&mario[0], 5000);
+			}
+			PlayerAddScore(&mario[0], (10 - levelCoins.coinsLeft)*800); // add all the score for the coins
+		}
+		
+		game_data.levelEndTime = gameFrame;
+		game_data.levelEnded = true;
+		ResetFireballs();
+		ResetEnemies(gameFrame);
+		ResetIcicles();
+		
+		scoreWhenRoundStarts = mario[0].score;
+	}
+	
+	if (gameFrame - game_data.levelEndTime > 150 - LEVEL_FADE_DURATION && gameFrame - game_data.levelEndTime != 150) { // fade out
+		SetDarkness((gameFrame - game_data.levelEndTime - (150 - LEVEL_FADE_DURATION))/(float)(LEVEL_FADE_DURATION/7));
+	} else if (gameFrame - game_data.levelEndTime == 150) { // wait a bit, then load the next level while the screen is black
+		SetDarkness(8);
+		// inc level
+		++game_data.level;
+		
+		ReadyLevel();
+	}
+}
+
+void SaveCurrentLevel(void) {
+	save_t newSave = GetSaveData();
+	if (mario[0].lives > 0) {
+		newSave.livesLeft = mario[0].lives;
+		newSave.curLevel = game_data.level;
+		newSave.curScore = scoreWhenRoundStarts;
+		newSave.inLevel = true;
+		newSave.collectedBonus = mario[0].hasCollectedBonus;
+	} else {
+		newSave.inLevel = false;
+		newSave.collectedBonus = false;
+		newSave.livesLeft = 4;
+		newSave.curLevel = 1;
+		newSave.curScore = 0;
+	}
+	
+	SaveCurrentData(newSave);
+}
+
+void LoadLevelFromSave(void) {
+	save_t save = GetSaveData();
+	if (save.inLevel) {
+		game_data.level = save.curLevel;
+		mario[0].lives = save.livesLeft;
+		mario[0].score = save.curScore;
+		mario[0].hasCollectedBonus = save.collectedBonus;
+		scoreWhenRoundStarts = save.curScore;
+	}
+}
+
+void RestartLevels(void) {
+	// pretty much a copy paste of EndLevel func with a few tweaks
+	game_data.level = 1;
+	mario[0].score = 0;
+	mario[0].lives = 4;
+	mario[0].state = PLAYER_NORMAL;
+	
+	ResetParticleArray();
+	ResetEnemies(gameFrame);
+	ResetFireballs();
+	ResetPows();
+	ResetIcicles();
+	
+	ReadyLevel();
 }

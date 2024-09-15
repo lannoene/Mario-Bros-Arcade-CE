@@ -8,7 +8,7 @@ DESCRIPTION = "Mario Bros Arcade game"
 COMPRESSED = NO
 
 CFLAGS = -Wall -Wextra -Oz
-CXXFLAGS = -Wall -Wextra -Oz -ffast-math
+CXXFLAGS = $(CFLAGS)
 
 # ----------------------------
 

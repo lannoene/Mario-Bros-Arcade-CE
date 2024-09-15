@@ -28,7 +28,6 @@ typedef struct {
 	uint8_t gameFrameBGData[TEXT_SIZE*9*TEXT_SIZE + 2];
 #endif
 	uint8_t pauseScrBackgroundData[100*100 + 2];
-	uint8_t respawnPlatformBgData[15*7 + 2];
 } hud_t;
 
 static hud_t hudData;
@@ -53,14 +52,13 @@ gfx_rletsprite_t* phase_numbers[10] = {
 	phase_number9
 };
 
-gfx_rletsprite_t* respawn_platforms[3] = {
-	respawn_platform_full,
-	respawn_platform_med,
-	respawn_platform_empty,
-};
-
 static inline void DrawPhaseText(void);
 static void DrawPauseScreen(void);
+
+static inline void gfx_PrintUIntXY(unsigned int n, uint16_t x, uint8_t y) {
+	gfx_SetTextXY(x, y);
+	gfx_PrintUInt(n, iLog10(n) + 1);
+}
 
 void InitHud(void) {
 	hudData.livesBackgroundData[0] = TEXT_SIZE*9;
@@ -73,8 +71,6 @@ void InitHud(void) {
 	hudData.bonusTimerBackgroundData[1] = TEXT_SIZE;
 	hudData.pauseScrBackgroundData[0] = PAUSE_WIDTH;
 	hudData.pauseScrBackgroundData[1] = PAUSE_HEIGHT;
-	hudData.respawnPlatformBgData[0] = 15;
-	hudData.respawnPlatformBgData[1] = 7;
 	
 #ifdef DEBUG_TIMER
 	hudData.gameFrameBGData[0] = TEXT_SIZE*9;
@@ -102,17 +98,11 @@ void HudGetBackground(player_t* player) {
 		pausedLastFrame = true;
 	if (game_data.paused || pausedLastFrame)
 		gfx_GetSprite((gfx_sprite_t*)hudData.pauseScrBackgroundData, 160 - (PAUSE_WIDTH/2), 120 - (PAUSE_WIDTH/2));
-	
-	if (player->state == PLAYER_RESPAWNING) { // i'm planning on changing this later, but i don't know what i'd do that makes sense
-		gfx_GetSprite((gfx_sprite_t*)hudData.respawnPlatformBgData, FIXED_POINT_TO_INT(player->x), FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT);
-	}
 }
 
-void HudDraw(player_t* player, unsigned int gameFrame) {
+void HudDraw(player_t *player, unsigned int gameFrame) {
 	// draw lives counter
-	gfx_SetTextXY(0, 0);
 	gfx_SetTextFGColor(1);
-	gfx_PrintString("Lives: ");
 	gfx_SetTextXY(48, 0);
 	gfx_PrintUInt(player->lives, 2);
 	
@@ -144,10 +134,6 @@ void HudDraw(player_t* player, unsigned int gameFrame) {
 		gfx_RLETSprite_NoClip(phase_clear, 130, 100);
 	}
 	
-	if (player->state == PLAYER_RESPAWNING) { // this was honestly the easiest way to do this
-		gfx_RLETSprite(respawn_platforms[(((gameFrame - player->spawnTime < PLAYER_RESP_FALL_DURATION) ? 0 : gameFrame - player->spawnTime - PLAYER_RESP_FALL_DURATION)*3)/(PLAYER_RESP_WAIT_MAX)], FIXED_POINT_TO_INT(player->x), FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT);
-	}
-	
 #ifdef DEBUG_TIMER
 	gfx_SetTextXY(0, 100);
 	gfx_PrintUInt(gameFrame, 10);
@@ -170,15 +156,11 @@ void HudRefresh(player_t* player, unsigned int gameFrame) {
 		if (!game_data.paused)
 			pausedLastFrame = false;
 	}
-	
-	if (player->state == PLAYER_RESPAWNING) {
-		gfx_Sprite((gfx_sprite_t*)hudData.respawnPlatformBgData, FIXED_POINT_TO_INT(player->x), FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT);
-	}
 }
 
 static inline void DrawPhaseText(void) {
 	for (uint8_t i = 0; i < hudData.phaseCardNumDigits + 1; i++) { // for every digit
-		gfx_RLETSprite_NoClip(phase_numbers[((uint8_t)(game_data.level/pow(10, i)))%10], 176 - TEXT_WIDTH*i, 100); // display the digit there at correct x coord
+		gfx_RLETSprite_NoClip(phase_numbers[((uint8_t)(game_data.level/pow(10, i))) % 10], 176 - TEXT_WIDTH*i, 100); // display the digit there at correct x coord
 	}
 }
 
@@ -246,8 +228,23 @@ void PauseScreenResetCursorPos(void) {
 }
 
 void GetRidOfRespawnPlatformRemnants(player_t* player) {
-	gfx_Sprite((gfx_sprite_t*)hudData.respawnPlatformBgData, FIXED_POINT_TO_INT(player->x), FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT);
+	gfx_Sprite((gfx_sprite_t*)player->respawnPlatformBgData, FIXED_POINT_TO_INT(player->x), FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT);
 	gfx_SetDrawScreen();
-	gfx_Sprite((gfx_sprite_t*)hudData.respawnPlatformBgData, FIXED_POINT_TO_INT(player->x), FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT);
+	gfx_Sprite((gfx_sprite_t*)player->respawnPlatformBgData, FIXED_POINT_TO_INT(player->x), FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT);
+	gfx_SetDrawBuffer();
+}
+
+void HudAddStaticObjects(void) {
+	for (int j = 0; j < 2; j++) {
+		for (int i = 0; i < game_data.numPlayers; i++) {
+			if (game_data.numPlayers != 1)
+				gfx_PrintStringXY("P  Lives: ", 0, i*TEXT_SIZE);
+			else
+				gfx_PrintStringXY("Lives: ", 0, 0);
+			/*gfx_SetTextXY(TEXT_SIZE, i*TEXT_SIZE);
+			gfx_PrintUInt(i, iLog10(i) + 1);*/
+		}
+		gfx_SetDrawScreen();
+	}
 	gfx_SetDrawBuffer();
 }

@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "player.h"
+#include "collision.h"
 
 #define PLATFORM_HEIGHT	8
 #define BLOCK_SIZE 8
@@ -14,7 +15,9 @@ typedef struct {
 	uint8_t* processedTileImage;
 	bool beingBumped, needsRefresh, icy, invisible : 1;
 	int16_t bumpedTileXpos;
+	uint8_t bumpedTileYpos;
 	unsigned int timeOfLastBump;
+	player_t *lastBumpPlayer;
 } platform_t;
 
 typedef struct {
@@ -34,7 +37,6 @@ enum ICY_PLATFORM_PRESETS {
 	BOTTOM_ICY = 0x2,
 	MIDDLE_ICY = 0x4,
 	PLATFORMS_ARE_INVISIBLE = 0x8,
-	ICICLES_FORM_LOW = 0x10,
 };
 
 extern levelPlatformData_t levelPlatforms;
@@ -47,3 +49,4 @@ void BumpPlatform(player_t* player, uint8_t platformIndex, unsigned int gameFram
 void RefreshPlatformBackgroundData(uint8_t type);
 void FreezePlatform(uint8_t index);
 void VanishPlatform(uint8_t index);
+void UpdatePlatforms(unsigned int gameFrame);

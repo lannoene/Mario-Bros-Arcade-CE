@@ -2,16 +2,24 @@
 
 #include <stdlib.h>
 #include <graphx.h>
+#include <sys/util.h>
 
 #include "platforms.h"
 #include "player.h"
 #include "defines.h"
+#include "level.h"
+
+#define ICICLE_TOP_Y 47
+#define ICICLE_TOP_LEFT_X 40
+#define ICICLE_TOP_RIGHT_X 265
 
 levelIcicleData_t levelIcicles;
 
 void InitIcicles(void) {
 	levelIcicles.icicleArray = malloc(0);
 	levelIcicles.numIcicles = 0;
+	levelIcicles.hasIciclesTop[LEFT] = false;
+	levelIcicles.hasIciclesTop[RIGHT] = false;
 }
 
 void SpawnIcicle(unsigned int gameFrame) {
@@ -30,24 +38,31 @@ void SpawnIcicle(unsigned int gameFrame) {
 	levelIcicles.icicleArray[i].state = ICICLE_FORMING;
 	levelIcicles.icicleArray[i].sprite = 0;
 	levelIcicles.icicleArray[i].verAccel = 0;
+	levelIcicles.icicleArray[i].isOnTop = false;
 	
 	if (rand() % 2 == 0) { // left or right
-		if (rand() % 6 == 0) { // on pipe or not
-			levelIcicles.icicleArray[i].y = 47; // on the pipe left
-			levelIcicles.icicleArray[i].x = 40;
+		if (randInt(0, 5) == 0 && !levelIcicles.hasIciclesTop[LEFT]) { // on pipe or not
+			levelIcicles.icicleArray[i].y = ICICLE_TOP_Y; // on the pipe left
+			levelIcicles.icicleArray[i].x = ICICLE_TOP_LEFT_X;
+			levelIcicles.hasIciclesTop[LEFT] = true;
+			levelIcicles.icicleArray[i].isOnTop = true;
 		} else {
 			levelIcicles.icicleArray[i].y = 72 + PLATFORM_HEIGHT; // on the ground left
-			levelIcicles.icicleArray[i].x = 5 + (rand() % 130);
+			levelIcicles.icicleArray[i].x = 5;
 		}
 	} else {
-		if (rand() % 6 == 0) {
-			levelIcicles.icicleArray[i].y = 47; // on the pipe right
-			levelIcicles.icicleArray[i].x = 265;
+		if (randInt(0, 5) == 0 && !levelIcicles.hasIciclesTop[RIGHT]) {
+			levelIcicles.icicleArray[i].y = ICICLE_TOP_Y; // on the pipe right
+			levelIcicles.icicleArray[i].x = ICICLE_TOP_RIGHT_X;
+			levelIcicles.hasIciclesTop[RIGHT] = true;
+			levelIcicles.icicleArray[i].isOnTop = true;
 		} else { // not on pipe
 			levelIcicles.icicleArray[i].y = 72 + PLATFORM_HEIGHT; // on the ground right
-			levelIcicles.icicleArray[i].x = 176 + (rand() % 130);
+			levelIcicles.icicleArray[i].x = 176;
 		}
 	}
+	if (!levelIcicles.icicleArray[i].isOnTop)
+		levelIcicles.icicleArray[i].x += randInt(0, 129);
 	levelIcicles.icicleArray[i].y_old = levelIcicles.icicleArray[i].y;
 	levelIcicles.icicleArray[i].x_old = levelIcicles.icicleArray[i].x;
 }
@@ -101,6 +116,12 @@ void UpdateIcicles(player_t* player, unsigned int gameFrame) {
 				
 				break;
 			case ICICLE_FALLING:
+				if (icicle->y == ICICLE_TOP_Y) {
+					if (icicle->x == ICICLE_TOP_LEFT_X)
+						levelIcicles.hasIciclesTop[LEFT] = false;
+					else if (icicle->x == ICICLE_TOP_RIGHT_X)
+						levelIcicles.hasIciclesTop[RIGHT] = false;
+				}
 				// now let icicle fall
 				icicle->sprite = ((gameFrame - icicle->spawnTime)/8 % 2) + 3;
 				
@@ -112,12 +133,14 @@ void UpdateIcicles(player_t* player, unsigned int gameFrame) {
 				 */
 				icicle->verAccel -= (gameFrame % 5 == 0) ? 1 : 0; 
 				
-				if (FIXED_POINT_TO_INT(player->x) + PLAYER_WIDTH > icicle->x && 
-				FIXED_POINT_TO_INT(player->x) < icicle->x + ICICLE_WIDTH && 
-				FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT > icicle->y + icicle->verAccel && 
-				FIXED_POINT_TO_INT(player->y) < icicle->y + ICICLE_HEIGHT + icicle->verAccel && 
-				player->state == PLAYER_NORMAL) {
-					KillPlayer(player, gameFrame);
+				for (int i = 0; i < game_data.numPlayers; i++) {
+					if (FIXED_POINT_TO_INT(player->x) + PLAYER_WIDTH > icicle->x && 
+					FIXED_POINT_TO_INT(player->x) < icicle->x + ICICLE_WIDTH && 
+					FIXED_POINT_TO_INT(player->y) + PLAYER_HEIGHT > icicle->y + icicle->verAccel && 
+					FIXED_POINT_TO_INT(player->y) < icicle->y + ICICLE_HEIGHT + icicle->verAccel && 
+					player->state == PLAYER_NORMAL) {
+						KillPlayer(&player[i], gameFrame);
+					}
 				}
 				
 				if (icicle->y > 240)

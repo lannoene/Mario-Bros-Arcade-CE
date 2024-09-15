@@ -5,32 +5,28 @@
 #include <math.h>
 
 #include <graphx.h>
+#include <sys/util.h>
 
 #include "platforms.h"
 #include "pipes.h"
 #include "bonus.h"
 #include "particles.h"
 #include "defines.h"
+#include "level.h"
 
 #define GRAVITY_WINGED 0.07
 #define ENEMY_DEAD_DECELERATION .017
 
 // i am not mentally well
 
-enum COLLISION_TYPE_IDS {
-	NO_COL = 0,
-	EXP_COL, // expensive collision
-	CHP_COL, // cheap collision
-	BTM_COL // bottom collision (collision with the bottom barrier)
-};
-
 levelEnemies_t levelEnemies;
 
 static inline void EnterRespawnPipe(enemy_t* enemy, unsigned int gameFrame);
 // lol
-static void CalcForSpinies(player_t* player, unsigned int gameFrame, enemy_t* enemy);
-static void CalcForFlies(player_t* player, unsigned int gameFrame, enemy_t* enemy);
-static void CalcForFreezies(player_t* player, unsigned int gameFrame, enemy_t* enemy);
+static void CalcForSpinies(unsigned int gameFrame, enemy_t* enemy);
+static void CalcForFlies(unsigned int gameFrame, enemy_t* enemy);
+static void CalcForFreezies(unsigned int gameFrame, enemy_t* enemy);
+static void CalcForCoins(unsigned int gameFrame, enemy_t *coin);
 // epic
 static uint8_t CalcCollsion(enemy_t* enemy, unsigned int gameFrame);
 
@@ -39,7 +35,7 @@ void InitEnemies(void) {
 	levelEnemies.enemyArray = malloc(0);
 }
 
-void SpawnEnemy(uint8_t enemyType, bool direction, unsigned int gameFrame) {
+enemy_t *SpawnEnemy(uint8_t enemyType, bool direction, unsigned int gameFrame) {
 	uint8_t i;
 	for (i = 0; i < levelEnemies.numEnemies; i++) {
 		if (levelEnemies.enemyArray[i].state == ENEMY_DEAD)
@@ -49,12 +45,18 @@ void SpawnEnemy(uint8_t enemyType, bool direction, unsigned int gameFrame) {
 		++levelEnemies.numEnemies;
 		levelEnemies.enemyArray = realloc(levelEnemies.enemyArray, levelEnemies.numEnemies*sizeof(enemy_t));
 	}
-	memset(levelEnemies.enemyArray + i, 0, sizeof(enemy_t));
+	memset(levelEnemies.enemyArray + i, 0, sizeof(enemy_t)); // remember, you don't need to set things to null/0 because this does it already
 	enemy_t* enemy = &levelEnemies.enemyArray[i];
 	enemy->type = enemyType;
+	enemy->height = I2FP(ENEMY_SPIKE_HITBOX_HEIGHT);
+	enemy->verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
 	if (enemyType == ENEMY_FREEZIE) {
 		enemy->horSpriteOffset = enemy->horSpriteOffset_old = (ENEMY_FREEZIE_WIDTH - ENEMY_SPIKE_SIZE); // freezies are smaller width wise, so we need to compensate for that, and the best way to do that without jank was this
 		enemy->width = TO_FIXED_POINT(ENEMY_FREEZIE_WIDTH);
+	} else if (enemyType == ENEMY_COIN) {
+		enemy->width = I2FP(COIN_WIDTH);
+		enemy->height = I2FP(COIN_HEIGHT);
+		enemy->verSpriteOffset = 0;
 	} else {
 		enemy->horSpriteOffset = enemy->horSpriteOffset_old = 0;
 		enemy->width = TO_FIXED_POINT(ENEMY_SPIKE_SIZE);
@@ -76,57 +78,69 @@ void SpawnEnemy(uint8_t enemyType, bool direction, unsigned int gameFrame) {
 	enemy->y_old = TO_FIXED_POINT(35);
 	enemy->backgroundData[0] = ENEMY_SPIKE_SIZE;
 	enemy->backgroundData[1] = ENEMY_SPIKE_SIZE;
-	enemy->lastBumpedEnemy = NULL;
-	enemy->verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
-	enemy->verSpriteOffset_old = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
-	enemy->crabIsMad = false;
-	enemy->freezieFreezeNextPlatform = false;
 	if (enemyType == ENEMY_FLY)
 		enemy->maxSpeed = TO_FIXED_POINT(0.4);
 	else if (enemyType == ENEMY_FREEZIE)
-		enemy->maxSpeed = TO_FIXED_POINT(0.75);
+		enemy->maxSpeed = TO_FIXED_POINT(0.55);
 	else
 		enemy->maxSpeed = TO_FIXED_POINT(0.5);
-	enemy->maxSpeed = (enemyType == ENEMY_FLY) ? TO_FIXED_POINT(0.4) : TO_FIXED_POINT(0.5);
+	enemy->verSpriteOffset_old = enemy->verSpriteOffset;
+	return enemy;
 }
 
 void FreeEnemies(void) {
 	free(levelEnemies.enemyArray);
 }
 
-void UpdateEnemies(player_t* player, unsigned int gameFrame) {
-	/*for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
-		enemy_t* enemy = &levelEnemies.enemyArray[i];*/
-	for (enemy_t* enemy = &levelEnemies.enemyArray[0]; enemy != &levelEnemies.enemyArray[levelEnemies.numEnemies]; enemy++) {
+void UpdateEnemies(unsigned int gameFrame) {
+	for (uint8_t i = 0; i < levelEnemies.numEnemies; i++) {
+		enemy_t* enemy = &levelEnemies.enemyArray[i];
 		if (enemy->state == ENEMY_DEAD)
 			continue;
+		
+		// run preliminary
+		switch (enemy->state) {
+			case ENEMY_EXITING_PIPE:
+				enemy->verVel = 0;
+				enemy->horVel = (enemy->dir == RIGHT) ? enemy->maxSpeed : -enemy->maxSpeed;
+				RedrawPipesWithNewSprite(!enemy->dir, 0, gameFrame);
+				if (enemy->dir == LEFT && FP2I(enemy->x + enemy->width) < 256) {
+					enemy->state = ENEMY_WALKING;
+				} else if (enemy->dir == RIGHT && FP2I(enemy->x) > 64) {
+					enemy->state = ENEMY_WALKING;
+				}
+				break;
+		}
 		
 		switch (enemy->type) {
 			case ENEMY_SPIKE:
 				// fallthrough
 			case ENEMY_CRAB:
-				CalcForSpinies(player, gameFrame, enemy); // the spiny func was made to calc for both spikes and crabs. this makes it slower, but i'm too lazy to change it
+				CalcForSpinies(gameFrame, enemy); // the spiny func was made to calc for both spikes and crabs. this makes it slower, but i'm too lazy to change it
 				break;
 			case ENEMY_FLY:
-				CalcForFlies(player, gameFrame, enemy);
+				CalcForFlies(gameFrame, enemy);
 				break;
 			case ENEMY_FREEZIE:
-				CalcForFreezies(player, gameFrame, enemy);
+				CalcForFreezies(gameFrame, enemy);
+				break;
+			case ENEMY_COIN:
+				CalcForCoins(gameFrame, enemy);
 				break;
 		}
 		for (enemy_t* oEnmy = enemy; oEnmy != &levelEnemies.enemyArray[levelEnemies.numEnemies]; oEnmy++) { // check for other enemy colision. (check every combination, not permutation)
 			if (enemy != oEnmy && // i don't like this if statement.
 			(enemy->lastBumpedEnemy != oEnmy || gameFrame - enemy->lastBumpedEnemyTime > 60) && // last bumped enemy isn't other enemy or delta last time > 60
-			gfx_CheckRectangleHotspot(enemy->x + enemy->horVel, enemy->y - enemy->verVel, enemy->width, TO_FIXED_POINT(ENEMY_SPIKE_HITBOX_HEIGHT),
-			oEnmy->x + oEnmy->horVel, oEnmy->y - oEnmy->verVel, enemy->width, TO_FIXED_POINT(ENEMY_SPIKE_HITBOX_HEIGHT)) && // i thought this func would make it cleaner but it didn't really
+			gfx_CheckRectangleHotspot(enemy->x + enemy->horVel, enemy->y - enemy->verVel, enemy->width, enemy->height,
+			oEnmy->x + oEnmy->horVel, oEnmy->y - oEnmy->verVel, oEnmy->width, oEnmy->height) && // i thought this func would make it cleaner but it didn't really
 			(enemy->state == ENEMY_WALKING || enemy->state == ENEMY_LAYING) &&
 			(oEnmy->state == ENEMY_WALKING || oEnmy->state == ENEMY_LAYING)) {
-				if (enemy->horVel != 0) { // if enemy1 is moving, switch their directions
+				if (enemy->horVel != 0 && enemy->state != ENEMY_LAYING) { // if enemy1 is moving, switch their directions
 					oEnmy->dir = enemy->dir;
 					enemy->dir = !enemy->dir;
 					enemy->lastBumpedEnemy = oEnmy;
 					oEnmy->lastBumpedEnemy = enemy;
-				} else { // if enemy1 is not moving, make enemy 2 switch directions (inherit enemy1's opposite dir) so they don't intersect
+				} else if (oEnmy->state != ENEMY_LAYING) { // if enemy1 is not moving, make enemy 2 switch directions (inherit enemy1's opposite dir) so they don't intersect
 					enemy->dir = oEnmy->dir;
 					oEnmy->dir = !enemy->dir;
 					enemy->lastBumpedEnemy = oEnmy;
@@ -152,6 +166,10 @@ void UpdateEnemies(player_t* player, unsigned int gameFrame) {
 }
 
 static inline void EnterRespawnPipe(enemy_t* enemy, unsigned int gameFrame) {
+	if (enemy->type == ENEMY_COIN) {
+		enemy->state = ENEMY_DEAD_SPINNING;
+		return;
+	}
 	enemy->y = TO_FIXED_POINT(35);
 	enemy->state = ENEMY_EXITING_PIPE;
 	enemy->spawnTime = gameFrame;
@@ -167,12 +185,11 @@ static inline void EnterRespawnPipe(enemy_t* enemy, unsigned int gameFrame) {
 	RedrawPipesWithNewSprite(!enemy->dir, 0, gameFrame); // make sure that the enemy does not flicker when exiting
 }
 
-static void CalcForSpinies(player_t* player, unsigned int gameFrame, enemy_t* enemy) {
-	// apply gravity
-	enemy->verVel -= TO_FIXED_POINT(GRAVITY);
+static void CalcForSpinies(unsigned int gameFrame, enemy_t* enemy) {
 	
 	switch (enemy->state) {
 		case ENEMY_WALKING:
+			enemy->verVel -= TO_FIXED_POINT(GRAVITY);
 			if (enemy->dir == LEFT && enemy->grounded == true && enemy->verVel <= 0)
 				enemy->horVel = -enemy->maxSpeed;
 			else if (enemy->dir == RIGHT && enemy->grounded == true && enemy->verVel <= 0)
@@ -183,6 +200,7 @@ static void CalcForSpinies(player_t* player, unsigned int gameFrame, enemy_t* en
 
 			break;
 		case ENEMY_LAYING:
+			enemy->verVel -= TO_FIXED_POINT(GRAVITY);
 			if (gameFrame - enemy->layStartTime > 400) {
 				enemy->state = ENEMY_WALKING;
 				enemy->verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
@@ -193,15 +211,9 @@ static void CalcForSpinies(player_t* player, unsigned int gameFrame, enemy_t* en
 				enemy->horVel = 0;
 			break;
 		case ENEMY_EXITING_PIPE:
-			RedrawPipesWithNewSprite(!enemy->dir, 0, gameFrame); // pipe is opposite their dir
-			enemy->verVel = 0;
-			if (enemy->dir == RIGHT)
-				enemy->horVel = TO_FIXED_POINT(0.5);
-			else
-				enemy->horVel = TO_FIXED_POINT(-0.5);
-			
-			if (gameFrame - enemy->spawnTime > 65)
-				enemy->state = ENEMY_WALKING;
+			break;
+		case ENEMY_DEAD_SPINNING:
+			enemy->verVel -= TO_FIXED_POINT(GRAVITY);
 			break;
 	}
 	
@@ -228,11 +240,10 @@ static void CalcForSpinies(player_t* player, unsigned int gameFrame, enemy_t* en
 	}
 }
 
-static void CalcForFlies(player_t* player, unsigned int gameFrame, enemy_t* enemy) {
-	enemy->verVel -= TO_FIXED_POINT(GRAVITY_WINGED);
-	
+static void CalcForFlies(unsigned int gameFrame, enemy_t* enemy) {
 	switch (enemy->state) {
 		case ENEMY_WALKING:
+			enemy->verVel -= TO_FIXED_POINT(GRAVITY_WINGED);
 			enemy->sprite = ((gameFrame - enemy->spawnTime)/8 % 2) + 1;
 			
 			if (enemy->grounded) {
@@ -253,6 +264,7 @@ static void CalcForFlies(player_t* player, unsigned int gameFrame, enemy_t* enem
 			
 			break;
 		case ENEMY_LAYING:
+			enemy->verVel -= TO_FIXED_POINT(GRAVITY_WINGED);
 			if (gameFrame - enemy->layStartTime > 400) {
 				enemy->state = ENEMY_WALKING;
 				enemy->verSpriteOffset = (ENEMY_SPIKE_HITBOX_HEIGHT - ENEMY_SPIKE_SIZE);
@@ -262,21 +274,17 @@ static void CalcForFlies(player_t* player, unsigned int gameFrame, enemy_t* enem
 				enemy->horVel = 0;
 			break;
 		case ENEMY_EXITING_PIPE:
-			RedrawPipesWithNewSprite(!enemy->dir, 0, gameFrame); // pipe is opposite their dir
-			enemy->verVel = 0;
-			if (enemy->dir == RIGHT)
-				enemy->horVel = TO_FIXED_POINT(0.5);
-			else
-				enemy->horVel = TO_FIXED_POINT(-0.5);
-			
-			if (gameFrame - enemy->spawnTime > 65)
-				enemy->state = ENEMY_WALKING;
+			enemy->sprite = 0;
+			break;
+		case ENEMY_DEAD_SPINNING:
+			enemy->verVel -= TO_FIXED_POINT(GRAVITY_WINGED);
 			break;
 	}
 	
 	if (enemy->state != ENEMY_DEAD_SPINNING) {
+		bool oldEnemyGrounded = enemy->grounded;
 		if (CalcCollsion(enemy, gameFrame)) { // != 0
-			if (!enemy->grounded)
+			if (!oldEnemyGrounded && enemy->grounded)
 				enemy->groundedStartTime = gameFrame;
 		}
 	} else {
@@ -301,11 +309,10 @@ static void CalcForFlies(player_t* player, unsigned int gameFrame, enemy_t* enem
 
 }
 
-static void CalcForFreezies(player_t* player, unsigned int gameFrame, enemy_t* enemy) {
-	enemy->verVel -= TO_FIXED_POINT(GRAVITY);
-	
+static void CalcForFreezies(unsigned int gameFrame, enemy_t* enemy) {
 	switch (enemy->state) {
 		case ENEMY_WALKING:
+			enemy->verVel -= TO_FIXED_POINT(GRAVITY);
 			if (enemy->dir == LEFT && enemy->grounded == true && enemy->verVel <= 0)
 				enemy->horVel = -enemy->maxSpeed;
 			else if (enemy->dir == RIGHT && enemy->grounded == true && enemy->verVel <= 0)
@@ -315,18 +322,8 @@ static void CalcForFreezies(player_t* player, unsigned int gameFrame, enemy_t* e
 		case ENEMY_TURNING:
 			
 			break;
-		case ENEMY_EXITING_PIPE:
-			RedrawPipesWithNewSprite(!enemy->dir, 0, gameFrame); // pipe is opposite their dir
-			enemy->verVel = 0;
-			if (enemy->dir == RIGHT)
-				enemy->horVel = TO_FIXED_POINT(0.5);
-			else
-				enemy->horVel = TO_FIXED_POINT(-0.5);
-			
-			if (gameFrame - enemy->spawnTime > 65)
-				enemy->state = ENEMY_WALKING;
-			break;
 		case ENEMY_DEAD_SPINNING: // enemy_dead_spinning for a freezie is just it dying
+			enemy->verVel -= TO_FIXED_POINT(GRAVITY);
 			enemy->sprite = ((gameFrame - enemy->eventTime)/4 % 5) + 3;
 			if (gameFrame - enemy->eventTime > 6) {
 				enemy->verVel = 0;
@@ -351,14 +348,13 @@ static void CalcForFreezies(player_t* player, unsigned int gameFrame, enemy_t* e
 	enemy->state != ENEMY_DEAD) {
 		switch (CalcCollsion(enemy, gameFrame)) {
 			case EXP_COL: // expesnive col only gets run when the enemy is off of the platform
-				if (rand() % 4 == 0 && !levelPlatforms.platformArray[enemy->lastGroundedPlatformIndex].icy)
-					enemy->freezieFreezeNextPlatform = true;
-				else
-					enemy->freezieFreezeNextPlatform = false;
+				enemy->freezieFreezeNextPlatform = randInt(0, 2) == 0 && !levelPlatforms.platformArray[enemy->lastGroundedPlatformIndex].icy;
+				dbg_printf("rolled the dice: %d\n", enemy->freezieFreezeNextPlatform);
 				break;
 			case CHP_COL:
 				if (enemy->freezieFreezeNextPlatform && 
-				enemy->x + (enemy->width/2) == levelPlatforms.platformArray[enemy->lastGroundedPlatformIndex].x + (levelPlatforms.platformArray[enemy->lastGroundedPlatformIndex].width/2)) {
+				enemy->x + enemy->width > levelPlatforms.platformArray[enemy->lastGroundedPlatformIndex].x + (levelPlatforms.platformArray[enemy->lastGroundedPlatformIndex].width/2)
+				&& enemy->x < levelPlatforms.platformArray[enemy->lastGroundedPlatformIndex].x + (levelPlatforms.platformArray[enemy->lastGroundedPlatformIndex].width/2)) {
 					FreezePlatform(enemy->lastGroundedPlatformIndex);
 					enemy->state = FREEZIE_FREEZING_PLATFORM;
 					enemy->eventTime = gameFrame;
@@ -449,11 +445,11 @@ static uint8_t CalcCollsion(enemy_t* enemy, unsigned int gameFrame) {
 		if (enemy->verVel < 0) { // only test for physics if the verVel is less than 0
 			uint8_t j = 0;
 			for (; j < levelPlatforms.numPlatforms; j++) {
-				if (enemy->y - enemy->verVel + TO_FIXED_POINT(ENEMY_SPIKE_HITBOX_HEIGHT) > levelPlatforms.platformArray[j].y 
+				if (enemy->y - enemy->verVel + enemy->height > levelPlatforms.platformArray[j].y 
 				&& enemy->y - enemy->verVel < levelPlatforms.platformArray[j].y + TO_FIXED_POINT(PLATFORM_HEIGHT) 
 				&& enemy->x + enemy->horVel + enemy->width > levelPlatforms.platformArray[j].x 
 				&& enemy->x + enemy->horVel < levelPlatforms.platformArray[j].x + levelPlatforms.platformArray[j].width) {
-					enemy->y = levelPlatforms.platformArray[j].y - TO_FIXED_POINT(ENEMY_SPIKE_HITBOX_HEIGHT);
+					enemy->y = levelPlatforms.platformArray[j].y - enemy->height;
 					enemy->verVel = 0;
 					enemy->grounded = true;
 					enemy->lastGroundedPlatformIndex = j;
@@ -470,17 +466,63 @@ static uint8_t CalcCollsion(enemy_t* enemy, unsigned int gameFrame) {
 	return 255;
 }
 
+// this is for all enemies except freezies and coins
 void KillEnemy(enemy_t* enemy, player_t* player, unsigned int gameFrame) {
-	enemy->verVel = (enemy->type != ENEMY_FLY) ? TO_FIXED_POINT(3) : TO_FIXED_POINT(2);
+	enemy->verVel = (enemy->type != ENEMY_FLY) ? I2FP(3) : I2FP(2);
 	enemy->state = ENEMY_DEAD_SPINNING;
 	if (player->dir == RIGHT)
-		enemy->horVel = TO_FIXED_POINT(1.5);
+		enemy->horVel = I2FP(1.5);
 	else
-		enemy->horVel = TO_FIXED_POINT(-1.5);
+		enemy->horVel = I2FP(-1.5);
 	enemy->grounded = false;
 	
 	--levelEnemies.enemiesLeft;
-	SpawnBonusCoin(0, 0, false, enemy->dir, gameFrame);
+	SpawnEnemy(ENEMY_COIN, enemy->dir, gameFrame);
+	
 	EnemyShowScore(enemy, player, gameFrame);
 	player->lastKilledEnemyTime = gameFrame;
+}
+
+static void CalcForCoins(unsigned int gameFrame, enemy_t *coin) {
+	coin->sprite = ((gameFrame - coin->spawnTime)/4) % 5;
+	
+	if (coin->bonus && coin->state != ENEMY_DEAD_SPINNING)
+		return;
+	
+	switch (coin->state) {
+		case ENEMY_WALKING:
+			coin->verVel -= TO_FIXED_POINT(GRAVITY);
+			if (coin->dir == RIGHT) {
+				coin->horVel = I2FP(0.5);
+			} else {
+				coin->horVel = I2FP(-0.5);
+			}
+			break;
+		case ENEMY_EXITING_PIPE:
+			// delay coin exit. i didn't like how quickly they came out after the player killed enemies
+			if (gameFrame - coin->spawnTime < 70) {
+				coin->horVel = 0;
+			} else {
+				if (coin->dir == LEFT)
+					coin->horVel = -coin->maxSpeed;
+				else
+					coin->horVel = coin->maxSpeed;
+			}
+			break;
+		case ENEMY_DEAD_SPINNING:
+			if (coin->bonus)
+				--levelCoins.coinsLeft;
+			if (!game_data.levelEnded)
+				SpawnParticle(FP2I(coin->x), FP2I(coin->y), PARTICLE_COIN_PICK, gameFrame);
+			coin->y = I2FP(241);
+			coin->state = ENEMY_DEAD;
+			return;
+	}
+	
+	if (coin->x < -COIN_WIDTH_FP)
+		coin->x = I2FP(320);
+	else if (coin->x > I2FP(320))
+		coin->x = -COIN_WIDTH_FP;
+	
+	CalcCollsion(coin, gameFrame);
 }
