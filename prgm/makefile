@@ -5,7 +5,7 @@
 NAME = MBros
 ICON = icon.png
 DESCRIPTION = "Mario Bros Arcade game"
-COMPRESSED = NO
+COMPRESSED = YES
 
 CFLAGS = -Wall -Wextra -Oz
 CXXFLAGS = $(CFLAGS)

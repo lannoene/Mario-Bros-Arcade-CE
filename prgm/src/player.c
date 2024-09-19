@@ -191,11 +191,11 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 	if (player->state == PLAYER_NORMAL) {
 		
 		// checking x for offscreen transition to other side
-		if (player->x < I2FP(-PLAYER_WIDTH + 2)) {
+		if (player->x < I2FP(-PLAYER_WIDTH)) {
 			player->x = I2FP(320 - 1); // if they go offscreen to the left, teleport them to the right side
 			if (player->grounded)
 				player->verAccel = 0;
-		} else if (player->x > I2FP(320 - 1)) {
+		} else if (player->x > I2FP(320)) {
 			player->x = I2FP(-PLAYER_WIDTH + 1); // if they go offscreen to the right, teleport them to the left side
 			if (player->grounded)
 				player->verAccel = 0;
@@ -209,8 +209,10 @@ void UpdatePlayer(player_t* player, int gameFrame) {
 			player->grounded = true;
 		} else if (player->lastGroundedPlatformIndex != -1 
 		&& player->grounded
-		&& player->x + I2FP(PLAYER_WIDTH) + player->horAccel > levelPlatforms.platformArray[player->lastGroundedPlatformIndex].x 
-		&& player->x + player->horAccel < levelPlatforms.platformArray[player->lastGroundedPlatformIndex].x + levelPlatforms.platformArray[player->lastGroundedPlatformIndex].width) {
+		&& (((player->x + I2FP(PLAYER_WIDTH) + player->horAccel > levelPlatforms.platformArray[player->lastGroundedPlatformIndex].x 
+		&& player->x + player->horAccel < levelPlatforms.platformArray[player->lastGroundedPlatformIndex].x + levelPlatforms.platformArray[player->lastGroundedPlatformIndex].width)
+		|| !(player->x > 0 && player->x + I2FP(PLAYER_WIDTH) < I2FP(320))))) { // if were are within the platform's last footprint or we are on the ground, going to the other screen (we don't want to fall off before we reach the other side!)
+		// yes, i know there's theoretically a bug where if you jumped at the correct pixel, you could falsify your grounded var and fall down, but that's too specific for me to care
 			player->verAccel = 0;
 			player->verAccelPassive = 0;
 			player->grounded = true;

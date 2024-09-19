@@ -17,3 +17,5 @@ void DrawBackground(uint8_t backgroundId);
 void DecompressSprites(void);
 void SetUpPalettes(void);
 void SetDarkness(uint8_t darkness);
+void LoadExtraSprites(void);
+void FreeExtraSprites(void);

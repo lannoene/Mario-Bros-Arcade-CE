@@ -35,6 +35,12 @@ for (typeof(arr[0]) *elemName = &arr[0]; elemName != &arr[max]; elemName++) {
 
 #define CONTINUE(x) goto __continue ## x
 
+#define FP_MUL(x, y)\
+(((x)*(y))/256)
+
+#define FP_DIV(x, y)\
+(((x)*256)/(y))
+
 static inline int iLog10(int n) { // this might be faster than float log10
 	for (int i = 1, tenExp = 1; i <= 10; i++) { // 10 is the max digits in an int
 		if (n < (tenExp *= 10))

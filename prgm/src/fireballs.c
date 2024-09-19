@@ -100,12 +100,11 @@ void UpdateFireballs(player_t* player, unsigned int gameFrame) {
 						fireball->alive = false;
 					++fireball->x;
 				}
-				/* this is so painful. also i give up. it's 4 am
-				int sinOfY = fpsin(TO_FIXED_POINT(fireball->x)); // except for here... idk how to get rid of this one
-				fireball->y = FIXED_POINT_TO_INT(TO_FIXED_POINT(fireball->original_y) + -(sinOfY + FIXED_POINT_TO_INT(sinOfY*sinOfY)) /* sinOfY*sinOfY has 2 fixed point mults in it, 
-				so we need to divide by fp m 2 times to get back to normal );*/
-				float sinOfY = sin((float)fireball->x/10);
-				fireball->y = fireball->original_y + -13*(sinOfY + sinOfY*sinOfY);
+				//dbg_printf("%d,\n", (int)(-13*(sinOfY + sinOfY*sinOfY)));
+				int8_t sinYOffsetTbl[] = {
+					-1,-3,-4,-7,-9,-11,-13,-16,-18,-20,-21,-23,-24,-25,-25,-25,-25,-24,-23,-22,-20,-19,-16,-14,-12,-10,-7,-5,-3,-2,0,0,1,2,2,3,3,3,2,2,1,1,0,0,0,0,0,0,0,0,0,1,1,2,2,3,3,3,3,2,1,0,0,
+				};
+				fireball->y = fireball->original_y + sinYOffsetTbl[fireball->x % sizeof(sinYOffsetTbl)];
 			}
 		} else {
 			if (gameFrame - fireball->spawnTime < 60) {
@@ -181,7 +180,9 @@ void ManageFireballSpawning(player_t* player, unsigned int gameFrame, int16_t fi
 		return;
 	if (gameFrame % 4 == 0)
 		--levelFireballs.fireballSpawnWeight;
-	if (fireballFlags & HAS_FIREBALL_GREEN && rand() % levelFireballs.fireballSpawnWeight == 0) {
+	static bool nd = false;
+	if (!nd) {
+		nd = true;
 		uint8_t fy;
 		// spawn green fireballs
 		if (player->y < TO_FIXED_POINT(72))

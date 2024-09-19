@@ -31,7 +31,7 @@ converts:
       - level/pipes_ground.png
   - name: compressed
     palette: global_palette
-    compress: zx7
+    compress: zx0
     width-and-height: false
     images:
       - background/bg_pipes.png
@@ -49,17 +49,11 @@ converts:
       - mario/walk2_right.png
       - mario/walk3_right.png
       - mario/jump_right.png
-      - mario/stand_left.png
-      - mario/walk1_left.png
-      - mario/walk2_left.png
-      - mario/walk3_left.png
-      - mario/jump_left.png
       - mario/slide_right.png
       - mario/slide_left.png
       - mario/dead.png
       - mario/blank_stare.png
       - level/pipe_stationary_right.png
-      - level/pipe_stationary_left.png
       - level/pow_full.png
       - level/pow_medium.png
       - level/pow_low.png
@@ -87,40 +81,20 @@ converts:
       - enemy/spike_walk2_right.png
       - enemy/spike_walk3_right.png
       - enemy/spike_upsidedown1_right.png
-      - enemy/spike_walk1_left.png
-      - enemy/spike_walk2_left.png
-      - enemy/spike_walk3_left.png
-      - enemy/spike_upsidedown1_left.png
       - enemy/crab_walk1_right.png
       - enemy/crab_walk2_right.png
       - enemy/crab_walk3_right.png
       - enemy/crab_upsidedown1_right.png
-      - enemy/crab_walk1_left.png
-      - enemy/crab_walk2_left.png
-      - enemy/crab_walk3_left.png
-      - enemy/crab_upsidedown1_left.png
       - enemy/crab_walk1_mad_right.png
       - enemy/crab_walk2_mad_right.png
       - enemy/crab_walk3_mad_right.png
-      - enemy/crab_walk1_mad_left.png
-      - enemy/crab_walk2_mad_left.png
-      - enemy/crab_walk3_mad_left.png
       - enemy/fly_ground.png
       - enemy/fly_wing1.png
       - enemy/fly_wing2.png
-      - enemy/fly_dead_left.png
       - enemy/fly_dead_right.png
-      - enemy/freezie_walk1_left.png
-      - enemy/freezie_walk2_left.png
-      - enemy/freezie_walk3_left.png
       - enemy/freezie_walk1_right.png
       - enemy/freezie_walk2_right.png
       - enemy/freezie_walk3_right.png
-      - enemy/freezie_die1_left.png
-      - enemy/freezie_die2_left.png
-      - enemy/freezie_die3_left.png
-      - enemy/freezie_die4_left.png
-      - enemy/freezie_die5_left.png
       - enemy/freezie_die1_right.png
       - enemy/freezie_die2_right.png
       - enemy/freezie_die3_right.png

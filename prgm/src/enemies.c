@@ -43,7 +43,13 @@ enemy_t *SpawnEnemy(uint8_t enemyType, bool direction, unsigned int gameFrame) {
 	}
 	if (i == levelEnemies.numEnemies) {
 		++levelEnemies.numEnemies;
-		levelEnemies.enemyArray = realloc(levelEnemies.enemyArray, levelEnemies.numEnemies*sizeof(enemy_t));
+		void *temp = realloc(levelEnemies.enemyArray, levelEnemies.numEnemies*sizeof(enemy_t));
+		if (!temp) {
+			levelEnemies.numEnemies--;
+			dbg_printf("ERROR: COULD NOT ALLOCATE ENEMY\n");
+			return NULL;
+		}
+		levelEnemies.enemyArray = temp;
 	}
 	memset(levelEnemies.enemyArray + i, 0, sizeof(enemy_t)); // remember, you don't need to set things to null/0 because this does it already
 	enemy_t* enemy = &levelEnemies.enemyArray[i];

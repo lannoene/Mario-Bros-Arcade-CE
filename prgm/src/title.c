@@ -15,7 +15,7 @@ bool LoadTitle(void) {
 	gfx_SetFontData(font);
 	gfx_SetMonospaceFont(8);
 	
-	zx7_Decompress(gfx_vbuffer, bg_title_compressed);
+	zx0_Decompress(gfx_vbuffer, bg_title_compressed);
 	
 	gfx_SetTextFGColor(1);
 	gfx_PrintStringXY("Press Enter", 110, 190);

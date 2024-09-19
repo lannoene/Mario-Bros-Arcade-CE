@@ -1,6 +1,7 @@
 #include <graphx.h>
 #include <keypadc.h>
 #include <tice.h>
+#include <debug.h>
 
 #include "screens.h"
 #include "draw.h"
@@ -11,6 +12,7 @@
 
 int main(void) {
 	srand(rtc_Time());
+	srandom(rand());
 	
 	// Initialize graphics drawing
 	gfx_Begin();
@@ -20,7 +22,7 @@ int main(void) {
 	gfx_SetPalette(global_palette, sizeof_global_palette, 0);
 	SetUpPalettes();
 	
-	DecompressSprites();
+	LoadExtraSprites();
 	
 	// These were set in the image conversion file
 	gfx_SetTransparentColor(3);
@@ -29,6 +31,8 @@ int main(void) {
 		// scan keypresses
 		kb_Scan();
 	} while (RunScreen());
+	
+	FreeExtraSprites();
 	
 	// End graphics drawing
 	gfx_End();

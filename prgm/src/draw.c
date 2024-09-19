@@ -2,6 +2,7 @@
 
 #include <compression.h>
 #include <math.h>
+#include <string.h>
 
 #include "gfx/gfx.h"
 
@@ -32,11 +33,11 @@ gfx_rletsprite_t* mario_sprites[2][8] = {
 		blank_stare
 	},
 	{
-		stand_left,
-		walk1_left,
-		walk2_left,
-		walk3_left,
-		jump_left,
+		0,
+		0,
+		0,
+		0,
+		0,
 		dead,
 		slide_left,
 		blank_stare
@@ -74,16 +75,12 @@ gfx_sprite_t* platform_bump_sprites[][3] = {
 gfx_rletsprite_t* enemy_sprites[][2][8] = {
 	{
 		{
-			spike_walk1_right, 
-			spike_walk2_right, 
+			spike_walk1_right,
+			spike_walk2_right,
 			spike_walk3_right,
 			spike_upsidedown1_right
 		},
 		{
-			spike_walk1_left,
-			spike_walk2_left,
-			spike_walk3_left,
-			spike_upsidedown1_left
 		}
 	},
 	{
@@ -95,15 +92,6 @@ gfx_rletsprite_t* enemy_sprites[][2][8] = {
 			crab_walk1_mad_right,
 			crab_walk2_mad_right,
 			crab_walk3_mad_right
-		},
-		{
-			crab_walk1_left,
-			crab_walk2_left,
-			crab_walk3_left,
-			crab_upsidedown1_left,
-			crab_walk1_mad_left,
-			crab_walk2_mad_left,
-			crab_walk3_mad_left
 		},
 	},
 	{
@@ -117,7 +105,6 @@ gfx_rletsprite_t* enemy_sprites[][2][8] = {
 			fly_ground,
 			fly_wing1,
 			fly_wing2,
-			fly_dead_left
 		}
 	},
 	{
@@ -131,16 +118,6 @@ gfx_rletsprite_t* enemy_sprites[][2][8] = {
 			freezie_die4_right,
 			freezie_die5_right
 		},
-		{
-			freezie_walk1_left,
-			freezie_walk2_left,
-			freezie_walk3_left,
-			freezie_die1_left,
-			freezie_die2_left,
-			freezie_die3_left,
-			freezie_die4_left, 
-			freezie_die5_left
-		}
 	},
 	{
 		{
@@ -168,7 +145,7 @@ gfx_rletsprite_t* pow_sprites[3] = {
 
 gfx_rletsprite_t* pipe_sprites[2][1] = {
 	{pipe_stationary_right},
-	{pipe_stationary_left}
+	{0}
 };
 
 gfx_rletsprite_t* fireball_sprites[2][8] = {
@@ -453,16 +430,16 @@ void DrawBackground(uint8_t backgroundId) {
 	// draw bg in buffer
 	switch (backgroundId) {
 		case BG_PIPES:
-			zx7_Decompress(gfx_vbuffer, bg_pipes_compressed);
+			zx0_Decompress(gfx_vbuffer, bg_pipes_compressed);
 			break;
 		case BG_LAVA:
-			zx7_Decompress(gfx_vbuffer, bg_lava_compressed);
+			zx0_Decompress(gfx_vbuffer, bg_lava_compressed);
 			break;
 		case BG_CASTLE:
-			zx7_Decompress(gfx_vbuffer, bg_castle_compressed);
+			zx0_Decompress(gfx_vbuffer, bg_castle_compressed);
 			break;
 		case BG_SNOWY:
-			zx7_Decompress(gfx_vbuffer, bg_snowy_compressed);
+			zx0_Decompress(gfx_vbuffer, bg_snowy_compressed);
 			break;
 	}
 	
@@ -506,3 +483,146 @@ void SetDarkness(uint8_t darkness) {
 		gfx_SetPalette(zeroArray, sizeof_global_palette, 0);
 	}
 }
+
+#define RLET_SIZE_MAX(x) ((((char*)x)[0] + 1) * ((char*)x)[1] * 3 / 2)
+#define SPRITE_SIZE_MAX(x) (((((char*)x)[0]) * ((char*)x)[1]) + 2)
+
+#define FLIP_SPRITE_SIZE_MAX (500 + 2)
+
+int rlet_size_necessary(const gfx_rletsprite_t *image) {
+	const uint8_t *_img = (const uint8_t*)image;
+	int offset = 2;
+	uint8_t width = _img[0], height = _img[1];
+	for (unsigned int i = 0; i < height; i++) {
+        int left = width;
+		while (left) {
+			// get transparent pixels counter
+			left -= _img[offset++];
+			if (!left)
+				break;
+			// get num opaque pixels
+			uint8_t np = _img[offset++];
+			left -= np;
+			offset += np;
+		}
+	}
+	return offset;
+}
+
+int rlet_size_necessary_flip(const gfx_rletsprite_t *image) {
+    const uint8_t *_img = (const uint8_t*)image;
+    int offset = 2, adjust = 0;
+    uint8_t width = _img[0], height = _img[1];
+	
+    for (uint8_t i = 0; i < height; i++) {
+        uint8_t left = width;
+        if (_img[offset])
+            adjust++;
+        while (left) {
+            // get transparent pixels counter
+            left -= _img[offset++];
+            if (!left) {
+                adjust--;
+                break;
+            }
+            // get num opaque pixels
+            uint8_t np = _img[offset++];
+            left -= np;
+            offset += np;
+        }
+    }
+    return offset + adjust;
+}
+
+int rlet_sprite_flipY(gfx_rletsprite_t *image, gfx_rletsprite_t *out) {
+	#define OPP_OFF ((offset) - ((offset) % width))
+	const uint8_t *_img = (const uint8_t*)image;
+	int offset = 2;
+	uint8_t width = _img[0], height = _img[1];
+	for (unsigned int i = 0; i < height; i++) {
+        int left = width;
+		while (left) {
+			// get transparent pixels counter
+			left -= _img[offset++];
+			if (!left)
+				break;
+			// get num opaque pixels
+			uint8_t np = _img[offset++];
+			left -= np;
+			offset += np;
+		}
+	}
+    return 0;
+}
+
+// we can only malloc the return sprite because otherwise it would cause heap fragmentation
+__attribute__((noinline))
+static void FlipRletSpriteY(const void *in, gfx_rletsprite_t *out) {
+	const int spriteSize = SPRITE_SIZE_MAX(in);
+	gfx_sprite_t *_tempSprite = malloc(spriteSize), *_flipTempSprite = malloc(spriteSize);
+	
+	gfx_ConvertFromRLETSprite(in, _tempSprite);
+	// flip across the y axis
+	gfx_FlipSpriteY(_tempSprite, _flipTempSprite);
+	free(_tempSprite);
+	
+	gfx_ConvertToRLETSprite(_flipTempSprite, out);
+	free(_flipTempSprite);
+	
+	
+	//memcpy(*out, _out, rlet_size_necessary(_out));
+	//free(_out);
+}
+
+#define FREE_SPRITE_ARR(arr, max)\
+do {\
+for (int __i = 0; __i < max; __i++)\
+	if (arr[__i] != NULL)\
+		free(arr[__i]);\
+} while(0)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincompatible-pointer-types"
+
+void *s_alloc(int s) { // statically allocate something on .data
+	static uint8_t _s_heap[7500];
+	static unsigned int nAlloc = 0;
+	
+	if (nAlloc + s > sizeof(_s_heap))
+		return NULL;
+	void *ret = &_s_heap[nAlloc];
+	nAlloc += s; // reserve space
+	return ret;
+}
+
+typedef struct {
+	void **in;
+	void **out;
+	int num;
+} convSprite_t;
+convSprite_t convSprites[] = {
+	{enemy_sprites[0][RIGHT], enemy_sprites[0][LEFT], 8},
+	{enemy_sprites[1][RIGHT], enemy_sprites[1][LEFT], 8},
+	{&enemy_sprites[2][RIGHT][3], &enemy_sprites[2][LEFT][3], 1},
+	{enemy_sprites[3][RIGHT], enemy_sprites[3][LEFT], 8},
+	{mario_sprites[RIGHT], mario_sprites[LEFT], 5},
+	{pipe_sprites[RIGHT], pipe_sprites[LEFT], 1},
+};
+
+void LoadExtraSprites(void) {
+	for (size_t i = 0; i < sizeof(convSprites)/sizeof(convSprite_t); i++) {
+		for (int j = 0; j < convSprites[i].num; j++) {
+			if (convSprites[i].in[j] != NULL) {
+				int s = rlet_size_necessary_flip(convSprites[i].in[j]);
+				convSprites[i].out[j] = s_alloc(s);
+				FlipRletSpriteY(convSprites[i].in[j], convSprites[i].out[j]);
+			}
+		}
+	}
+}
+
+void FreeExtraSprites(void) {
+	for (size_t i = 0; i < sizeof(convSprites)/sizeof(convSprite_t); i++) {
+		FREE_SPRITE_ARR(convSprites[i].out, convSprites[i].num);
+	}
+}
+#pragma clang diagnostic pop

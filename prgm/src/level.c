@@ -496,7 +496,7 @@ void LoadLevelFromSave(void) {
 void RestartLevels(void) {
 	// pretty much a copy paste of EndLevel func with a few tweaks
 	game_data.level = 1;
-	mario[0].score = 0;
+	scoreWhenRoundStarts = mario[0].score = 0;
 	mario[0].lives = 4;
 	mario[0].state = PLAYER_NORMAL;
 	
