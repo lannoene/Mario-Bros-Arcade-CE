@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <graphx.h>
+#include <sys/util.h>
 
 #include "platforms.h"
 #include "level.h"
@@ -180,9 +181,7 @@ void ManageFireballSpawning(player_t* player, unsigned int gameFrame, int16_t fi
 		return;
 	if (gameFrame % 4 == 0)
 		--levelFireballs.fireballSpawnWeight;
-	static bool nd = false;
-	if (!nd) {
-		nd = true;
+	if (fireballFlags & HAS_FIREBALL_GREEN && randInt(0, levelFireballs.fireballSpawnWeight) == 0) {
 		uint8_t fy;
 		// spawn green fireballs
 		if (player->y < TO_FIXED_POINT(72))
@@ -190,7 +189,7 @@ void ManageFireballSpawning(player_t* player, unsigned int gameFrame, int16_t fi
 		else if (player->y < TO_FIXED_POINT(120))
 			fy = 107;
 		else if (player->y < TO_FIXED_POINT(176))
-			fy = 166;
+			fy = 161;
 		else
 			fy = 200;
 		

@@ -534,44 +534,20 @@ int rlet_size_necessary_flip(const gfx_rletsprite_t *image) {
     return offset + adjust;
 }
 
-int rlet_sprite_flipY(gfx_rletsprite_t *image, gfx_rletsprite_t *out) {
-	#define OPP_OFF ((offset) - ((offset) % width))
-	const uint8_t *_img = (const uint8_t*)image;
-	int offset = 2;
-	uint8_t width = _img[0], height = _img[1];
-	for (unsigned int i = 0; i < height; i++) {
-        int left = width;
-		while (left) {
-			// get transparent pixels counter
-			left -= _img[offset++];
-			if (!left)
-				break;
-			// get num opaque pixels
-			uint8_t np = _img[offset++];
-			left -= np;
-			offset += np;
-		}
-	}
-    return 0;
-}
-
-// we can only malloc the return sprite because otherwise it would cause heap fragmentation
 __attribute__((noinline))
 static void FlipRletSpriteY(const void *in, gfx_rletsprite_t *out) {
 	const int spriteSize = SPRITE_SIZE_MAX(in);
 	gfx_sprite_t *_tempSprite = malloc(spriteSize), *_flipTempSprite = malloc(spriteSize);
 	
-	gfx_ConvertFromRLETSprite(in, _tempSprite);
-	// flip across the y axis
-	gfx_FlipSpriteY(_tempSprite, _flipTempSprite);
-	free(_tempSprite);
-	
-	gfx_ConvertToRLETSprite(_flipTempSprite, out);
-	free(_flipTempSprite);
-	
-	
-	//memcpy(*out, _out, rlet_size_necessary(_out));
-	//free(_out);
+	if (_tempSprite && _flipTempSprite) {
+		gfx_ConvertFromRLETSprite(in, _tempSprite);
+		// flip across the y axis
+		gfx_FlipSpriteY(_tempSprite, _flipTempSprite);
+		free(_tempSprite);
+		
+		gfx_ConvertToRLETSprite(_flipTempSprite, out);
+		free(_flipTempSprite);
+	}
 }
 
 #define FREE_SPRITE_ARR(arr, max)\
@@ -614,7 +590,8 @@ void LoadExtraSprites(void) {
 			if (convSprites[i].in[j] != NULL) {
 				int s = rlet_size_necessary_flip(convSprites[i].in[j]);
 				convSprites[i].out[j] = s_alloc(s);
-				FlipRletSpriteY(convSprites[i].in[j], convSprites[i].out[j]);
+				if (convSprites[i].out[j])
+					FlipRletSpriteY(convSprites[i].in[j], convSprites[i].out[j]);
 			}
 		}
 	}
