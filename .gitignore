@@ -1,10 +1,4 @@
 bin/
-include/
-lib/
-meta/
-todo.txt
-prgm/bin/
-prgm/obj/
-prgm/meta/
-prgm/src/gfx/*.c
-prgm/src/gfx/*.h
+obj/
+src/gfx/*.c
+src/gfx/*.h

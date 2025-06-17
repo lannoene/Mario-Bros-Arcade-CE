@@ -1,6 +1,6 @@
 Credit:
 Tj The Kid - Mario Sprites
-Mario350, Pie-jacker875, TheHappyFaceKing - Backgrounds
+Mario350, Pie-jacker875, TheHappyFaceKing, Snessy the Duck - Backgrounds
 Techokami - Enemy and Pipe sprites
 TheHappyFaceKing - Fonts
 Mario350 - Platform Tilesets
